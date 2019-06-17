@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using SharpNoise.Utilities.Imaging;
 
-namespace ConsoleApp1
+namespace GlobalMap
 {
     public abstract class GenerationSettings
     {
-        private List<Color> _debugColors = new List<Color>
+        private readonly List<Color> _debugColors = new List<Color>
         {
             new Color(0,0,0,Byte.MaxValue),
             new Color(128,0,0,Byte.MaxValue),
