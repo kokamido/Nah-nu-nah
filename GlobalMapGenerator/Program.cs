@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 
 namespace GlobalMap
@@ -7,11 +8,8 @@ namespace GlobalMap
     {
         public static void Main(string[] args)
         {
-            var image = MapGenerationHelper.GenereateMap(1980, 1080, new DefaultEarth());
-            using (var fs = File.OpenWrite("NoiseMap.png"))
-            {
-                image.SaveGdiBitmap(fs, ImageFormat.Png);
-            }
+            var alt = MapGenerationHelper.GenereateAltitudeMap(1024, 768);
+            alt.ToBitmap(new DefaultEarth()).Save("NoiseMap.png");
         }
     }
 }
