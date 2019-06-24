@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Printing;
 using System.Linq;
 using Color = SharpNoise.Utilities.Imaging.Color;
 using ColorDr = System.Drawing.Color;
@@ -9,25 +7,25 @@ using Image = SharpNoise.Utilities.Imaging.Image;
 
 namespace GlobalMap
 {
-    public class AltitudeMap
+    public class Map
     {
         public readonly int Width;
         public readonly int Height;
-        public readonly double[,] Map;
+        public readonly double[,] Altitudes;
 
-        public AltitudeMap(Image imgGreyscale)
+        public Map(Image imgGreyscale)
         {
             Width = imgGreyscale.Width;
             Height = imgGreyscale.Height;
-            Map = new double[Width, Height];
+            Altitudes = new double[Width, Height];
             for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
-                Map[x, y] = GreyscaleColorToDouble(imgGreyscale[x, y]);
+                Altitudes[x, y] = GreyscaleColorToDouble(imgGreyscale[x, y]);
             }
         }
 
-        public Bitmap ToBitmap(GenerationSettings settings, bool debug = false)
+        public Bitmap ToBitmap(AltitudeGenerationSettings settings, bool debug = false)
         {
             var layers = settings.Layers;
             if (debug)
@@ -41,7 +39,7 @@ namespace GlobalMap
             for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
-                var color = GetColor(layersArray, Map[x, y]);
+                var color = GetColor(layersArray, Altitudes[x, y]);
                 res.SetPixel(x, y, color);
             }
 

@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace GlobalMap
 {
-    public abstract class GenerationSettings
+    public abstract class AltitudeGenerationSettings
     {
         public readonly Color[] DebugColors = {
             Color.FromArgb(byte.MaxValue,0,0,0),
@@ -26,9 +26,9 @@ namespace GlobalMap
         public abstract Dictionary<(double level, string name), Color> Layers { get;}
     }
 
-    public class DefaultEarth : GenerationSettings
+    public class DefaultEarthAltitude : AltitudeGenerationSettings
     {
-        public DefaultEarth()
+        public DefaultEarthAltitude()
         {
             Layers = new Dictionary<(double level, string name), Color>
             {
@@ -46,9 +46,9 @@ namespace GlobalMap
         public override Dictionary<(double level, string name), Color> Layers { get; }
     }
     
-    public class DryLand : GenerationSettings
+    public class DryLandAltitude : AltitudeGenerationSettings
     {
-        public DryLand()
+        public DryLandAltitude()
         {
             Layers = new Dictionary<(double level, string name), Color>
             {
