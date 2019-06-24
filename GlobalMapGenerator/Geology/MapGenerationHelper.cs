@@ -8,7 +8,7 @@ namespace GlobalMap
 {
     public static class MapGenerationHelper
     {
-        public static Map GenerateAltitudeMap(int width, int height)
+        public static Map GenerateAltitudeMap(int width, int height, AltitudeGenerationSettings settings)
         {
             var noiseSource = new Perlin
             {
@@ -37,7 +37,7 @@ namespace GlobalMap
             
             renderer.BuildGrayscaleGradient();
             renderer.Render();
-            return new Map(image);
+            return new Map(image, settings);
         }
     }
 }

@@ -12,9 +12,11 @@ namespace GlobalMap
         public readonly int Width;
         public readonly int Height;
         public readonly double[,] Altitudes;
+        public readonly AltitudeGenerationSettings AltitudeGenerationSettings;
 
-        public Map(Image imgGreyscale)
+        public Map(Image imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
         {
+            AltitudeGenerationSettings = altitudeColorSettings;
             Width = imgGreyscale.Width;
             Height = imgGreyscale.Height;
             Altitudes = new double[Width, Height];
@@ -25,12 +27,12 @@ namespace GlobalMap
             }
         }
 
-        public Bitmap ToBitmap(AltitudeGenerationSettings settings, bool debug = false)
+        public Bitmap ToBitmap(bool debug = false)
         {
-            var layers = settings.Layers;
+            var layers = AltitudeGenerationSettings.Layers;
             if (debug)
             {
-                layers = layers.Select((l, index) => KeyValuePair.Create(l.Key, settings.DebugColors[index]))
+                layers = layers.Select((l, index) => KeyValuePair.Create(l.Key, AltitudeGenerationSettings.DebugColors[index]))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
