@@ -7,9 +7,9 @@ using SharpNoise.Utilities.Imaging;
 
 namespace GlobalMap
 {
-    public static class MapGenerationHelper
+    public static class MapGenerator
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(MapGenerationHelper));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MapGenerator));
         
         public static Map GenerateAltitudeMap(int width, int height, AltitudeGenerationSettings settings)
         {
@@ -42,7 +42,7 @@ namespace GlobalMap
             
             renderer.BuildGrayscaleGradient();
             renderer.Render();
-            Log.Info($"Noise map has been generated, converting it ti our format");
+            Log.Info($"Noise map has been generated, converting it to our format");
             var res = new Map(image, settings);
             Log.Info("Map has been generated");
             return res;
