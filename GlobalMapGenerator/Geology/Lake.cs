@@ -55,7 +55,7 @@ namespace GlobalMap
             var toProcess = new HashSet<Tuple<int, int>> {tile};
             while (toProcess.Any())
             {
-                Log.Debug($"Finding lake from tile {tile}, current basin is {string.Join(", ", basin)}");
+                Log.Debug($"Finding lake from tile {tile}, current basin volume is {basin.Count}");
                 var buf = new HashSet<Tuple<int, int>>();
                 basin.UnionWith(toProcess);
                 foreach (var t in toProcess)
