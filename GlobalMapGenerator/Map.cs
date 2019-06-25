@@ -13,6 +13,8 @@ namespace GlobalMap
         public readonly int Height;
         public readonly double[,] Altitudes;
         public readonly AltitudeGenerationSettings AltitudeGenerationSettings;
+        public double SeaAltitude => AltitudeGenerationSettings.SeaAltitude;
+        public List<River> Rivers = new List<River>();
 
         public Map(Image imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
         {
@@ -43,6 +45,14 @@ namespace GlobalMap
             {
                 var color = GetColor(layersArray, Altitudes[x, y]);
                 res.SetPixel(x, y, color);
+            }
+
+            foreach (var river in Rivers)
+            {
+                foreach (var tile in river.RiverTiles)
+                {
+                    res.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.RiverColor);
+                }
             }
 
             return res;
