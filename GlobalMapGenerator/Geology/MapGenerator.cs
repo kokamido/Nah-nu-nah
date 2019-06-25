@@ -14,7 +14,7 @@ namespace GlobalMap
         public static Map GenerateAltitudeMap(int width, int height, AltitudeGenerationSettings settings)
         {
             Log.Info($"Start generating a map with width '{width}', height '{height}' and altitude settings '{settings.GetType()}'");
-            Log.Info($"Generating noise map.");
+            Log.Info("Generating noise map.");
             var noiseSource = new Perlin
             {
                 Seed = new Random().Next()
@@ -42,7 +42,7 @@ namespace GlobalMap
             
             renderer.BuildGrayscaleGradient();
             renderer.Render();
-            Log.Info($"Noise map has been generated, converting it to our format");
+            Log.Info("Noise map has been generated, converting it to our format");
             var res = new Map(image, settings);
             Log.Info("Map has been generated");
             return res;

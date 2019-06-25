@@ -25,7 +25,7 @@ namespace GlobalMap
 
         public abstract Dictionary<(double level, string name), Color> Layers { get;}
         public Color RiverColor => Color.FromArgb(byte.MaxValue,10,150,255);
-        public Color LakeColor => Color.FromArgb(byte.MaxValue,0,141,151);
+        public Color LakeColor => Color.FromArgb(byte.MaxValue,0,200,191);
         public abstract double SeaAltitude { get; }
         public abstract double LakeRelativeSquareThreshold { get; }
     }
@@ -43,13 +43,13 @@ namespace GlobalMap
                 {(0.55, "Прибрежная зона"), Color.FromArgb(byte.MaxValue,0, 192, 0)},
                 {(0.625, "Равнина"), Color.FromArgb(byte.MaxValue,192, 192, 0)},
                 {(0.8, "Предгорья"), Color.FromArgb(byte.MaxValue,160, 96, 64)},
-                {(0.925, "Горы"), Color.FromArgb(byte.MaxValue,128, 200, 200)},
+                {(0.925, "Горы"), Color.FromArgb(byte.MaxValue,188, 180, 120)},
                 {(0.9875, "Вершина мира"), Color.FromArgb(byte.MaxValue,byte.MaxValue, byte.MaxValue, byte.MaxValue)},
             };    
         }
         public override Dictionary<(double level, string name), Color> Layers { get; }
         public override double SeaAltitude => 0.455;
-        public override double LakeRelativeSquareThreshold => 0.03;
+        public override double LakeRelativeSquareThreshold => 0.015;
     }
     
     public class DryLandAltitude : AltitudeGenerationSettings
