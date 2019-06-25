@@ -12,8 +12,8 @@ namespace GlobalMap
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
-            var map = MapGenerator.GenerateAltitudeMap(128, 96, new DefaultEarthAltitude());
-            map.GetСompatibleRiver();
+            var map = MapGenerator.GenerateAltitudeMap(1024, 768, new DefaultEarthAltitude());
+            map.Rivers.Add(map.GetCompatibleRiver(3));
             map.ToBitmap().Save("NoiseMap.png");
         }
     }

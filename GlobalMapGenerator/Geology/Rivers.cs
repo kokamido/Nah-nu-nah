@@ -28,7 +28,7 @@ namespace GlobalMap
         private static readonly ILog Log = LogManager.GetLogger(typeof(RiverGenerator));
         [ThreadStatic] private static Random rnd;
        
-        public static River GetСompatibleRiver(this Map map, int width = 3)
+        public static River GetCompatibleRiver(this Map map, int width = 0)
         {
             Log.Info($"Start creating a river");
             if(rnd == null)
@@ -54,7 +54,7 @@ namespace GlobalMap
                 Log.Debug($"Tile ({currentTile.Item1},{currentTile.Item2}) added to river");
                 riverTiles.Add(currentTile);
                 currentTile = map.Altitudes.GetNeighbourByMinCriteria(currentTile,
-                    Comparer<double>.Create((d, d1) => Math.Sign(d - d1)),riverTiles);
+                    Comparer<double>.Create((d, d1) => Math.Sign(d - d1)),riverTiles,false);
             }
             Log.Debug($"Final river mainstream tiles {string.Join(", ",riverTiles.Select(t => $"({t.Item1}, {t.Item2})"))}");
             Log.Info($"River mainstream has been created, final length is {riverTiles.Count}. Start extension to width {width}");
