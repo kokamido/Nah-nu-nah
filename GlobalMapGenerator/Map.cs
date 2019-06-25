@@ -68,7 +68,7 @@ namespace GlobalMap
             {
                 foreach (var tile in lake.Tiles)
                 {
-                    res.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.RiverColor);
+                    res.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.LakeColor);
                 }
             }
 
