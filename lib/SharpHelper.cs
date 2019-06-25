@@ -6,6 +6,14 @@ namespace lib
 {
     public static class SharpHelper
     {
+        [ThreadStatic] private static Random rnd;
+
+        public static int GetRndInt(int left, int right)
+        {
+            if(rnd == null)
+                rnd = new Random();
+            return rnd.Next(left, right);
+        }
         public static void ForEach<T>(this T[,] arr, Action<T> action, Action<int, int> coordsCallback = null,
             int width = 0, int height = 0)
         {
@@ -61,13 +69,14 @@ namespace lib
             IComparer<T> comparer, HashSet<Tuple<int, int>> exceptions = null, bool disableDiag = false)
         {
             var neighbours = GetNeighboursIndexes(arr, index,disableDiag)
-                .Select(n => Tuple.Create(arr[n.Item1, n.Item2], Tuple.Create(n.Item1, n.Item2)));
+                .Select(n => Tuple.Create(arr[n.Item1, n.Item2], Tuple.Create(n.Item1, n.Item2)))
+                .ToList();
 
             return neighbours
                        .Where(n => !exceptions?.Contains(n.Item2) ?? true)
                        .OrderBy(x => x.Item1, comparer)
                        .FirstOrDefault()?.Item2
-                   ?? throw new Exception($"Can't get any neighbour, something strange is going on");
+                   ?? neighbours[GetRndInt(0,neighbours.Count)].Item2;
         }
     }
 }

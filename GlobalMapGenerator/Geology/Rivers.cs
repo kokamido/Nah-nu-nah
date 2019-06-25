@@ -26,14 +26,10 @@ namespace GlobalMap
     public static class RiverGenerator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(RiverGenerator));
-        [ThreadStatic] private static Random rnd;
-       
+
         public static River GetCompatibleRiver(this Map map, int width = 0)
         {
             Log.Info($"Start creating a river");
-            if(rnd == null)
-                rnd = new Random();
-            
             var altitudeThreshold = MathHelper.GetQuantile(map.Altitudes, 0.9);
             var possibleRiverSource = new List<Tuple<int, int>>();
             map.Altitudes.ForEach(
@@ -47,7 +43,7 @@ namespace GlobalMap
                 map.Height);
             
             var riverTiles = new HashSet<Tuple<int, int>>();
-            var source = possibleRiverSource[rnd.Next(0, possibleRiverSource.Count)];
+            var source = possibleRiverSource[SharpHelper.GetRndInt(0, possibleRiverSource.Count)];
             var currentTile = source;
             while (map.Altitudes[currentTile.Item1,currentTile.Item2] > map.SeaAltitude)
             {
