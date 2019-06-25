@@ -1,0 +1,6 @@
+
+[Start of logging]
+25.06.2019 10:05:20.975 INFO     1 Start generating a map with width '128', height '96' and altitude settings 'GlobalMap.DefaultEarthAltitude' 
+25.06.2019 10:05:20.985 INFO     1 Generating noise map. 
+25.06.2019 10:05:21.003 INFO     1 Noise map has been generated, converting it ti our format 
+25.06.2019 10:05:21.004 INFO     1 Map has been generated 

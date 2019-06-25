@@ -1,10 +1,18 @@
-﻿namespace GlobalMap
+﻿using System.IO;
+using System.Reflection;
+using log4net;
+using log4net.Config;
+
+namespace GlobalMap
 {
-    static class Program
+    static class GlobalMapGenerator
     {
+        
         public static void Main(string[] args)
         {
-            var alt = MapGenerationHelper.GenerateAltitudeMap(1920, 1080, new DefaultEarthAltitude());
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+            var alt = MapGenerationHelper.GenerateAltitudeMap(128, 96, new DefaultEarthAltitude());
             alt.ToBitmap().Save("NoiseMap.png");
         }
     }

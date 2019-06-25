@@ -1,4 +1,5 @@
 using System;
+using log4net;
 using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
@@ -8,8 +9,12 @@ namespace GlobalMap
 {
     public static class MapGenerationHelper
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MapGenerationHelper));
+        
         public static Map GenerateAltitudeMap(int width, int height, AltitudeGenerationSettings settings)
         {
+            Log.Info($"Start generating a map with width '{width}', height '{height}' and altitude settings '{settings.GetType()}'");
+            Log.Info($"Generating noise map.");
             var noiseSource = new Perlin
             {
                 Seed = new Random().Next()
@@ -37,7 +42,10 @@ namespace GlobalMap
             
             renderer.BuildGrayscaleGradient();
             renderer.Render();
-            return new Map(image, settings);
+            Log.Info($"Noise map has been generated, converting it ti our format");
+            var res = new Map(image, settings);
+            Log.Info("Map has been generated");
+            return res;
         }
     }
 }
