@@ -16,3 +16,15 @@
 25.06.2019 10:14:29.586 INFO     1 Generating noise map. 
 25.06.2019 10:14:29.876 INFO     1 Noise map has been generated, converting it to our format 
 25.06.2019 10:14:29.909 INFO     1 Map has been generated 
+
+[Start of logging]
+25.06.2019 10:16:39.638 INFO     1 Start generating a map with width '1920', height '1080' and altitude settings 'GlobalMap.DefaultEarthAltitude' 
+25.06.2019 10:16:39.648 INFO     1 Generating noise map. 
+25.06.2019 10:16:39.941 INFO     1 Noise map has been generated, converting it to our format 
+25.06.2019 10:16:39.973 INFO     1 Map has been generated 
+
+[Start of logging]
+25.06.2019 10:16:49.584 INFO     1 Start generating a map with width '1920', height '1080' and altitude settings 'GlobalMap.DefaultEarthAltitude' 
+25.06.2019 10:16:49.594 INFO     1 Generating noise map. 
+25.06.2019 10:16:49.891 INFO     1 Noise map has been generated, converting it to our format 
+25.06.2019 10:16:49.923 INFO     1 Map has been generated 
