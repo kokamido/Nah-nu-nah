@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Schema;
 using lib;
 using log4net;
-using log4net.Repository.Hierarchy;
 
 namespace GlobalMap
 {
@@ -29,7 +27,7 @@ namespace GlobalMap
 
         public static River GetCompatibleRiver(this Map map, int width = 0)
         {
-            Log.Info($"Start creating a river");
+            Log.Info("Start creating a river");
             var altitudeThreshold = MathHelper.GetQuantile(map.Altitudes, 0.9);
             var possibleRiverSource = new List<Tuple<int, int>>();
             map.Altitudes.ForEach(
@@ -45,7 +43,7 @@ namespace GlobalMap
             var riverTiles = new HashSet<Tuple<int, int>>();
             var source = possibleRiverSource[SharpHelper.GetRndInt(0, possibleRiverSource.Count)];
             var currentTile = source;
-            while (map.Altitudes[currentTile.Item1,currentTile.Item2] > map.SeaAltitude)
+            while (!map.IsUnderSeaLevel(currentTile))
             {
                 Log.Debug($"Tile ({currentTile.Item1},{currentTile.Item2}) added to river");
                 riverTiles.Add(currentTile);

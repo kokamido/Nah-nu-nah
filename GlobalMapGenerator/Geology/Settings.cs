@@ -26,6 +26,7 @@ namespace GlobalMap
         public abstract Dictionary<(double level, string name), Color> Layers { get;}
         public Color RiverColor => Color.Aquamarine;
         public abstract double SeaAltitude { get; }
+        public abstract double LakeRelativeSquareThreshold { get; }
     }
 
     public class DefaultEarthAltitude : AltitudeGenerationSettings
@@ -46,7 +47,8 @@ namespace GlobalMap
             };    
         }
         public override Dictionary<(double level, string name), Color> Layers { get; }
-        public override double SeaAltitude => 0.455;
+        public override double SeaAltitude => 0.45;
+        public override double LakeRelativeSquareThreshold => 0.03;
     }
     
     public class DryLandAltitude : AltitudeGenerationSettings
@@ -66,5 +68,6 @@ namespace GlobalMap
         }
         public override Dictionary<(double level, string name), Color> Layers { get; }
         public override double SeaAltitude => 0.255;
+        public override double LakeRelativeSquareThreshold => 0.03;
     }
 }

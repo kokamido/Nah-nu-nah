@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -13,9 +14,15 @@ namespace GlobalMap
         public readonly int Height;
         public readonly double[,] Altitudes;
         public readonly AltitudeGenerationSettings AltitudeGenerationSettings;
-        public double SeaAltitude => AltitudeGenerationSettings.SeaAltitude;
+        
         public List<River> Rivers = new List<River>();
-
+        public List<Lake> Lakes;
+        
+        public bool IsUnderSeaLevel(Tuple<int, int> t) => Altitudes[t.Item1, t.Item2] < AltitudeGenerationSettings.SeaAltitude;
+        public bool IsRiverTile(Tuple<int, int> t) => Rivers.Any(r => r.RiverTiles.Contains(t));
+        public bool IsLakeTile(Tuple<int, int> t) => Lakes.Any(r => r.Tiles.Contains(t));
+        public int Square => Width*Height;
+        
         public Map(Image imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
         {
             AltitudeGenerationSettings = altitudeColorSettings;
@@ -27,6 +34,8 @@ namespace GlobalMap
             {
                 Altitudes[x, y] = GreyscaleColorToDouble(imgGreyscale[x, y]);
             }
+
+            Lakes = this.FindLakes(AltitudeGenerationSettings.LakeRelativeSquareThreshold);
         }
 
         public Bitmap ToBitmap(bool debug = false)
@@ -50,6 +59,14 @@ namespace GlobalMap
             foreach (var river in Rivers)
             {
                 foreach (var tile in river.RiverTiles)
+                {
+                    res.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.RiverColor);
+                }
+            }
+            
+            foreach (var lake in Lakes)
+            {
+                foreach (var tile in lake.Tiles)
                 {
                     res.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.RiverColor);
                 }
