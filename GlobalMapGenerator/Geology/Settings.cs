@@ -25,7 +25,7 @@ namespace GlobalMap
 
         public abstract Dictionary<(double level, string name), Color> Layers { get;}
         public Color RiverColor => Color.FromArgb(byte.MaxValue,10,150,255);
-        public Color LakeColor => Color.FromArgb(byte.MaxValue,59,253,208);
+        public Color LakeColor => Color.FromArgb(byte.MaxValue,0,141,151);
         public abstract double SeaAltitude { get; }
         public abstract double LakeRelativeSquareThreshold { get; }
     }
