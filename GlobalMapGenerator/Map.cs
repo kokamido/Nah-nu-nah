@@ -43,7 +43,7 @@ namespace GlobalMap
             var layers = AltitudeGenerationSettings.Layers;
             if (debug)
             {
-                layers = layers.Select((l, index) => KeyValuePair.Create(l.Key, AltitudeGenerationSettings.DebugColors[index]))
+                layers = layers.Select((l, index) => new KeyValuePair<(double,string), ColorDr>(l.Key, AltitudeGenerationSettings.DebugColors[index]))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using lib;
 using log4net;
+using Settings;
 
 namespace GlobalMap
 {
@@ -28,14 +29,27 @@ namespace GlobalMap
 
             var tilesToProcess = new HashSet<Tuple<int, int>>(Enumerable.Range(0, map.Width)
                 .SelectMany(x => Enumerable.Range(0, map.Height).Select(y => Tuple.Create(x, y)))
-                .Where(map.IsUnderSeaLevel));
+                .Where(map.IsUnderSeaLevel)
+                .OrderBy(x => SharpHelper.GetRndInt(int.MinValue, int.MaxValue)));
 
-            while (tilesToProcess.Any())
+            void Iter()
             {
-                var current = tilesToProcess.First();
-                tilesToProcess.Remove(current);
+                Tuple<int, int> current;
+                lock (tilesToProcess)
+                {
+                    if (tilesToProcess.Any())
+                    {
+                        current = tilesToProcess.First();
+                        tilesToProcess.Remove(current);
+                    }
+                    else
+                        return;
+                }
+                lock (tilesToProcess)
+                    tilesToProcess.Remove(current);
                 var basin = GetBasin(map, current);
-                tilesToProcess.ExceptWith(basin);
+                lock (tilesToProcess)
+                    tilesToProcess.ExceptWith(basin);
                 if (basin.Count <= thresholdAbsolute)
                 {
                     Log.Info("Water area processed, it's lake");
@@ -45,6 +59,9 @@ namespace GlobalMap
                     Log.Info("Water area processed, it's to big to be lake");
             }
 
+            while (tilesToProcess.Any())
+                Enumerable.Range(0, SystemSettings.AvaliableThreads).AsParallel().ForAll(s => Iter());
+            
             Log.Info($"Lakes has been found, total {res.Count} water areas");
             return res;
         }

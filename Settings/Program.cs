@@ -1,4 +1,4 @@
-﻿namespace lib
+﻿namespace Settings
 {
     internal class Program
     {
