@@ -52,11 +52,11 @@ namespace GlobalMap
                     tilesToProcess.ExceptWith(basin);
                 if (basin.Count <= thresholdAbsolute)
                 {
-                    Log.Info("Water area processed, it's lake");
+                    Log.Info($"Water area processed, it's lake with square {basin.Count}");
                     res.Add(new Lake(basin));
                 }
                 else
-                    Log.Info("Water area processed, it's to big to be lake");
+                    Log.Info($"Water area processed, it's to big to be lake, it's square is {basin.Count}");
             }
 
             while (tilesToProcess.Any())
