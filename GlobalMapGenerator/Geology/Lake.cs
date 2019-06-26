@@ -24,7 +24,7 @@ namespace GlobalMap
         {
             Log.Info($"Finding lakes");
             var res = new List<Lake>();
-            var thresholdAbsolute = map.Square * squareThreshold;
+            var thresholdAbsolute = map.Square * map.AltitudeGenerationSettings.LakeRelativeSquareThreshold;
 
             var tilesToProcess = new HashSet<Tuple<int, int>>(Enumerable.Range(0, map.Width)
                 .SelectMany(x => Enumerable.Range(0, map.Height).Select(y => Tuple.Create(x, y)))
