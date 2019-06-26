@@ -29,38 +29,28 @@ namespace GlobalMap
 
             var tilesToProcess = new HashSet<Tuple<int, int>>(Enumerable.Range(0, map.Width)
                 .SelectMany(x => Enumerable.Range(0, map.Height).Select(y => Tuple.Create(x, y)))
-                .Where(map.IsUnderSeaLevel)
-                .OrderBy(x => SharpHelper.GetRndInt(int.MinValue, int.MaxValue)));
+                .Where(map.IsUnderSeaLevel));
 
-            void Iter()
+            void Iter(Func<HashSet<Tuple<int,int>>,Tuple<int,int>> selector)
             {
-                Tuple<int, int> current;
-                lock (tilesToProcess)
+                while (true)
                 {
-                    if (tilesToProcess.Any())
-                    {
-                        current = tilesToProcess.First();
-                        tilesToProcess.Remove(current);
-                    }
-                    else
-                        return;
+                    Tuple<int, int> current;
+                    lock (tilesToProcess)
+                        current = selector.Invoke(tilesToProcess);
+                    if (current == null)
+                        break;
+                    var lake = GetBasin(map, current);
+                    lock (tilesToProcess)
+                        tilesToProcess.ExceptWith(lake);
+                    if(lake.Count <= thresholdAbsolute)
+                        lock(res)
+                            res.Add(new Lake(lake));
                 }
-                lock (tilesToProcess)
-                    tilesToProcess.Remove(current);
-                var basin = GetBasin(map, current);
-                lock (tilesToProcess)
-                    tilesToProcess.ExceptWith(basin);
-                if (basin.Count <= thresholdAbsolute)
-                {
-                    Log.Info($"Water area processed, it's lake with square {basin.Count}");
-                    res.Add(new Lake(basin));
-                }
-                else
-                    Log.Info($"Water area processed, it's to big to be lake, it's square is {basin.Count}");
             }
 
-            while (tilesToProcess.Any())
-                Enumerable.Range(0, SystemSettings.AvaliableThreads).AsParallel().ForAll(s => Iter());
+            var a = new Func<HashSet<Tuple<int,int>>,Tuple<int,int>>[] {t => t.FirstOrDefault(), t => t.LastOrDefault()};
+            a.AsParallel().ForAll(Iter);
             
             Log.Info($"Lakes has been found, total {res.Count} water areas");
             return res;
