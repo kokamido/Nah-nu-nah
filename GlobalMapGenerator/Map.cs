@@ -35,7 +35,7 @@ namespace GlobalMap
                 Altitudes[x, y] = GreyscaleColorToDouble(imgGreyscale[x, y]);
             }
 
-            Lakes = this.FindLakes(AltitudeGenerationSettings.LakeRelativeSquareThreshold);
+            Lakes = this.FindLakes();
         }
 
         public Bitmap ToBitmap(bool debug = false)

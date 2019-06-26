@@ -66,7 +66,7 @@ namespace lib
         }
 
         public static Tuple<int, int> GetNeighbourByMinCriteria<T>(this T[,] arr, Tuple<int, int> index,
-            IComparer<T> comparer, HashSet<Tuple<int, int>> exceptions = null, bool disableDiag = false)
+            IComparer<T> comparer, ICollection<Tuple<int, int>> exceptions = null, bool disableDiag = false)
         {
             var neighbours = GetNeighboursIndexes(arr, index,disableDiag)
                 .Select(n => Tuple.Create(arr[n.Item1, n.Item2], Tuple.Create(n.Item1, n.Item2)))

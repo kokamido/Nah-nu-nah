@@ -40,25 +40,32 @@ namespace GlobalMap
                 map.Width, 
                 map.Height);
             
-            var riverTiles = new HashSet<Tuple<int, int>>();
+            var riverMainstream = new List<Tuple<int, int>>();
             var source = possibleRiverSource[SharpHelper.GetRndInt(0, possibleRiverSource.Count)];
             var currentTile = source;
             while (!map.IsUnderSeaLevel(currentTile))
             {
                 Log.Debug($"Tile ({currentTile.Item1},{currentTile.Item2}) added to river");
-                riverTiles.Add(currentTile);
+                riverMainstream.Add(currentTile);
                 currentTile = map.Altitudes.GetNeighbourByMinCriteria(currentTile,
-                    Comparer<double>.Create((d, d1) => Math.Sign(d - d1)),riverTiles,false);
+                    Comparer<double>.Create((d, d1) => Math.Sign(d - d1)),riverMainstream,false);
             }
-            Log.Debug($"Final river mainstream tiles {string.Join(", ",riverTiles.Select(t => $"({t.Item1}, {t.Item2})"))}");
-            Log.Info($"River mainstream has been created, final length is {riverTiles.Count}. Start extension to width {width}");
-            var extendedRiver = new HashSet<Tuple<int,int>>();
-            foreach (var t in riverTiles)
+            Log.Debug($"Final river mainstream tiles {string.Join(", ",riverMainstream.Select(t => $"({t.Item1}, {t.Item2})"))}");
+            Log.Info($"River mainstream has been created, final length is {riverMainstream.Count}.");
+            var extendedRiver = new HashSet<Tuple<int,int>>(riverMainstream);
+            if (width > 1)
             {
-                extendedRiver.UnionWith(ExtendRiverTile(map,t,width));
+                Log.Info($"Extending river mainstream up to width {width}");
+                double currentNum = 0;
+                foreach (var t in riverMainstream)
+                {
+                    currentNum++;
+                    extendedRiver.UnionWith(ExtendRiverTile(map,t,(int)Math.Ceiling(width*(currentNum/riverMainstream.Count))));
+                }
+                Log.Debug($"Extended river is {string.Join(", ",extendedRiver)}");
+                Log.Info($"River has been extended. Done!");
             }
-            Log.Debug($"Extended river is {string.Join(", ",extendedRiver)}");
-            Log.Info($"River has been extended. Done!");
+            
             return new River(extendedRiver, source);
         }
 

@@ -49,7 +49,7 @@ namespace GlobalMap
         }
         public override Dictionary<(double level, string name), Color> Layers { get; }
         public override double SeaAltitude => 0.455;
-        public override double LakeRelativeSquareThreshold => 0.015;
+        public override double LakeRelativeSquareThreshold => 0.01;
     }
     
     public class DryLandAltitude : AltitudeGenerationSettings
