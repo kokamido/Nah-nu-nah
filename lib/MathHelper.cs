@@ -1,13 +1,36 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Threading;
 
 namespace lib
 {
     public static class MathHelper
     {
+        public static Tuple<int, int> Minus(this Tuple<int, int> left, Tuple<int, int> right)
+        {
+            return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
+        }
+        
+        public static Tuple<int, int> Plus(this Tuple<int, int> left, Tuple<int, int> right)
+        {
+            return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
+        }
+
+        public static Tuple<double, double> Multiply(this Tuple<double, double> vec, double multiplier)
+        {
+            return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
+        }
+        
+        public static Tuple<int, int> Multiply(this Tuple<int, int> vec, int multiplier)
+        {
+            return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
+        }
+
+        public static Tuple<int, int> Round(this Tuple<double, double> t)
+        {
+            return Tuple.Create((int)Math.Round(t.Item1), (int)Math.Round(t.Item2));
+        }
+        
         public static double GetQuantile(double[,] arr, double q)
         {
             if (q <= 0 || q > 1)
@@ -22,6 +45,13 @@ namespace lib
         public static double GetAngle(this Tuple<int, int> radVec)
         {
             return Math.Atan(radVec.Item2 / (double) radVec.Item1);
+        }
+        
+        public static Tuple<double,double> Get1Normal(this Tuple<int, int> vec)
+        {
+            var normal = Tuple.Create(-vec.Item2, vec.Item1);
+            var abs = normal.GetAbs();
+            return Tuple.Create(normal.Item1 / abs, normal.Item2 / abs);
         }
 
         public static double EuclideanRange(Tuple<int, int> p0, Tuple<int, int> p1)

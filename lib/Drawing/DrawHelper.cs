@@ -17,7 +17,7 @@ namespace lib
     
     public static class DrawHelper
     {
-        public static void Draw(IEnumerable<ColoredPoint> points, Bitmap bitmap)
+        public static void DrawOn(this IEnumerable<ColoredPoint> points, Bitmap bitmap)
         {
             foreach (var p in points)
                 bitmap.SetPixel(p.Coords.Item1, p.Coords.Item2, p.Color);
