@@ -16,7 +16,8 @@ namespace GlobalMap
         public readonly AltitudeGenerationSettings AltitudeGenerationSettings;
         
         public List<River> Rivers = new List<River>();
-        public List<Lake> Lakes;
+        public List<WaterArea> Lakes;
+        public List<WaterArea> Seas;
         
         public bool IsUnderSeaLevel(Tuple<int, int> t) => Altitudes[t.Item1, t.Item2] < AltitudeGenerationSettings.SeaAltitude;
         public bool IsRiverTile(Tuple<int, int> t) => Rivers.Any(r => r.RiverTiles.Contains(t));
@@ -35,7 +36,7 @@ namespace GlobalMap
                 Altitudes[x, y] = GreyscaleColorToDouble(imgGreyscale[x, y]);
             }
 
-            Lakes = this.FindLakes();
+            this.ClassifyWaterAreas();
         }
 
         public Bitmap ToBitmap(bool debug = false)

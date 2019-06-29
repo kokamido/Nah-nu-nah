@@ -12,16 +12,13 @@ namespace GlobalMap
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
-            var map = MapGenerator.GenerateAltitudeMap(1024, 768, new DefaultEarthAltitude());
+            var map = MapGenerator.GenerateAltitudeMap(512, 384, new DefaultEarthAltitude());
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(3));
             map.Rivers.Add(map.GetCompatibleRiver(3));
             map.Rivers.Add(map.GetCompatibleRiver(3));
-            map.Rivers.Add(map.GetCompatibleRiver(3));
-            map.Rivers.Add(map.GetCompatibleRiver(4));
-            map.Rivers.Add(map.GetCompatibleRiver(4));
             map.ToBitmap().Save("NoiseMap.png");
         }
     }

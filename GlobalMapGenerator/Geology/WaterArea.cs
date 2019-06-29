@@ -7,24 +7,25 @@ using Settings;
 
 namespace GlobalMap
 {
-    public class Lake
+    public class WaterArea
     {
         public HashSet<Tuple<int, int>> Tiles;
 
-        public Lake(HashSet<Tuple<int, int>> tiles)
+        public WaterArea(HashSet<Tuple<int, int>> tiles)
         {
             Tiles = tiles;
         }
     }
 
-    public static class LakeHelper
+    public static class WaterAreaHelper
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(LakeHelper));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(WaterAreaHelper));
 
-        public static List<Lake> FindLakes(this Map map, double squareThreshold = 0.05)
+        public static void ClassifyWaterAreas(this Map map, double squareThreshold = 0.05)
         {
-            Log.Info($"Finding lakes");
-            var res = new List<Lake>();
+            Log.Info($"Classifying water areas");
+            var lakes = new HashSet<WaterArea>();
+            var seas = new HashSet<WaterArea>();
             var thresholdAbsolute = map.Square * map.AltitudeGenerationSettings.LakeRelativeSquareThreshold;
 
             var tilesToProcess = new HashSet<Tuple<int, int>>(Enumerable.Range(0, map.Width)
@@ -40,20 +41,25 @@ namespace GlobalMap
                         current = selector.Invoke(tilesToProcess);
                     if (current == null)
                         break;
-                    var lake = GetBasin(map, current);
+                    var waterArea = GetBasin(map, current);
                     lock (tilesToProcess)
-                        tilesToProcess.ExceptWith(lake);
-                    if(lake.Count <= thresholdAbsolute)
-                        lock(res)
-                            res.Add(new Lake(lake));
+                        tilesToProcess.ExceptWith(waterArea);
+                    if(waterArea.Count <= thresholdAbsolute)
+                        lock(lakes)
+                            lakes.Add(new WaterArea(waterArea));
+                    else
+                        lock(seas)
+                            seas.Add(new WaterArea(waterArea));
                 }
             }
 
             var a = new Func<HashSet<Tuple<int,int>>,Tuple<int,int>>[] {t => t.FirstOrDefault(), t => t.LastOrDefault()};
             a.AsParallel().ForAll(Iter);
             
-            Log.Info($"Lakes has been found, total {res.Count} water areas");
-            return res;
+            Log.Info($"Lakes has been found, total {lakes.Count} water areas");
+            Log.Info($"Seas has been found, total {seas.Count} water areas");
+            map.Lakes = lakes.ToList();
+            map.Seas = seas.ToList();
         }
 
         private static HashSet<Tuple<int, int>> GetBasin(Map map, Tuple<int, int> tile)
@@ -62,7 +68,7 @@ namespace GlobalMap
             var toProcess = new HashSet<Tuple<int, int>> {tile};
             while (toProcess.Any())
             {
-                Log.Debug($"Finding lake from tile {tile}, current basin volume is {basin.Count}");
+                Log.Debug($"Classifying water area from tile {tile}, current basin volume is {basin.Count}");
                 var buf = new HashSet<Tuple<int, int>>();
                 basin.UnionWith(toProcess);
                 foreach (var t in toProcess)
