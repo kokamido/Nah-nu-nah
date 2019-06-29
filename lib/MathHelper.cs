@@ -45,8 +45,6 @@ namespace lib
         {
             var start = fst.Item1 < snd.Item1 ? fst : snd;
             var end = fst.Item1 >= snd.Item1 ? fst : snd;
-            Console.WriteLine($"start {start}");
-            Console.WriteLine($"end {end}");
             var xDelta = Math.Abs(end.Item1 - start.Item1);
             var yDelta = end.Item2 - start.Item2;
             if (xDelta != 0 && yDelta != 0)
@@ -78,8 +76,6 @@ namespace lib
             
             var small = ab.Count <= ac.Count ? ab : ac;
             var big = ab.Count > ac.Count ? ab : ac;
-            Console.WriteLine(string.Join(", ",small));
-            Console.WriteLine(string.Join(", ",big));
             HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();
 
             int i = 0;
