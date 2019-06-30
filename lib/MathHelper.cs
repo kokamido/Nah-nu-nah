@@ -10,7 +10,7 @@ namespace lib
         {
             return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
         }
-        
+
         public static Tuple<int, int> Plus(this Tuple<int, int> left, Tuple<int, int> right)
         {
             return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
@@ -20,7 +20,7 @@ namespace lib
         {
             return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
         }
-        
+
         public static Tuple<int, int> Multiply(this Tuple<int, int> vec, int multiplier)
         {
             return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
@@ -28,9 +28,14 @@ namespace lib
 
         public static Tuple<int, int> Round(this Tuple<double, double> t)
         {
-            return Tuple.Create((int)Math.Round(t.Item1), (int)Math.Round(t.Item2));
+            return Tuple.Create((int) Math.Round(t.Item1), (int) Math.Round(t.Item2));
         }
-        
+
+        public static Tuple<double, double> GetRadVec(double angle, double length)
+        {
+            return Tuple.Create(Math.Cos(angle), Math.Sin(angle)).Multiply(length);
+        }
+
         public static double GetQuantile(double[,] arr, double q)
         {
             if (q <= 0 || q > 1)
@@ -44,10 +49,14 @@ namespace lib
 
         public static double GetAngle(this Tuple<int, int> radVec)
         {
-            return Math.Atan(radVec.Item2 / (double) radVec.Item1);
+            if (radVec.Item2 >= 0)
+                return Math.Atan(radVec.Item2 / (double) radVec.Item1);
+            if (radVec.Item1 < 0)
+                return Math.PI + Math.Atan(radVec.Item2 / (double) radVec.Item1);
+            return 2*Math.PI + Math.Atan(radVec.Item2 / (double) radVec.Item1);
         }
-        
-        public static Tuple<double,double> Get1Normal(this Tuple<int, int> vec)
+
+        public static Tuple<double, double> Get1Normal(this Tuple<int, int> vec)
         {
             var normal = Tuple.Create(-vec.Item2, vec.Item1);
             var abs = normal.GetAbs();
@@ -64,7 +73,7 @@ namespace lib
             return EuclideanRange(Tuple.Create(0, 0), p);
         }
 
-        public static Tuple<int, int> RotateAroundZero(Tuple<int, int> point, double angle)
+        public static Tuple<int, int> RotateAroundZero(this Tuple<int, int> point, double angle)
         {
             var newAngle = point.GetAngle() + angle;
             var abs = point.GetAbs();
@@ -80,10 +89,11 @@ namespace lib
             if (xDelta != 0 && yDelta != 0)
             {
                 var multiplier = yDelta / (double) xDelta;
-                var add =  start.Item1 - start.Item1 * multiplier;
-                return new[]{start}.Concat(Enumerable.Range(0, xDelta)
-                    .Select(n => Tuple.Create(start.Item1 + n, (int) Math.Round((start.Item1 + n) * multiplier+add)))
-                    .Concat(new[]{end}))
+                var add = start.Item1 - start.Item1 * multiplier;
+                return new[] {start}.Concat(Enumerable.Range(0, xDelta)
+                        .Select(n =>
+                            Tuple.Create(start.Item1 + n, (int) Math.Round((start.Item1 + n) * multiplier + add)))
+                        .Concat(new[] {end}))
                     .Distinct()
                     .ToList();
             }
@@ -93,9 +103,11 @@ namespace lib
             if (xDelta == 0)
             {
                 var kokoko = Math.Min(start.Item2, end.Item2);
-                return Enumerable.Range(0, Math.Abs(yDelta)+1).Select(y => Tuple.Create(start.Item1, kokoko + y)).ToList();
+                return Enumerable.Range(0, Math.Abs(yDelta) + 1).Select(y => Tuple.Create(start.Item1, kokoko + y))
+                    .ToList();
             }
-            return Enumerable.Range(0, xDelta+1).Select(x => Tuple.Create(start.Item1 + x, start.Item2)).ToList();
+
+            return Enumerable.Range(0, xDelta + 1).Select(x => Tuple.Create(start.Item1 + x, start.Item2)).ToList();
         }
 
         public static List<Tuple<int, int>> GetFilledTriangle(Tuple<int, int> a, Tuple<int, int> b, Tuple<int, int> c)
@@ -103,7 +115,7 @@ namespace lib
             var sorted = new[] {a, b, c}.OrderBy(p => p.Item1).ThenBy(p => p.Item2).ToArray();
             var ab = GetLineSegment(sorted[0], sorted[1]);
             var ac = GetLineSegment(sorted[0], sorted[2]);
-            
+
             var small = ab.Count <= ac.Count ? ab : ac;
             var big = ab.Count > ac.Count ? ab : ac;
             HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();

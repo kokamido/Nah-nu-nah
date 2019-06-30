@@ -23,7 +23,10 @@ namespace GlobalMap
         public bool IsRiverTile(Tuple<int, int> t) => Rivers.Any(r => r.RiverTiles.Contains(t));
         public bool IsLakeTile(Tuple<int, int> t) => Lakes.Any(r => r.Tiles.Contains(t));
         public int Square => Width*Height;
-        
+
+        private Bitmap bitmap;
+        public Bitmap AsBitmap => bitmap ?? (bitmap = ToBitmap());
+
         public Map(Image imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
         {
             AltitudeGenerationSettings = altitudeColorSettings;
@@ -39,7 +42,7 @@ namespace GlobalMap
             this.ClassifyWaterAreas();
         }
 
-        public Bitmap ToBitmap(bool debug = false)
+        private Bitmap ToBitmap(bool debug = false)
         {
             var layers = AltitudeGenerationSettings.Layers;
             if (debug)

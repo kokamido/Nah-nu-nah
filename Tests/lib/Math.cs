@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using lib;
 using NUnit.Framework;
 
@@ -94,8 +94,72 @@ namespace ConsoleApplication1.lib
             var a = Tuple.Create(1, 0);
             var b = Tuple.Create(1, 5);
             var c = Tuple.Create(3, 5);
-            Console.WriteLine(string.Join(", ",MathHelper.GetFilledTriangle(a,b,c)));
-            
+            var ans = new HashSet<Tuple<int,int>>
+            {
+                Tuple.Create(1, 0), 
+                Tuple.Create(1, 1), 
+                Tuple.Create(1, 2), 
+                Tuple.Create(2, 4), 
+                Tuple.Create(1, 3), 
+                Tuple.Create(2, 2), 
+                Tuple.Create(3, 5), 
+                Tuple.Create(1, 4), 
+                Tuple.Create(1, 5), 
+                Tuple.Create(2, 5)
+            };
+            Assert.AreEqual(ans,new HashSet<Tuple<int,int>>(MathHelper.GetFilledTriangle(a,b,c)));
+        }
+
+        [Test]
+        public void GetAngle0()
+        {
+            Assert.AreEqual(0,Tuple.Create(1,0).GetAngle());
+        }
+        
+        [Test]
+        public void GetAngle90()
+        {
+            Assert.AreEqual(System.Math.PI/2,Tuple.Create(0,1000).GetAngle(),0.01);
+        }
+        
+        [Test]
+        public void GetAngle225()
+        {
+            Assert.AreEqual(System.Math.PI*1.25,Tuple.Create(-300,-300).GetAngle(),0.01);
+        }
+        
+        [Test]
+        public void GetAngle315()
+        {
+            Assert.AreEqual(System.Math.PI*2-System.Math.PI/4,Tuple.Create(12,-12).GetAngle(),0.01);
+        }
+        
+        [Test]
+        public void Rotation0()
+        {
+            var a = Tuple.Create(1, 1);
+            Assert.AreEqual(a, a.RotateAroundZero(0));
+        }
+        
+        [Test]
+        public void Rotation90()
+        {
+            var a = Tuple.Create(1, 1);
+            Assert.AreEqual(Tuple.Create(-1,1), a.RotateAroundZero(System.Math.PI/2));
+        }
+        
+        [Test]
+        public void Rotation270()
+        {
+            var a = Tuple.Create(1, 1);
+            Assert.AreEqual(Tuple.Create(1,-1), a.RotateAroundZero(System.Math.PI*1.5));
+        }
+        
+        [Test]
+        public void Rotation360()
+        {
+            var a = Tuple.Create(1, 1);
+            Assert.AreEqual(a, a.RotateAroundZero(System.Math.PI*2));
         }
     }
 }
