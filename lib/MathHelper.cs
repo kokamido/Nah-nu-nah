@@ -80,21 +80,36 @@ namespace lib
             return Tuple.Create((int) Math.Round(abs * Math.Cos(newAngle)), (int) Math.Round(abs * Math.Sin(newAngle)));
         }
 
+        public static Tuple<int, int> ToPositiveQuad(this Tuple<int, int> t)
+        {
+            return Tuple.Create(Math.Abs(t.Item1),Math.Abs(t.Item2));
+        }
+
+        public static IEnumerable<Tuple<int, int>> SortPoints(this IEnumerable<Tuple<int, int>> src) =>
+            src.OrderBy(p => p.Item1).ThenBy(p => p.Item2);
+
         public static List<Tuple<int, int>> GetLineSegment(Tuple<int, int> fst, Tuple<int, int> snd)
         {
             var start = fst.Item1 < snd.Item1 ? fst : snd;
             var end = fst.Item1 >= snd.Item1 ? fst : snd;
             var xDelta = Math.Abs(end.Item1 - start.Item1);
             var yDelta = end.Item2 - start.Item2;
+            var multiplier = yDelta / (double) xDelta;
+            var add = start.Item2 - start.Item1 * multiplier;
+            var startToEnd = end.Minus(start);
+            var shift = start.Minus(start.ToPositiveQuad());
+            start = start.ToPositiveQuad();
+            end = start.Plus(startToEnd);
+
             if (xDelta != 0 && yDelta != 0)
             {
-                var multiplier = yDelta / (double) xDelta;
-                var add = start.Item1 - start.Item1 * multiplier;
-                return new[] {start}.Concat(Enumerable.Range(0, xDelta)
+                return new[] {start}.Concat(Enumerable.Range(1, xDelta)
                         .Select(n =>
                             Tuple.Create(start.Item1 + n, (int) Math.Round((start.Item1 + n) * multiplier + add)))
                         .Concat(new[] {end}))
                     .Distinct()
+                    .Select(t => t.Plus(shift))
+                    .SortPoints()
                     .ToList();
             }
 
@@ -103,30 +118,41 @@ namespace lib
             if (xDelta == 0)
             {
                 var kokoko = Math.Min(start.Item2, end.Item2);
-                return Enumerable.Range(0, Math.Abs(yDelta) + 1).Select(y => Tuple.Create(start.Item1, kokoko + y))
+                return new[] {start}
+                    .Concat(Enumerable.Range(1, Math.Abs(yDelta)).Select(y => Tuple.Create(start.Item1, kokoko + y)))
+                    .Concat(new[] {end})
+                    .Distinct()
+                    .SortPoints()
                     .ToList();
             }
-
-            return Enumerable.Range(0, xDelta + 1).Select(x => Tuple.Create(start.Item1 + x, start.Item2)).ToList();
+            return Enumerable.Range(0, xDelta + 1).Select(x => Tuple.Create(start.Item1 + x, start.Item2)).SortPoints().ToList();;
         }
 
         public static List<Tuple<int, int>> GetFilledTriangle(Tuple<int, int> a, Tuple<int, int> b, Tuple<int, int> c)
         {
-            var sorted = new[] {a, b, c}.OrderBy(p => p.Item1).ThenBy(p => p.Item2).ToArray();
+            Console.WriteLine($"a {a}, b {b}, c{c}");
+            var shiftX = new[]{a.Item1, b.Item1, c.Item1}.Min();
+            var shiftY = new[]{a.Item2, b.Item2, c.Item2}.Min();
+            var shift = Tuple.Create(shiftX, shiftY);
+            Console.WriteLine("SHIFT "+shift);
+            var sorted = new[] {a.Minus(shift), b.Minus(shift), c.Minus(shift)}.SortPoints().ToArray();
+
             var ab = GetLineSegment(sorted[0], sorted[1]);
             var ac = GetLineSegment(sorted[0], sorted[2]);
-
+            Console.WriteLine("SORTED "+sorted.PrettyPrint());
             var small = ab.Count <= ac.Count ? ab : ac;
             var big = ab.Count > ac.Count ? ab : ac;
-            HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();
 
+            Console.WriteLine("SMOL "+small.PrettyPrint());
+            Console.WriteLine("BIG" + big.PrettyPrint());
+            HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();
             int i = 0;
             for (; i < small.Count; i++)
                 result.UnionWith(GetLineSegment(small[i], big[i]));
 
             for (; i < big.Count; i++)
                 result.UnionWith(GetLineSegment(small.Last(), big[i]));
-            return result.ToList();
+            return result.Select(p => p.Plus(shift)).OrderBy(t => t.Item1).ThenBy(t => t.Item2).ToList();
         }
     }
 }

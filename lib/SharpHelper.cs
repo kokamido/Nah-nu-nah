@@ -78,5 +78,10 @@ namespace lib
                        .FirstOrDefault()?.Item2
                    ?? neighbours[GetRndInt(0,neighbours.Count)].Item2;
         }
+
+        public static string PrettyPrint<T>(this ICollection<T> src, string sep = ", ")
+        {
+            return string.Join(sep, src);
+        }
     }
 }

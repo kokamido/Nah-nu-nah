@@ -1,31 +1,27 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace lib
 {
     public class Arrow : IDrawable
     {
-        private List<ColoredPoint> points;
-        private Tuple<int, int> nose;
+        public readonly Tuple<int, int> A;
+        public readonly  Tuple<int, int> B;
+        public readonly Color Color;
 
         public Arrow(int length, int width, Color color)
         {
-            var a = Tuple.Create(length, width / 2);
-            var b = Tuple.Create(length, -width / 2);
-            var c = Tuple.Create(0, 0);
-            nose = Tuple.Create(0 , 0);
-            points = MathHelper.GetFilledTriangle(a, b, c).Select(t => new ColoredPoint {Color = color, Coords = t})
-                .ToList();
+            A = Tuple.Create(length, width / 2);
+            B = Tuple.Create(length, -width / 2);
+            Color = color;
         }
 
         public bool DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
         {
-            var shift = point.Minus(nose);
-            points.Select(p => new ColoredPoint {Color = p.Color, Coords = p.Coords.RotateAroundZero(angle).Plus(shift)})
-                .Where(p => p.Coords.Item1 >= 0 && p.Coords.Item1 < bitmap.Width && p.Coords.Item2 >= 0 && p.Coords.Item2 < bitmap.Height)
+            MathHelper.GetFilledTriangle(A.RotateAroundZero(angle).Plus(point),B.RotateAroundZero(angle).Plus(point),point)
+                .Where(p => p.Item1 >= 0 && p.Item1 < bitmap.Width && p.Item2 >= 0 && p.Item2 < bitmap.Height)
+                .Select(p => new ColoredPoint{Color = Color, Coords = p})
                 .DrawOn(bitmap);
             return true;
         }
