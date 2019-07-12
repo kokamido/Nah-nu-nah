@@ -110,57 +110,6 @@ namespace ConsoleApplication1.lib
         }
 
         [Test]
-        public void FilledTriangle()
-        {
-            var a = Tuple.Create(1, 0);
-            var b = Tuple.Create(1, 5);
-            var c = Tuple.Create(3, 5);
-            var ans = new HashSet<Tuple<int,int>>
-            {
-                Tuple.Create(1, 0),
-                Tuple.Create(1, 1),
-                Tuple.Create(1, 2),
-                Tuple.Create(1, 3),
-                Tuple.Create(1, 4),
-                Tuple.Create(1, 5),
-                Tuple.Create(2, 2),
-                Tuple.Create(2, 3),
-                Tuple.Create(2, 4),
-                Tuple.Create(2, 5),
-                Tuple.Create(3, 4),
-                Tuple.Create(3, 5),
-            };
-            var res = new HashSet<Tuple<int, int>>(MathHelper.GetFilledTriangle(a, b, c));
-            Console.WriteLine(res.PrettyPrint());
-            Assert.IsTrue(ans.IsEqualAsSet(res));
-        }
-
-        [Test]
-        public void FilledTriangle1()
-        {
-            var a = Tuple.Create(-1, 0);
-            var b = Tuple.Create(-1, -5);
-            var c = Tuple.Create(-3, -5);
-            var ans = new HashSet<Tuple<int,int>>
-            {
-                Tuple.Create(-1, -0),
-                Tuple.Create(-1, -1),
-                Tuple.Create(-1, -2),
-                Tuple.Create(-1, -3),
-                Tuple.Create(-1, -4),
-                Tuple.Create(-1, -5),
-                Tuple.Create(-2, -2),
-                Tuple.Create(-2, -3),
-                Tuple.Create(-2, -4),
-                Tuple.Create(-2, -5),
-                Tuple.Create(-3, -4),
-                Tuple.Create(-3, -5),
-            };
-            var triangle = MathHelper.GetFilledTriangle(a, b, c);
-            Assert.IsTrue(ans.IsEqualAsSet(triangle));
-        }
-
-        [Test]
         public void GetAngle0()
         {
             Assert.AreEqual(0,Tuple.Create(1,0).GetAngle());
