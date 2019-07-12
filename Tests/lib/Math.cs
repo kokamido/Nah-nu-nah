@@ -61,10 +61,7 @@ namespace ConsoleApplication1.lib
             var end = Tuple.Create(1, 5);
             var res = MathHelper.GetLineSegment(start, end);
             var ans = Enumerable.Range(1, 5).Select(y => Tuple.Create(1, y)).ToList();
-            Assert.AreEqual(res.Count,ans.Count);
-            foreach (var t in res)
-                ans.Remove(t);
-            Assert.IsEmpty(ans);
+            Assert.IsTrue(ans.IsEqualAsSet(res));
         }
 
         [Test]
@@ -72,7 +69,9 @@ namespace ConsoleApplication1.lib
         {
             var start = Tuple.Create(1, 1);
             var end = Tuple.Create(5, 1);
-            Assert.AreEqual(Enumerable.Range(1,5).Select(y =>Tuple.Create(y,1)).ToList(),MathHelper.GetLineSegment(start,end));
+            var ans = Enumerable.Range(1, 5).Select(y => Tuple.Create(y, 1)).ToList();
+            var res = MathHelper.GetLineSegment(start, end);
+            Assert.IsTrue(ans.IsEqualAsSet(res));
         }
 
         [Test]
@@ -80,7 +79,9 @@ namespace ConsoleApplication1.lib
         {
             var start = Tuple.Create(1, 1);
             var end = Tuple.Create(5, 5);
-            Assert.AreEqual(Enumerable.Range(1,5).Select(y =>Tuple.Create(y,y)).ToList(),MathHelper.GetLineSegment(start,end));
+            var ans = Enumerable.Range(1, 5).Select(y => Tuple.Create(y, y)).ToList();
+            var res = MathHelper.GetLineSegment(start, end);
+            Assert.IsTrue(ans.IsEqualAsSet(res));
         }
 
         [Test]
@@ -88,9 +89,9 @@ namespace ConsoleApplication1.lib
         {
             var start = Tuple.Create(1, 1);
             var end = Tuple.Create(-5, -5);
-            var ans = MathHelper.GetLineSegment(start, end);
-            ans.Reverse();
-            Assert.AreEqual(Enumerable.Range(0,7).Select(y =>Tuple.Create(1-y,1-y)).ToList(),ans);
+            var res = MathHelper.GetLineSegment(start, end);
+            var ans = Enumerable.Range(0, 7).Select(y => Tuple.Create(1 - y, 1 - y)).ToList();
+            Assert.IsTrue(ans.IsEqualAsSet(res));
         }
 
         [Test]
@@ -105,12 +106,7 @@ namespace ConsoleApplication1.lib
                 Tuple.Create(1, 4),
                 Tuple.Create(2, 5),
             };
-            Assert.AreEqual(ans.Length,res.Count);
-            foreach (var tuple in ans)
-            {
-                res.Remove(tuple);
-            }
-            Assert.IsEmpty(res);
+            Assert.IsTrue(ans.IsEqualAsSet(res));
         }
 
         [Test]
@@ -134,11 +130,9 @@ namespace ConsoleApplication1.lib
                 Tuple.Create(3, 4),
                 Tuple.Create(3, 5),
             };
-            var triangle = new HashSet<Tuple<int, int>>(MathHelper.GetFilledTriangle(a, b, c));
-            Console.WriteLine(string.Join(", ",triangle));
-            Assert.AreEqual(ans.Count, triangle.Count);
-            ans.ExceptWith(triangle);
-            Assert.IsEmpty(ans);
+            var res = new HashSet<Tuple<int, int>>(MathHelper.GetFilledTriangle(a, b, c));
+            Console.WriteLine(res.PrettyPrint());
+            Assert.IsTrue(ans.IsEqualAsSet(res));
         }
 
         [Test]
@@ -162,10 +156,8 @@ namespace ConsoleApplication1.lib
                 Tuple.Create(-3, -4),
                 Tuple.Create(-3, -5),
             };
-            var triangle = new HashSet<Tuple<int, int>>(MathHelper.GetFilledTriangle(a, b, c));
-            Assert.AreEqual(ans.Count, triangle.Count);
-            ans.ExceptWith(triangle);
-            Assert.IsEmpty(ans);
+            var triangle = MathHelper.GetFilledTriangle(a, b, c);
+            Assert.IsTrue(ans.IsEqualAsSet(triangle));
         }
 
         [Test]
