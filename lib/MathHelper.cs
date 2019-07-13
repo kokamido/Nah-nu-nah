@@ -36,6 +36,11 @@ namespace lib
             return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
         }
 
+        public static Tuple<double, double> Multiply(this Tuple<int, int> vec, double multiplier)
+        {
+            return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
+        }
+
         public static Tuple<double, double> Divide(this Tuple<int, int> vec, double divider)
         {
             return Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
@@ -108,7 +113,7 @@ namespace lib
         {
             if (angle == 0)
                 return point;
-            var newAngle = (point.GetAngle() + angle) % (2*Math.PI);
+            var newAngle = (point.GetAngle() + angle) % (2 * Math.PI);
             var abs = point.GetAbs();
             return Tuple.Create((abs * Math.Cos(newAngle)).Round(), (abs * Math.Sin(newAngle)).Round());
         }
@@ -202,30 +207,17 @@ namespace lib
             return res.ToList();
         }
 
-        public static List<Tuple<int, int>> GetFilledTriangle(Tuple<int, int> a, Tuple<int, int> b, Tuple<int, int> c)
+        public static HashSet<Tuple<int, int>> GetFilledTriangle(Tuple<int, int> a, Tuple<int, int> b,
+            Tuple<int, int> c)
         {
-            var sorted = new[]
-                {
-                    Tuple.Create(EuclideanRange(a, b), GetLineSegment(a, b)),
-                    Tuple.Create(EuclideanRange(a, c), GetLineSegment(a, c)),
-                    Tuple.Create(EuclideanRange(b, c), GetLineSegment(b, c)),
-                }
-                .OrderBy(t => t.Item1)
-                .ToArray();
-            var side1 = sorted[1].Item2;
-            var side2 = sorted[2].Item2;
-            if (EuclideanRange(side1.First(), side2.First()) > EuclideanRange(side1.First(), side2.Last()))
-                side2.Reverse();
-            var small = side1.Count <= side2.Count ? side1 : side2;
-            var big = side1.Count > side2.Count ? side1 : side2;
-            HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();
-            int i = 0;
-            for (; i < small.Count; i++)
-                result.UnionWith(GetLineSegment(small[i], big[i], 2));
-            for (; i < big.Count; i++)
-                result.UnionWith(GetLineSegment(small.Last(), big[i], 2));
-            var rs = result.OrderBy(t => t.Item1).ThenBy(t => t.Item2).ToList();
-            return rs;
+            var sideLengths = new[] {EuclideanRange(a, b), EuclideanRange(a, c), EuclideanRange(b, c)};
+            double quant = 1.0 / sideLengths.Max();
+            var res = new HashSet<Tuple<int, int>>();
+            for (double i = 0; i <= 1; i += quant)
+                for (double j = 0; j <= 1-i; j += quant)
+                    res.Add(a.Multiply(i).Plus(b.Multiply(j)).Plus(c.Multiply(1-i-j)).Round());
+            return res;
+
         }
     }
 }

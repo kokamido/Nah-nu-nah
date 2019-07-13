@@ -67,7 +67,7 @@ namespace GlobalMap.Weather
                 if (p.Equals(0.0.MakeTupleWith(0.0)))
                     continue;
                 var abs = p.GetAbs().Round();
-                if (abs < 10)
+                if (abs < 5)
                     continue;
                 new Arrow(abs, abs / 3, Color.Crimson).DrawOn(bitmap, x.MakeTupleWith(y),p.GetAngle());
             }
