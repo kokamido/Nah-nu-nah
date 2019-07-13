@@ -30,7 +30,7 @@ namespace GlobalMap
 
         private Bitmap bitmap;
         public Bitmap RedrawBitmap(MapDrawingSettings settings, bool debugAltitude=false) => bitmap = ToBitmap(settings, debugAltitude);
-        public Bitmap GetBitmap(MapDrawingSettings settings, bool debugAltitude=false) => bitmap ?? (bitmap = ToBitmap(settings, debugAltitude));
+        public Bitmap GetBitmap() => bitmap ?? (bitmap = ToBitmap(MapDrawingSettings.Altitudes| MapDrawingSettings.Winds, false));
 
         private ILog log = LogManager.GetLogger(typeof(Map));
 

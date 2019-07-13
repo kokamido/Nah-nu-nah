@@ -26,7 +26,7 @@ namespace GlobalMap
 
             map.GenerateWinds(new RandomWind());
 
-            map.GetBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("NoiseMap.png");
+            map.GetBitmap().Save("NoiseMap.png");
 
         }
     }

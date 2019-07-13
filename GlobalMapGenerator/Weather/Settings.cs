@@ -26,14 +26,17 @@ namespace GlobalMap.Weather
 
         public int GetPower(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords)
         {
-            var res =  SharpHelper.GetUniformRndInt(map.Width / 60, map.Width / 35);
+            var res =  SharpHelper.GetUniformRndInt(map.Width / 70, map.Width / 40);
             Log.Info($"New cyclone's power is {res}");
             return res;
         }
 
         public Tuple<int, int> GetNexEye(Map map, List<Cyclone> previousCyclones)
         {
+
             var res = SharpHelper.GetUniformRndInt(0, map.Width).MakeTupleWith(SharpHelper.GetUniformRndInt(0, map.Height));
+            while(!map.IsUnderSeaLevel(res))
+                res = SharpHelper.GetUniformRndInt(0, map.Width).MakeTupleWith(SharpHelper.GetUniformRndInt(0, map.Height));
             Log.Info($"New cyclone's eye is located in {res}");
             return res;
         }
