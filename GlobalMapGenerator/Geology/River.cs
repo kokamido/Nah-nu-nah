@@ -41,7 +41,7 @@ namespace GlobalMap
                 map.Height);
             
             var riverMainstream = new List<Tuple<int, int>>();
-            var source = possibleRiverSource[SharpHelper.GetRndInt(0, possibleRiverSource.Count)];
+            var source = possibleRiverSource[SharpHelper.GetUniformRndInt(0, possibleRiverSource.Count)];
             var currentTile = source;
             while (!map.IsUnderSeaLevel(currentTile))
             {

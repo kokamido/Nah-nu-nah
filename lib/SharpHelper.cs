@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 
 namespace lib
 {
@@ -8,7 +8,7 @@ namespace lib
     {
         [ThreadStatic] private static Random rnd;
 
-        public static int GetRndInt(int left, int right)
+        public static int GetUniformRndInt(int left, int right)
         {
             if(rnd == null)
                 rnd = new Random();
@@ -49,6 +49,14 @@ namespace lib
         public static string PrettyPrint<T>(this ICollection<T> src, string sep = ", ")
         {
             return string.Join(sep, src);
+        }
+
+        public static Color Blend(this Color color, Color backColor, double amount)
+        {
+            byte r = (byte) ((color.R * amount) + backColor.R * (1 - amount));
+            byte g = (byte) ((color.G * amount) + backColor.G * (1 - amount));
+            byte b = (byte) ((color.B * amount) + backColor.B * (1 - amount));
+            return Color.FromArgb(r, g, b);
         }
     }
 }

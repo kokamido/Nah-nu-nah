@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using lib;
+using Settings;
 
 namespace GlobalMap.Weather
 {
@@ -10,7 +11,7 @@ namespace GlobalMap.Weather
     {
         public Tuple<int, int> Eye;
         public double Power;
-        public double Range;
+        public double Range => Power * GlobalMapGeneratorMetaSettings.CyclonePowerToRangeMultiplier;
         public bool CounterClockwise;
 
         private static int _ahahaMagicMantiss = 3;
@@ -25,11 +26,12 @@ namespace GlobalMap.Weather
             var range = MathHelper.EuclideanRange(Eye, point);
             var vec = point.Minus(Eye);
             var norm = vec.Get1Normal();
-            if (CounterClockwise)
-                    norm = 0.0.MakeTupleWith(0.0).Minus(norm);
+            if (!CounterClockwise)
+                norm = 0.0.MakeTupleWith(0.0).Minus(norm);
             return range > Range
                 ? Tuple.Create(0.0, 0.0)
-                : norm.Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power);
+                : norm.Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] *
+                                Power);
         }
     }
 
@@ -39,6 +41,8 @@ namespace GlobalMap.Weather
         public int Width;
         public int Height;
         public ICollection<Cyclone> Cyclones;
+        public readonly Color EyeColor = Color.Magenta;
+        public readonly Color ArrowColor = Color.Crimson;
 
         public WindMap(ICollection<Cyclone> cyclones, int width, int height)
         {
@@ -54,9 +58,10 @@ namespace GlobalMap.Weather
 
         public void DrawOn(Bitmap bitmap)
         {
-            var eye = new Circle(bitmap.Width / 100, Color.Magenta);
+
             foreach (var cyclone in Cyclones)
             {
+                var eye = new Circle(cyclone.Power.Round(), EyeColor);
                 eye.DrawOn(bitmap, cyclone.Eye, 0);
             }
 
@@ -67,9 +72,9 @@ namespace GlobalMap.Weather
                 if (p.Equals(0.0.MakeTupleWith(0.0)))
                     continue;
                 var abs = p.GetAbs().Round();
-                if (abs < 5)
+                if (abs == 0)
                     continue;
-                new Arrow(abs, abs / 3, Color.Crimson).DrawOn(bitmap, x.MakeTupleWith(y),p.GetAngle());
+                new Arrow(abs, abs / 3, ArrowColor).DrawOn(bitmap, x.MakeTupleWith(y), p.GetAngle());
             }
         }
     }

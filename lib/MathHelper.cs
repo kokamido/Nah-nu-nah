@@ -173,7 +173,7 @@ namespace lib
                        .Where(n => !exceptions?.Contains(n.Item2) ?? true)
                        .OrderBy(x => x.Item1, comparer)
                        .FirstOrDefault()?.Item2
-                   ?? neighbours[SharpHelper.GetRndInt(0, neighbours.Count)].Item2;
+                   ?? neighbours[SharpHelper.GetUniformRndInt(0, neighbours.Count)].Item2;
         }
 
         public static List<Tuple<int, int>> GetLineSegment(Tuple<int, int> fst, Tuple<int, int> snd, int width = 1)

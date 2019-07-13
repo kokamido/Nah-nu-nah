@@ -23,8 +23,10 @@ namespace lib
         public void DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
         {
             angle += Math.PI;
-            MathHelper.GetFilledTriangle(A.RotateAroundZero(angle).Plus(point),B.RotateAroundZero(angle).Plus(point),C.RotateAroundZero(angle).Plus(point))
-                .Select(p => new ColoredPoint{Color = Color, Coords = p})
+            MathHelper.GetFilledTriangle(A.RotateAroundZero(angle).Plus(point), B.RotateAroundZero(angle).Plus(point),
+                    C.RotateAroundZero(angle).Plus(point))
+                .Where(p => p.IsInBorders(bitmap.Width, bitmap.Height))
+                .Select(p => new ColoredPoint {Color = Color.Blend(bitmap.GetPixel(p.Item1, p.Item2), 0.6), Coords = p})
                 .DrawOn(bitmap);
         }
     }
@@ -43,7 +45,7 @@ namespace lib
             _pointsAroundZero = GetPoints();
         }
 
-        private HashSet<Tuple<int,int>> GetPoints()
+        private HashSet<Tuple<int, int>> GetPoints()
         {
             var rSq = Radius * Radius;
             var res = new HashSet<Tuple<int, int>>();
@@ -57,13 +59,16 @@ namespace lib
                 res.Add((-x).MakeTupleWith(y));
                 res.Add((-x).MakeTupleWith(-y));
             }
+
             return res;
         }
 
         public void DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
         {
             _pointsAroundZero
-                .Select(p => new ColoredPoint{Coords = p.Plus(point),Color=Color})
+                .Select(p => p.Plus(point))
+                .Where(p => p.IsInBorders(bitmap.Width, bitmap.Height))
+                .Select(p => new ColoredPoint {Coords = p, Color = Color.Blend(bitmap.GetPixel(p.Item1, p.Item2), 0.6)})
                 .DrawOn(bitmap);
         }
     }

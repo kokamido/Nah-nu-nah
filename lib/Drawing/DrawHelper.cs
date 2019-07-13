@@ -29,8 +29,7 @@ namespace lib
         public static void DrawOn(this IEnumerable<ColoredPoint> points, Bitmap bitmap)
         {
             foreach (var p in points)
-                if(p.Coords.IsInBorders(bitmap.Width,bitmap.Height))
-                    bitmap.SetPixel(p.Coords.Item1, p.Coords.Item2, p.Color);
+                bitmap.SetPixel(p.Coords.Item1, p.Coords.Item2, p.Color);
         }
     }
 }
