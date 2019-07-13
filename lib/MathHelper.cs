@@ -79,12 +79,7 @@ namespace lib
                 return point;
             var newAngle = point.GetAngle() + angle;
             var abs = point.GetAbs();
-            return Tuple.Create((int) Math.Round(abs * Math.Cos(newAngle)), (int) Math.Round(abs * Math.Sin(newAngle)));
-        }
-
-        public static Tuple<int, int> ToPositiveQuad(this Tuple<int, int> t)
-        {
-            return Tuple.Create(Math.Abs(t.Item1), Math.Abs(t.Item2));
+            return Tuple.Create((abs * Math.Cos(newAngle)).Round(), (abs * Math.Sin(newAngle)).Round());
         }
 
         public static IEnumerable<Tuple<int, int>> SortPoints(this IEnumerable<Tuple<int, int>> src) =>
@@ -96,6 +91,8 @@ namespace lib
         public static double Min(params double[] doubles) => doubles.Min();
         public static int Max(params int[] ints) => ints.Max();
         public static double Max(params double[] doubles) => doubles.Max();
+        public static int Round(this double d) => (int) Math.Round(d);
+        public static Tuple<int,int> MakeTupleWith(this int x, int y) => Tuple.Create(x,y);
 
         public static IEnumerable<Tuple<int, int>> GetNeighbours(this Tuple<int, int> p)
         {
@@ -138,9 +135,6 @@ namespace lib
 
         public static List<Tuple<int, int>> GetFilledTriangle(Tuple<int, int> a, Tuple<int, int> b, Tuple<int, int> c)
         {
-            var shiftX = new[] {a.Item1, b.Item1, c.Item1}.Min();
-            var shiftY = new[] {a.Item2, b.Item2, c.Item2}.Min();
-            var shift = Tuple.Create(shiftX, shiftY);
             var sorted = new[]
                 {
                     Tuple.Create(EuclideanRange(a, b), GetLineSegment(a, b)),
@@ -149,22 +143,21 @@ namespace lib
                 }
                 .OrderBy(t => t.Item1)
                 .ToArray();
-
+            Console.WriteLine(sorted.Select(p => p.Item1).ToList().PrettyPrint());
             var side1 = sorted[1].Item2;
             var side2 = sorted[2].Item2;
             if (EuclideanRange(side1.First(), side2.First()) > EuclideanRange(side1.First(), side2.Last()))
                 side2.Reverse();
             var small = side1.Count <= side2.Count ? side1 : side2;
             var big = side1.Count > side2.Count ? side1 : side2;
-
             HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();
             int i = 0;
             for (; i < small.Count; i++)
                 result.UnionWith(GetLineSegment(small[i], big[i],2));
-
             for (; i < big.Count; i++)
                 result.UnionWith(GetLineSegment(small.Last(), big[i],2));
-            return result.Select(p => p.Plus(shift)).OrderBy(t => t.Item1).ThenBy(t => t.Item2).ToList();
+            var rs = result.OrderBy(t => t.Item1).ThenBy(t => t.Item2).ToList();
+            return rs;
         }
     }
 }

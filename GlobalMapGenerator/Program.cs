@@ -14,21 +14,34 @@ namespace GlobalMap
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
             var map = MapGenerator.GenerateAltitudeMap(1024, 768, new DefaultEarthAltitude());
-            /* map.Rivers.Add(map.GetCompatibleRiver(2));
-             map.Rivers.Add(map.GetCompatibleRiver(2));
-             map.Rivers.Add(map.GetCompatibleRiver(2));
-             map.Rivers.Add(map.GetCompatibleRiver(3));
-             map.Rivers.Add(map.GetCompatibleRiver(3));
-             map.Rivers.Add(map.GetCompatibleRiver(3));
-             map.Rivers.Add(map.GetCompatibleRiver(3));
-             map.Rivers.Add(map.GetCompatibleRiver(4));
-             map.Rivers.Add(map.GetCompatibleRiver(4));*/
-            var arrow = new Arrow(100, 30, Color.Red);
-            arrow.DrawOn(map.AsBitmap, Tuple.Create(100, 150), 0);
-            arrow.DrawOn(map.AsBitmap, Tuple.Create(200, 200), Math.PI / 4);
-            arrow.DrawOn(map.AsBitmap, Tuple.Create(300, 250), Math.PI / 3);
-            arrow.DrawOn(map.AsBitmap, Tuple.Create(400, 300), Math.PI / 2);
+            map.Rivers.Add(map.GetCompatibleRiver(2));
+            map.Rivers.Add(map.GetCompatibleRiver(2));
+            map.Rivers.Add(map.GetCompatibleRiver(2));
+            map.Rivers.Add(map.GetCompatibleRiver(3));
+            map.Rivers.Add(map.GetCompatibleRiver(3));
+            map.Rivers.Add(map.GetCompatibleRiver(3));
+            map.Rivers.Add(map.GetCompatibleRiver(3));
+            map.Rivers.Add(map.GetCompatibleRiver(4));
+            map.Rivers.Add(map.GetCompatibleRiver(4));
+
+
+            var arrow = new Arrow(14, 6, Color.Crimson);
+
+            var center = Tuple.Create(512, 384);
+            var circle = new Circle(25,Color.BlueViolet);
+            circle.DrawOn(map.AsBitmap, center, 0);
+            for (int r = 100; r <= 200; r += 25)
+            {
+                for (double phi = 1; phi <= 50; phi++)
+                {
+                    var angle = Math.PI * 2 * phi / 50;
+                    var point = Tuple.Create((int) (r * Math.Cos(angle)), (int) (r * Math.Sin(angle)))
+                        .Plus(center);
+                    arrow.DrawOn(map.AsBitmap, point, angle + Math.PI / 2);
+                }
+            }
             map.AsBitmap.Save("NoiseMap.png");
         }
     }

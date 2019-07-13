@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace lib
 {
@@ -20,8 +22,47 @@ namespace lib
         public bool DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
         {
             MathHelper.GetFilledTriangle(A.RotateAroundZero(angle).Plus(point),B.RotateAroundZero(angle).Plus(point),point)
-                .Where(p => p.Item1 >= 0 && p.Item1 < bitmap.Width && p.Item2 >= 0 && p.Item2 < bitmap.Height)
                 .Select(p => new ColoredPoint{Color = Color, Coords = p})
+                .DrawOn(bitmap);
+            return true;
+        }
+    }
+
+    public class Circle : IDrawable
+    {
+        public readonly int Radius;
+        public readonly Color Color;
+        private readonly HashSet<Tuple<int, int>> _pointsAroundZero;
+
+
+        public Circle(int rad, Color color)
+        {
+            Radius = rad;
+            Color = color;
+            _pointsAroundZero = GetPoints();
+        }
+
+        private HashSet<Tuple<int,int>> GetPoints()
+        {
+            var rSq = Radius * Radius;
+            var res = new HashSet<Tuple<int, int>>();
+            for (int xSq = 0; xSq <= rSq; xSq++)
+            for (int ySq = 0; ySq < rSq - xSq; ySq++)
+            {
+                var x = Math.Sqrt(xSq).Round();
+                var y = Math.Sqrt(ySq).Round();
+                res.Add(x.MakeTupleWith(y));
+                res.Add(x.MakeTupleWith(-y));
+                res.Add((-x).MakeTupleWith(y));
+                res.Add((-x).MakeTupleWith(-y));
+            }
+            return res;
+        }
+
+        public bool DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
+        {
+            _pointsAroundZero
+                .Select(p => new ColoredPoint{Coords = p.Plus(point),Color=Color})
                 .DrawOn(bitmap);
             return true;
         }

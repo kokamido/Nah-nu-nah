@@ -16,16 +16,16 @@ namespace lib
         public Color Color;
 
         public override string ToString() => $"({Coords.Item1}, {Coords.Item2}); {Color}";
-        
+
     }
-    
+
     public static class DrawHelper
     {
         public static void DrawOn(this IEnumerable<ColoredPoint> points, Bitmap bitmap)
         {
             foreach (var p in points)
-                bitmap.SetPixel(p.Coords.Item1, p.Coords.Item2, p.Color);
-            
+                if(p.Coords.Item1 >= 0 && p.Coords.Item1 < bitmap.Width && p.Coords.Item2 >= 0 && p.Coords.Item2 < bitmap.Height)
+                    bitmap.SetPixel(p.Coords.Item1, p.Coords.Item2, p.Color);
         }
     }
 }

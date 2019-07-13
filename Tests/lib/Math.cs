@@ -155,6 +155,13 @@ namespace ConsoleApplication1.lib
         }
 
         [Test]
+        public void Rotation270Big()
+        {
+            var a = Tuple.Create(100, 27);
+            Assert.AreEqual(Tuple.Create(27,-100), a.RotateAroundZero(System.Math.PI*1.5));
+        }
+
+        [Test]
         public void Rotation360()
         {
             var a = Tuple.Create(1, 1);
