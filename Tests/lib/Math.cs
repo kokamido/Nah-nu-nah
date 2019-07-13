@@ -124,13 +124,13 @@ namespace ConsoleApplication1.lib
         [Test]
         public void GetAngle225()
         {
-            Assert.AreEqual(System.Math.PI*1.25,Tuple.Create(-300,-300).GetAngle(),0.01);
+            Assert.AreEqual(-System.Math.PI*0.75,Tuple.Create(-300,-300).GetAngle(),0.01);
         }
 
         [Test]
         public void GetAngle315()
         {
-            Assert.AreEqual(System.Math.PI*2-System.Math.PI/4,Tuple.Create(12,-12).GetAngle(),0.01);
+            Assert.AreEqual(-System.Math.PI/4,Tuple.Create(12,-12).GetAngle(),0.01);
         }
 
         [Test]
@@ -148,10 +148,24 @@ namespace ConsoleApplication1.lib
         }
 
         [Test]
+        public void Rotation135()
+        {
+            var a = Tuple.Create(100, 0);
+            Assert.AreEqual(Tuple.Create((-100*System.Math.Sqrt(2)/2).Round(),(100*System.Math.Sqrt(2)/2).Round()), a.RotateAroundZero(3*System.Math.PI/4));
+        }
+
+        [Test]
         public void Rotation270()
         {
             var a = Tuple.Create(1, 1);
             Assert.AreEqual(Tuple.Create(1,-1), a.RotateAroundZero(System.Math.PI*1.5));
+        }
+
+        [Test]
+        public void RotationMinus270()
+        {
+            var a = Tuple.Create(1, 1);
+            Assert.AreEqual(Tuple.Create(-1,1), a.RotateAroundZero(-System.Math.PI*1.5));
         }
 
         [Test]
@@ -166,6 +180,70 @@ namespace ConsoleApplication1.lib
         {
             var a = Tuple.Create(1, 1);
             Assert.AreEqual(a, a.RotateAroundZero(System.Math.PI*2));
+        }
+
+        [Test]
+        public void Get1Norm1_0()
+        {
+            var v = 1.MakeTupleWith(0);
+            var ans = 0.MakeTupleWith(1);
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm1_1()
+        {
+            var v = 1.MakeTupleWith(1);
+            var ans = (-1).MakeTupleWith(1).Divide(System.Math.Sqrt(2));
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm0_1()
+        {
+            var v = 0.MakeTupleWith(1);
+            var ans = (-1).MakeTupleWith(0);
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm_min1_1()
+        {
+            var v = (-1).MakeTupleWith(1);
+            var ans = (-1).MakeTupleWith(-1).Divide(System.Math.Sqrt(2));
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm_min1_0()
+        {
+            var v = (-1).MakeTupleWith(0);
+            var ans = 0d.MakeTupleWith(-1d);
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm_min1_min1()
+        {
+            var v = (-1).MakeTupleWith(-1);
+            var ans = 1.MakeTupleWith(-1).Divide(System.Math.Sqrt(2));
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm0_min1()
+        {
+            var v = (0).MakeTupleWith(-1);
+            var ans = 1.MakeTupleWith(0);
+            Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void Get1Norm1_min1()
+        {
+            var v = 1.MakeTupleWith(-1);
+            var ans = 1.MakeTupleWith(1).Divide(System.Math.Sqrt(2));
+            Assert.AreEqual(ans,v.Get1Normal());
         }
     }
 }

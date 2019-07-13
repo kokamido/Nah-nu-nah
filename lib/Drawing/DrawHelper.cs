@@ -5,9 +5,14 @@ using System.Runtime.ConstrainedExecution;
 
 namespace lib
 {
+    public interface IPositionalDrawable
+    {
+        void DrawOn(Bitmap bitmap, Tuple<int,int> point, double angle);
+    }
+
     public interface IDrawable
     {
-        bool DrawOn(Bitmap bitmap, Tuple<int,int> point, double angle);
+        void DrawOn(Bitmap bitmap);
     }
 
     public class ColoredPoint
@@ -24,7 +29,7 @@ namespace lib
         public static void DrawOn(this IEnumerable<ColoredPoint> points, Bitmap bitmap)
         {
             foreach (var p in points)
-                if(p.Coords.Item1 >= 0 && p.Coords.Item1 < bitmap.Width && p.Coords.Item2 >= 0 && p.Coords.Item2 < bitmap.Height)
+                if(p.Coords.IsInBorders(bitmap.Width,bitmap.Height))
                     bitmap.SetPixel(p.Coords.Item1, p.Coords.Item2, p.Color);
         }
     }

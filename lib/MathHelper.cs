@@ -11,7 +11,17 @@ namespace lib
             return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
         }
 
+        public static Tuple<double, double> Minus(this Tuple<double, double> left, Tuple<double, double> right)
+        {
+            return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
+        }
+
         public static Tuple<int, int> Plus(this Tuple<int, int> left, Tuple<int, int> right)
+        {
+            return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
+        }
+
+        public static Tuple<double, double> Plus(this Tuple<double, double> left, Tuple<double, double> right)
         {
             return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
         }
@@ -24,6 +34,16 @@ namespace lib
         public static Tuple<int, int> Multiply(this Tuple<int, int> vec, int multiplier)
         {
             return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
+        }
+
+        public static Tuple<double, double> Divide(this Tuple<int, int> vec, double divider)
+        {
+            return Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
+        }
+
+        public static Tuple<double, double> Divide(this Tuple<double, double> vec, double divider)
+        {
+            return Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
         }
 
         public static Tuple<int, int> Round(this Tuple<double, double> t)
@@ -49,21 +69,27 @@ namespace lib
 
         public static double GetAngle(this Tuple<int, int> radVec)
         {
-            if (radVec.Item2 >= 0)
-                return Math.Atan(radVec.Item2 / (double) radVec.Item1);
-            if (radVec.Item1 < 0)
-                return Math.PI + Math.Atan(radVec.Item2 / (double) radVec.Item1);
-            return 2 * Math.PI + Math.Atan(radVec.Item2 / (double) radVec.Item1);
+            return Math.Atan2(radVec.Item2, radVec.Item1);
+        }
+
+        public static double GetAngle(this Tuple<double, double> radVec)
+        {
+            return Math.Atan2(radVec.Item2, radVec.Item1);
         }
 
         public static Tuple<double, double> Get1Normal(this Tuple<int, int> vec)
         {
-            var normal = Tuple.Create(-vec.Item2, vec.Item1);
+            var normal = vec.RotateAroundZero(Math.PI / 2);
             var abs = normal.GetAbs();
-            return Tuple.Create(normal.Item1 / abs, normal.Item2 / abs);
+            return normal.Divide(abs);
         }
 
         public static double EuclideanRange(Tuple<int, int> p0, Tuple<int, int> p1)
+        {
+            return Math.Sqrt(Math.Pow(p0.Item1 - p1.Item1, 2) + Math.Pow(p0.Item2 - p1.Item2, 2));
+        }
+
+        public static double EuclideanRange(Tuple<double, double> p0, Tuple<double, double> p1)
         {
             return Math.Sqrt(Math.Pow(p0.Item1 - p1.Item1, 2) + Math.Pow(p0.Item2 - p1.Item2, 2));
         }
@@ -73,11 +99,16 @@ namespace lib
             return EuclideanRange(Tuple.Create(0, 0), p);
         }
 
+        public static double GetAbs(this Tuple<double, double> p)
+        {
+            return EuclideanRange(Tuple.Create(0.0, 0.0), p);
+        }
+
         public static Tuple<int, int> RotateAroundZero(this Tuple<int, int> point, double angle)
         {
             if (angle == 0)
                 return point;
-            var newAngle = point.GetAngle() + angle;
+            var newAngle = (point.GetAngle() + angle) % (2*Math.PI);
             var abs = point.GetAbs();
             return Tuple.Create((abs * Math.Cos(newAngle)).Round(), (abs * Math.Sin(newAngle)).Round());
         }
@@ -92,7 +123,11 @@ namespace lib
         public static int Max(params int[] ints) => ints.Max();
         public static double Max(params double[] doubles) => doubles.Max();
         public static int Round(this double d) => (int) Math.Round(d);
-        public static Tuple<int,int> MakeTupleWith(this int x, int y) => Tuple.Create(x,y);
+        public static Tuple<int, int> MakeTupleWith(this int x, int y) => Tuple.Create(x, y);
+        public static Tuple<double, double> MakeTupleWith(this double x, double y) => Tuple.Create(x, y);
+
+        public static bool IsInBorders(this Tuple<int, int> point, int width, int height)
+            => point.Item1 >= 0 && point.Item1 < width && point.Item2 >= 0 && point.Item2 < height;
 
         public static IEnumerable<Tuple<int, int>> GetNeighbours(this Tuple<int, int> p)
         {
@@ -100,6 +135,40 @@ namespace lib
             for (int j = -1; j < 2; j++)
                 if (i != 0 || j != 0)
                     yield return p.Plus(Tuple.Create(i, j));
+        }
+
+        public static HashSet<Tuple<int, int>> GetNeighboursIndexes<T>(this T[,] arr, Tuple<int, int> index,
+            bool disableDiag = false)
+        {
+            var width = arr.GetLength(0) - 1;
+            var height = arr.GetLength(1) - 1;
+            var neighbours = new HashSet<Tuple<T, Tuple<int, int>>>();
+
+            for (int x = -1; x < 2; x++)
+            for (int y = -1; y < 2; y++)
+            {
+                if (disableDiag && Math.Abs(x) + Math.Abs(y) == 2)
+                    continue;
+                var newX = Math.Min(Math.Max(index.Item1 + x, 0), width);
+                var newY = Math.Min(Math.Max(index.Item2 + y, 0), height);
+                neighbours.Add(Tuple.Create(arr[newX, newY], Tuple.Create(newX, newY)));
+            }
+
+            return new HashSet<Tuple<int, int>>(neighbours.Select(t => t.Item2));
+        }
+
+        public static Tuple<int, int> GetNeighbourByMinCriteria<T>(this T[,] arr, Tuple<int, int> index,
+            IComparer<T> comparer, ICollection<Tuple<int, int>> exceptions = null, bool disableDiag = false)
+        {
+            var neighbours = GetNeighboursIndexes(arr, index, disableDiag)
+                .Select(n => Tuple.Create(arr[n.Item1, n.Item2], Tuple.Create(n.Item1, n.Item2)))
+                .ToList();
+
+            return neighbours
+                       .Where(n => !exceptions?.Contains(n.Item2) ?? true)
+                       .OrderBy(x => x.Item1, comparer)
+                       .FirstOrDefault()?.Item2
+                   ?? neighbours[SharpHelper.GetRndInt(0, neighbours.Count)].Item2;
         }
 
         public static List<Tuple<int, int>> GetLineSegment(Tuple<int, int> fst, Tuple<int, int> snd, int width = 1)
@@ -143,7 +212,6 @@ namespace lib
                 }
                 .OrderBy(t => t.Item1)
                 .ToArray();
-            Console.WriteLine(sorted.Select(p => p.Item1).ToList().PrettyPrint());
             var side1 = sorted[1].Item2;
             var side2 = sorted[2].Item2;
             if (EuclideanRange(side1.First(), side2.First()) > EuclideanRange(side1.First(), side2.Last()))
@@ -153,9 +221,9 @@ namespace lib
             HashSet<Tuple<int, int>> result = new HashSet<Tuple<int, int>>();
             int i = 0;
             for (; i < small.Count; i++)
-                result.UnionWith(GetLineSegment(small[i], big[i],2));
+                result.UnionWith(GetLineSegment(small[i], big[i], 2));
             for (; i < big.Count; i++)
-                result.UnionWith(GetLineSegment(small.Last(), big[i],2));
+                result.UnionWith(GetLineSegment(small.Last(), big[i], 2));
             var rs = result.OrderBy(t => t.Item1).ThenBy(t => t.Item2).ToList();
             return rs;
         }

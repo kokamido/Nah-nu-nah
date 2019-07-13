@@ -2,33 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace lib
 {
-    public class Arrow : IDrawable
+    public class Arrow : IPositionalDrawable
     {
         public readonly Tuple<int, int> A;
-        public readonly  Tuple<int, int> B;
+        public readonly Tuple<int, int> B;
+        public readonly Tuple<int, int> C;
         public readonly Color Color;
 
         public Arrow(int length, int width, Color color)
         {
-            A = Tuple.Create(length, width / 2);
-            B = Tuple.Create(length, -width / 2);
+            A = Tuple.Create(0, width / 2);
+            B = Tuple.Create(0, -width / 2);
+            C = Tuple.Create(length, 0);
             Color = color;
         }
 
-        public bool DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
+        public void DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
         {
-            MathHelper.GetFilledTriangle(A.RotateAroundZero(angle).Plus(point),B.RotateAroundZero(angle).Plus(point),point)
+            angle += Math.PI;
+            MathHelper.GetFilledTriangle(A.RotateAroundZero(angle).Plus(point),B.RotateAroundZero(angle).Plus(point),C.RotateAroundZero(angle).Plus(point))
                 .Select(p => new ColoredPoint{Color = Color, Coords = p})
                 .DrawOn(bitmap);
-            return true;
         }
     }
 
-    public class Circle : IDrawable
+    public class Circle : IPositionalDrawable
     {
         public readonly int Radius;
         public readonly Color Color;
@@ -59,12 +60,11 @@ namespace lib
             return res;
         }
 
-        public bool DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
+        public void DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
         {
             _pointsAroundZero
                 .Select(p => new ColoredPoint{Coords = p.Plus(point),Color=Color})
                 .DrawOn(bitmap);
-            return true;
         }
     }
 }
