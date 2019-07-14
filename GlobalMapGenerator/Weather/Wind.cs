@@ -63,7 +63,8 @@ namespace GlobalMap.Weather
             foreach (var cyclone in cyclones)
             {
                 var eyeOfTheStormTiles = MathHelper.GetCirclePoints(cyclone.Power.Round()/2)
-                    .Select(p => p.Plus(cyclone.Eye));
+                    .Select(p => p.Plus(cyclone.Eye))
+                    .Where(p => p.IsInBorders(Width,Height));
                 foreach (var t in eyeOfTheStormTiles)
                 {
                     Map[t.Item1, t.Item2] = 0.0.MakeTupleWith(0.0);
