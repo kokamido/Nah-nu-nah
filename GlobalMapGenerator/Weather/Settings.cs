@@ -20,7 +20,7 @@ namespace GlobalMap.Weather
 
         public override bool IsCounterClockWise(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords)
         {
-            var res = SharpHelper.GetUniformRndInt(0, 1) == 0;
+            var res = SharpHelper.GetUniformRndInt(0, 2) == 0;
             Log.Info($"New cyclone is "+(res ? "counter" : "")+"clockwise");
             return res;
         }
