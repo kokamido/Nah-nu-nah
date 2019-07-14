@@ -1,70 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 
 namespace lib
 {
     public static class MathHelper
     {
         public static Tuple<int, int> Minus(this Tuple<int, int> left, Tuple<int, int> right)
-        {
-            return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
-        }
+            => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
 
         public static Tuple<double, double> Minus(this Tuple<double, double> left, Tuple<double, double> right)
-        {
-            return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
-        }
+            => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
 
         public static Tuple<double, double> Minus(this Tuple<int, int> left, Tuple<double, double> right)
-        {
-            return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
-        }
+            => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
+
+        public static Tuple<double, double> Minus(this Tuple<double, double> left, Tuple<int, int> right)
+            => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
 
         public static Tuple<int, int> Plus(this Tuple<int, int> left, Tuple<int, int> right)
-        {
-            return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
-        }
+            => Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
 
         public static Tuple<double, double> Plus(this Tuple<double, double> left, Tuple<double, double> right)
-        {
-            return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
-        }
+            => Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
 
         public static Tuple<double, double> Multiply(this Tuple<double, double> vec, double multiplier)
-        {
-            return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
-        }
+            => Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
 
         public static Tuple<int, int> Multiply(this Tuple<int, int> vec, int multiplier)
-        {
-            return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
-        }
+            => Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
 
         public static Tuple<double, double> Multiply(this Tuple<int, int> vec, double multiplier)
-        {
-            return Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
-        }
+            => Tuple.Create(vec.Item1 * multiplier, vec.Item2 * multiplier);
 
         public static Tuple<double, double> Divide(this Tuple<int, int> vec, double divider)
-        {
-            return Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
-        }
+            => Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
 
         public static Tuple<double, double> Divide(this Tuple<double, double> vec, double divider)
-        {
-            return Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
-        }
+            => Tuple.Create(vec.Item1 / divider, vec.Item2 / divider);
 
         public static Tuple<int, int> Round(this Tuple<double, double> t)
-        {
-            return Tuple.Create((int) Math.Round(t.Item1), (int) Math.Round(t.Item2));
-        }
+            => Tuple.Create((int) Math.Round(t.Item1), (int) Math.Round(t.Item2));
 
         public static Tuple<double, double> GetRadVec(double angle, double length)
-        {
-            return Tuple.Create(Math.Cos(angle), Math.Sin(angle)).Multiply(length);
-        }
+            => Tuple.Create(Math.Cos(angle), Math.Sin(angle)).Multiply(length);
+
+        public static double ScalProd(this Tuple<double, double> fst, Tuple<double, double> snd)
+            => fst.Item1 * snd.Item1 + fst.Item2 * snd.Item2;
 
         public static Tuple<double, double> Get1Vec(this Tuple<int, int> v) => v.Divide(v.GetAbs());
         public static Tuple<double, double> Get1Vec(this Tuple<double, double> v) => v.Divide(v.GetAbs());
@@ -126,9 +109,19 @@ namespace lib
             return Tuple.Create((abs * Math.Cos(newAngle)).Round(), (abs * Math.Sin(newAngle)).Round());
         }
 
+        public static Tuple<double, double> RotateAroundZero(this Tuple<double, double> point, double angle)
+        {
+            if (angle == 0)
+                return point;
+            var newAngle = (point.GetAngle() + angle) % (2 * Math.PI);
+            var abs = point.GetAbs();
+            return Tuple.Create((abs * Math.Cos(newAngle)), (abs * Math.Sin(newAngle)));
+        }
+
         public static IEnumerable<Tuple<int, int>> SortPoints(this IEnumerable<Tuple<int, int>> src) =>
             src.OrderBy(p => p.Item1).ThenBy(p => p.Item2);
 
+        public static double AngleTo0_2Pi(this double angle) => angle >= 0 ? angle : angle + 2*Math.PI;
         public static int Abs(this int a) => Math.Abs(a);
         public static double Abs(this double a) => Math.Abs(a);
         public static int Min(params int[] ints) => ints.Min();
@@ -222,10 +215,9 @@ namespace lib
             double quant = 1.0 / sideLengths.Max();
             var res = new HashSet<Tuple<int, int>>();
             for (double i = 0; i <= 1; i += quant)
-                for (double j = 0; j <= 1-i; j += quant)
-                    res.Add(a.Multiply(i).Plus(b.Multiply(j)).Plus(c.Multiply(1-i-j)).Round());
+            for (double j = 0; j <= 1 - i; j += quant)
+                res.Add(a.Multiply(i).Plus(b.Multiply(j)).Plus(c.Multiply(1 - i - j)).Round());
             return res;
-
         }
 
         public static HashSet<Tuple<int, int>> GetCirclePoints(int radius)
@@ -233,13 +225,14 @@ namespace lib
             var rSq = radius * radius;
             var res = new HashSet<Tuple<int, int>>();
             for (int x = 0; x <= radius; x++)
-            for (int y = 0; y < Math.Sqrt(rSq - x*x).Round(); y++)
+            for (int y = 0; y < Math.Sqrt(rSq - x * x).Round(); y++)
             {
                 res.Add(x.MakeTupleWith(y));
                 res.Add(x.MakeTupleWith(-y));
                 res.Add((-x).MakeTupleWith(y));
                 res.Add((-x).MakeTupleWith(-y));
             }
+
             return res;
         }
     }

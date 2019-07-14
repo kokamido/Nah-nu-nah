@@ -8,6 +8,7 @@ namespace GlobalMap
 {
     static class GlobalMapGenerator
     {
+        private static ILog log = LogManager.GetLogger(typeof(GlobalMapGenerator));
         public static void Main(string[] args)
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
@@ -26,8 +27,10 @@ namespace GlobalMap
 
             map.GenerateWinds(new RandomWind());
 
-            map.GetBitmap().Save("NoiseMap.png");
 
+            log.Info("drawing");
+            map.GetBitmap().Save("NoiseMap.png");
+            log.Info("drawing complete");
         }
     }
 }
