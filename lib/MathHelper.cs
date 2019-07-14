@@ -16,6 +16,11 @@ namespace lib
             return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
         }
 
+        public static Tuple<double, double> Minus(this Tuple<int, int> left, Tuple<double, double> right)
+        {
+            return Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
+        }
+
         public static Tuple<int, int> Plus(this Tuple<int, int> left, Tuple<int, int> right)
         {
             return Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
@@ -60,6 +65,9 @@ namespace lib
         {
             return Tuple.Create(Math.Cos(angle), Math.Sin(angle)).Multiply(length);
         }
+
+        public static Tuple<double, double> Get1Vec(this Tuple<int, int> v) => v.Divide(v.GetAbs());
+        public static Tuple<double, double> Get1Vec(this Tuple<double, double> v) => v.Divide(v.GetAbs());
 
         public static double GetQuantile(double[,] arr, double q)
         {
@@ -218,6 +226,21 @@ namespace lib
                     res.Add(a.Multiply(i).Plus(b.Multiply(j)).Plus(c.Multiply(1-i-j)).Round());
             return res;
 
+        }
+
+        public static HashSet<Tuple<int, int>> GetCirclePoints(int radius)
+        {
+            var rSq = radius * radius;
+            var res = new HashSet<Tuple<int, int>>();
+            for (int x = 0; x <= radius; x++)
+            for (int y = 0; y < Math.Sqrt(rSq - x*x).Round(); y++)
+            {
+                res.Add(x.MakeTupleWith(y));
+                res.Add(x.MakeTupleWith(-y));
+                res.Add((-x).MakeTupleWith(y));
+                res.Add((-x).MakeTupleWith(-y));
+            }
+            return res;
         }
     }
 }

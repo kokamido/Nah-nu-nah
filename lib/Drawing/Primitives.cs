@@ -42,25 +42,7 @@ namespace lib
         {
             Radius = rad;
             Color = color;
-            _pointsAroundZero = GetPoints();
-        }
-
-        private HashSet<Tuple<int, int>> GetPoints()
-        {
-            var rSq = Radius * Radius;
-            var res = new HashSet<Tuple<int, int>>();
-            for (int xSq = 0; xSq <= rSq; xSq++)
-            for (int ySq = 0; ySq < rSq - xSq; ySq++)
-            {
-                var x = Math.Sqrt(xSq).Round();
-                var y = Math.Sqrt(ySq).Round();
-                res.Add(x.MakeTupleWith(y));
-                res.Add(x.MakeTupleWith(-y));
-                res.Add((-x).MakeTupleWith(y));
-                res.Add((-x).MakeTupleWith(-y));
-            }
-
-            return res;
+            _pointsAroundZero = MathHelper.GetCirclePoints(Radius);
         }
 
         public void DrawOn(Bitmap bitmap, Tuple<int, int> point, double angle)
