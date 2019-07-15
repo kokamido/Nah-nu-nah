@@ -15,14 +15,7 @@ namespace GlobalMap.Weather
             var cycCount = settings.GetCyclonesCount(map);
             for (int i = 0; i < cycCount; i++)
             {
-                var currentEye = settings.GetNexEye(map, cyclones);
-                cyclones.Add(new Cyclone
-                {
-                    Eye = currentEye,
-                    Power = settings.GetPower(map, cyclones, currentEye),
-                    IsAntiCyclone = settings.IsAntiCyclone(map, cyclones, currentEye),
-                    IsCounterClockwise = settings.IsCounterClockWise(map, cyclones, currentEye)
-                });
+                cyclones.Add(settings.GetNewCyclone(map, cyclones));
             }
 
             var res = new WindMap(cyclones, map.Width, map.Height, map.AltitudeGenerationSettings.HeightWindBlockingThreshold);

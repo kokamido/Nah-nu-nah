@@ -8,53 +8,113 @@ namespace GlobalMap.Weather
 {
     public abstract class WindMapGeneratorSettings
     {
-        public abstract bool IsCounterClockWise(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords);
-        public abstract bool IsAntiCyclone(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords);
-        public abstract int GetPower(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords);
-        public abstract Tuple<int, int> GetNexEye(Map map, List<Cyclone> previousCyclones);
+        public abstract Cyclone GetNewCyclone(Map map, List<Cyclone> previosCyclones);
         public abstract int GetCyclonesCount(Map map);
     }
 
-    public class RandomWind : WindMapGeneratorSettings
+    public class CoriolisWind : WindMapGeneratorSettings
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(RandomWind));
-
-        public override bool IsAntiCyclone(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords)
+        private static readonly ILog Log = LogManager.GetLogger(typeof(CoriolisWind));
+        private static readonly NormalRandom NormalRandom = new NormalRandom(0, 3);
+        
+        private bool IsCounterClockWise(Map map, Tuple<int, int> eyeCoords)
         {
-            var res = SharpHelper.GetUniformRndInt(0, 2) == 0;
-            Log.Info($"New wind is "+(res ? "Cyclone" : "AntiCyclone"));
-            return res;
-        }
-
-        public override bool IsCounterClockWise(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords)
-        {
-            var res = SharpHelper.GetUniformRndInt(0, 2) == 0;
+            var res = eyeCoords.Item2 < map.Height / 2;
             Log.Info($"New wind is "+(res ? "counter" : "")+"clockwise");
             return res;
         }
 
-        public override int GetPower(Map map, List<Cyclone> previousCyclones, Tuple<int, int> eyeCoords)
+        private bool IsAntiCyclone(Map map)
         {
-            var res =  SharpHelper.GetUniformRndInt(map.Width / 70, map.Width / 40);
-            Log.Info($"New wind's power is {res}");
+            var res = SharpHelper.GetUniformRndInt(0, 2) == 0;
+            Log.Info($"New wind is "+(res ? "AntiCyclone" : "Cyclone"));
             return res;
         }
 
-        public override Tuple<int, int> GetNexEye(Map map, List<Cyclone> previousCyclones)
+        private int GetPower(Map map,  double delta)
         {
+            var res =  (int)(SharpHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3- Math.Abs(delta)));
+            Log.Info($"New wind's power is {res}");
+            return res ;
+        }
 
-            var res = SharpHelper.GetUniformRndInt(0, map.Width).MakeTupleWith(SharpHelper.GetUniformRndInt(0, map.Height));
-            while(!map.IsUnderSeaLevel(res) || previousCyclones.Any() && previousCyclones.Min(c => MathHelper.EuclideanRange(res,c.Eye))< map.Width/4.0)
-                res = SharpHelper.GetUniformRndInt(0, map.Width).MakeTupleWith(SharpHelper.GetUniformRndInt(0, map.Height));
+        private Tuple<int, int> GetNexEye(bool isAntiCyclone, Map map, double delta, List<Cyclone> previousCyclones)
+        {
+            var res = GenerateNewCoord(isAntiCyclone, map, delta);
+            while(!map.IsUnderSeaLevel(res) || previousCyclones.Any() && previousCyclones.Min(c => MathHelper.EuclideanRange(res,c.Eye))< map.Width/40.0)
+                res = GenerateNewCoord(isAntiCyclone, map, delta);
             Log.Info($"New wind's eye is located in {res}");
             return res;
         }
 
+        private Tuple<int, int> GenerateNewCoord(bool isAntiCyclone, Map map, double delta)
+        {
+            var echelon = isAntiCyclone ? SharpHelper.GetUniformRndInt(0, 2): SharpHelper.GetUniformRndInt(0, 3);
+            var ye = map.Height / 6;
+            var y = (isAntiCyclone? (2+2*echelon)*ye:(1+2*echelon)*ye )+ (int)(delta/3 * ye);
+            
+            var x = SharpHelper.GetUniformRndInt(0, map.Width);
+            return new Tuple<int,int>(x,y);
+        }
+        
+        
+
+        public override Cyclone GetNewCyclone(Map map, List<Cyclone> previosCyclones)
+        {
+            var isAntiCyclone = IsAntiCyclone(map);
+            var delta = NormalRandom.Next();
+            delta = (delta > 3 ? 3 : delta < -3 ? -3 : delta) / 3;
+            var coord = GetNexEye(isAntiCyclone, map, delta, previosCyclones);
+            var power = GetPower(map, delta);
+            return new Cyclone
+            {
+                Eye = coord,
+                IsAntiCyclone = isAntiCyclone,
+                IsCounterClockwise = IsCounterClockWise(map, coord),
+                Power = power
+            };
+        }
+       
+
         public override int GetCyclonesCount(Map map)
         {
-            var res = SharpHelper.GetUniformRndInt(4, 6);
+            var res = SharpHelper.GetUniformRndInt(15, 20);
             Log.Info($"There will {res} winds in our world!");
             return res;
+        }
+    }
+    internal class NormalRandom
+    {
+        private readonly Random _randi;
+        private readonly double m;
+        private readonly double t;
+        private double? _buffer;
+
+        public NormalRandom(double m, double t, int? seed = null)
+        {
+            _randi = seed.HasValue? new Random(seed.Value): new Random();
+            this.m = m;
+            this.t = t;
+            _buffer = null;
+        }
+
+        public double Next()
+        {
+            if (_buffer.HasValue)
+            {
+                var rs = _buffer.Value;
+                _buffer = null;
+                return rs;
+            }
+            var (z1, z2) = GetNormalRandom(_randi.NextDouble(), _randi.NextDouble());
+            _buffer = m + t * z2;
+            return m + t * z1;
+
+        }
+
+        private (double, double) GetNormalRandom(double r, double t)
+        {
+            return (Math.Sqrt(-2*Math.Log(r)) * Math.Sin(2*Math.PI*t), Math.Sqrt(-2*Math.Log(r)) * Math.Cos(2*Math.PI*t));
         }
     }
 }
