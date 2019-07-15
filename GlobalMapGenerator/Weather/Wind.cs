@@ -37,14 +37,14 @@ namespace GlobalMap.Weather
             var p = coords.Minus(Eye);
             var x = p.Item1;
             var y = p.Item2;
-            var power = (Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMul-1)/2.0;
+            var power = (Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier-1)/2.0;
             return (-x + 2 * y).MakeTupleWith(-5*x - power*y);
         }
 
         private Tuple<double, double> GetAntiCycloneVec(Tuple<int, int> coords)
         {
             var p = coords.Minus(Eye);
-            var power = Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMul;
+            var power = Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier;
             var x = p.Item1;
             var y = p.Item2;
             return (power*x + y).MakeTupleWith(-x + power*y);
@@ -96,7 +96,7 @@ namespace GlobalMap.Weather
             var circle = MathHelper.GetCirclePoints(GlobalMapGeneratorMetaSettings.LandscapeRepulsionRadius);
             for (int x = 0; x < width; x++)
             {
-                if (x % 5 == 0)
+                if (x % 10 == 0)
                     _log.Info($"Windmap landscape correction progress is {x / (double) width}");
 
                 for (int y = 0; y < height; y++)
