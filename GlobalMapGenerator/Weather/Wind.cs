@@ -15,6 +15,7 @@ namespace GlobalMap.Weather
         public double Power;
         public double Range => Power * GlobalMapGeneratorMetaSettings.CyclonePowerToRangeMultiplier;
         public bool IsAntiCyclone;
+        public bool IsCounterClockwise;
 
         private static int _ahahaMagicMantiss = 3;
         private static int _ahahaMagicExponent = 100;
@@ -26,10 +27,21 @@ namespace GlobalMap.Weather
         public Tuple<double, double> GetVecIn(Tuple<int, int> point)
         {
             var range = MathHelper.EuclideanRange(point, Eye);
-            return range <= Range
-                ? (IsAntiCyclone ? GetAntiCycloneVec(point) : GetCycloneVec(point)).Get1Vec()
-                .Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power)
-                : 0.0.MakeTupleWith(0.0);
+            if (!IsCounterClockwise)
+            {
+                var buf = point.Minus(Eye);
+                buf = (-buf.Item1).MakeTupleWith(buf.Item2);
+                point = buf.Plus(Eye);
+            }
+
+            var res = range > Range
+                ? 0.0.MakeTupleWith(0.0)
+                : (IsAntiCyclone
+                    ? GetAntiCycloneVec(point)
+                    : GetCycloneVec(point)).Get1Vec()
+                .Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power);
+
+            return IsCounterClockwise ? res : (-res.Item1).MakeTupleWith(res.Item2);
         }
 
         private Tuple<double, double> GetCycloneVec(Tuple<int, int> coords)
@@ -37,8 +49,8 @@ namespace GlobalMap.Weather
             var p = coords.Minus(Eye);
             var x = p.Item1;
             var y = p.Item2;
-            var power = (Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier-1)/2.0;
-            return (-x + 2 * y).MakeTupleWith(-5*x - power*y);
+            var power = (Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier - 1) / 2.0;
+            return (-x + 2 * y).MakeTupleWith(-5 * x - power * y);
         }
 
         private Tuple<double, double> GetAntiCycloneVec(Tuple<int, int> coords)
@@ -47,7 +59,7 @@ namespace GlobalMap.Weather
             var power = Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier;
             var x = p.Item1;
             var y = p.Item2;
-            return (power*x + y).MakeTupleWith(-x + power*y);
+            return (power * x + y).MakeTupleWith(-x + power * y);
         }
     }
 
