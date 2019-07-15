@@ -14,7 +14,7 @@ namespace GlobalMap.Weather
         public Tuple<int, int> Eye;
         public double Power;
         public double Range => Power * GlobalMapGeneratorMetaSettings.CyclonePowerToRangeMultiplier;
-        public bool CounterClockwise;
+        public bool IsAntiCyclone;
 
         private static int _ahahaMagicMantiss = 3;
         private static int _ahahaMagicExponent = 100;
@@ -25,15 +25,29 @@ namespace GlobalMap.Weather
 
         public Tuple<double, double> GetVecIn(Tuple<int, int> point)
         {
-            var range = MathHelper.EuclideanRange(Eye, point);
-            var vec = point.Minus(Eye);
-            var norm = vec.Get1Normal();
-            if (!CounterClockwise)
-                norm = 0.0.MakeTupleWith(0.0).Minus(norm);
-            return range > Range
-                ? Tuple.Create(0.0, 0.0)
-                : norm.Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] *
-                                Power);
+            var range = MathHelper.EuclideanRange(point, Eye);
+            return range <= Range
+                ? (IsAntiCyclone ? GetAntiCycloneVec(point) : GetCycloneVec(point)).Get1Vec()
+                .Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power)
+                : 0.0.MakeTupleWith(0.0);
+        }
+
+        private Tuple<double, double> GetCycloneVec(Tuple<int, int> coords)
+        {
+            var p = coords.Minus(Eye);
+            var x = p.Item1;
+            var y = p.Item2;
+            var power = (Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMul-1)/2.0;
+            return (-x + 2 * y).MakeTupleWith(-5*x - power*y);
+        }
+
+        private Tuple<double, double> GetAntiCycloneVec(Tuple<int, int> coords)
+        {
+            var p = coords.Minus(Eye);
+            var power = Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMul;
+            var x = p.Item1;
+            var y = p.Item2;
+            return (power*x + y).MakeTupleWith(-x + power*y);
         }
     }
 
@@ -62,9 +76,9 @@ namespace GlobalMap.Weather
                     .Aggregate(0.0.MakeTupleWith(0.0), (acc, succ) => acc.Plus(succ));
             foreach (var cyclone in cyclones)
             {
-                var eyeOfTheStormTiles = MathHelper.GetCirclePoints(cyclone.Power.Round()/2)
+                var eyeOfTheStormTiles = MathHelper.GetCirclePoints(cyclone.Power.Round() / 2)
                     .Select(p => p.Plus(cyclone.Eye))
-                    .Where(p => p.IsInBorders(Width,Height));
+                    .Where(p => p.IsInBorders(Width, Height));
                 foreach (var t in eyeOfTheStormTiles)
                 {
                     Map[t.Item1, t.Item2] = 0.0.MakeTupleWith(0.0);
@@ -92,7 +106,7 @@ namespace GlobalMap.Weather
                     {
                         circle
                             .AsParallel()
-                            .WithDegreeOfParallelism(Math.Min(SystemSettings.AvaliableThreads,2))
+                            .WithDegreeOfParallelism(Math.Min(SystemSettings.AvaliableThreads, 2))
                             .Select(p => p.Plus(currentPoint))
                             .Where(p => p.IsInBorders(width, height))
                             .ForAll(p =>
@@ -118,12 +132,13 @@ namespace GlobalMap.Weather
                         var endpoint = currentPoint.Plus(Map[currentPoint.Item1, currentPoint.Item2]
                             .Get1Vec().Multiply(GlobalMapGeneratorMetaSettings.LandscapeTailForWindDecrease)
                             .Round());
-                        if(!endpoint.IsInBorders(Width,Height))
+                        if (!endpoint.IsInBorders(Width, Height))
                             continue;
-                        var seg = MathHelper.GetLineSegment(currentPoint,endpoint);
-                        var mul = seg.Count(p => altitudes[p.Item1,p.Item2] >= HeightThresholdForWindCorrection)/(double)seg.Count;
-                        if(mul > 0)
-                            Map[x, y] = Map[x, y].Multiply((1 - mul)/2.0);
+                        var seg = MathHelper.GetLineSegment(currentPoint, endpoint);
+                        var mul = seg.Count(p => altitudes[p.Item1, p.Item2] >= HeightThresholdForWindCorrection) /
+                                  (double) seg.Count;
+                        if (mul > 0)
+                            Map[x, y] = Map[x, y].Multiply((1 - mul) / 2.0);
                     }
                 }
             }

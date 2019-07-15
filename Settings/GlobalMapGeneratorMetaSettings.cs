@@ -9,5 +9,6 @@ namespace Settings
         public static double LandscapeTailForWindDecrease = 75;
         public static double HeightPointRepulsionAngle = Math.PI/200;
         public static double HeightPointRepulsionPowerDecrease = 0.35;
+        public static double CycloneEigenvalueFromPowerMul = 1/20.0;
     }
 }

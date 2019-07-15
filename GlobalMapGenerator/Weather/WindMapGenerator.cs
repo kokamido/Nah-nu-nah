@@ -20,7 +20,7 @@ namespace GlobalMap.Weather
                 {
                     Eye = currentEye,
                     Power = settings.GetPower(map, cyclones, currentEye),
-                    CounterClockwise = settings.IsCounterClockWise(map, cyclones, currentEye)
+                    IsAntiCyclone = settings.IsCounterClockWise(map, cyclones, currentEye)
                 });
             }
 

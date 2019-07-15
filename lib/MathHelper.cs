@@ -131,6 +131,8 @@ namespace lib
         public static int Round(this double d) => (int) Math.Round(d);
         public static Tuple<int, int> MakeTupleWith(this int x, int y) => Tuple.Create(x, y);
         public static Tuple<double, double> MakeTupleWith(this double x, double y) => Tuple.Create(x, y);
+        public static Tuple<double, double> MakeTupleWith(this int x, double y) => Tuple.Create((double)x, y);
+        public static Tuple<double, double> MakeTupleWith(this double x, int y) => Tuple.Create(x, (double)y);
 
         public static bool IsInBorders(this Tuple<int, int> point, int width, int height)
             => point.Item1 >= 0 && point.Item1 < width && point.Item2 >= 0 && point.Item2 < height;
