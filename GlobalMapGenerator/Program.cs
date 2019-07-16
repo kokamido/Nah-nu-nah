@@ -27,7 +27,6 @@ namespace GlobalMap
 
             map.GenerateWinds(new CoriolisWind());
 
-
             log.Info("drawing");
             map.GetBitmap().Save("NoiseMap.png");
             log.Info("drawing complete");

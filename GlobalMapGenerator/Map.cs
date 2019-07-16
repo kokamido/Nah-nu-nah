@@ -49,7 +49,7 @@ namespace GlobalMap
             this.ClassifyWaterAreas();
         }
 
-        public void GenerateWinds(WindMapGeneratorSettings settings)
+        public void GenerateWinds(CycloneFabric settings)
         {
             WindMap = WindMapGenerator.Generate(settings, this);
         }

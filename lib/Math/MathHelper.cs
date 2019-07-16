@@ -1,12 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace lib
 {
     public static class MathHelper
     {
+        private static NormalRandom normalRandom = new NormalRandom(0,1);
+
+        public static double GetNormalRandomNum()
+        {
+            lock (normalRandom)
+                return normalRandom.Next();
+        }
+
         public static Tuple<int, int> Minus(this Tuple<int, int> left, Tuple<int, int> right)
             => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
 

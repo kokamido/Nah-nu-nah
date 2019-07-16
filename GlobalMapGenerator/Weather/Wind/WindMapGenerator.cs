@@ -9,10 +9,10 @@ namespace GlobalMap.Weather
     public static class WindMapGenerator
     {
         private static ILog log = LogManager.GetLogger(typeof(WindMapGenerator));
-        public static WindMap Generate(WindMapGeneratorSettings settings, Map map)
+        public static WindMap Generate(CycloneFabric settings, Map map)
         {
             var cyclones = new List<Cyclone>();
-            var cycCount = settings.GetCyclonesCount(map);
+            var cycCount = settings.GetCyclonesCount();
             for (int i = 0; i < cycCount; i++)
             {
                 cyclones.Add(settings.GetNewCyclone(map, cyclones));
