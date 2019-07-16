@@ -25,8 +25,7 @@ namespace GlobalMap
             map.Rivers.Add(map.GetCompatibleRiver(4));
             map.Rivers.Add(map.GetCompatibleRiver(4));
 
-            map.GenerateWinds(new RandomWind());
-
+            map.GenerateWinds(new CoriolisWind());
 
             log.Info("drawing");
             map.GetBitmap().Save("NoiseMap.png");

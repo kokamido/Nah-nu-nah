@@ -9,20 +9,13 @@ namespace GlobalMap.Weather
     public static class WindMapGenerator
     {
         private static ILog log = LogManager.GetLogger(typeof(WindMapGenerator));
-        public static WindMap Generate(WindMapGeneratorSettings settings, Map map)
+        public static WindMap Generate(CycloneFabric settings, Map map)
         {
             var cyclones = new List<Cyclone>();
-            var cycCount = settings.GetCyclonesCount(map);
+            var cycCount = settings.GetCyclonesCount();
             for (int i = 0; i < cycCount; i++)
             {
-                var currentEye = settings.GetNexEye(map, cyclones);
-                cyclones.Add(new Cyclone
-                {
-                    Eye = currentEye,
-                    Power = settings.GetPower(map, cyclones, currentEye),
-                    IsAntiCyclone = settings.IsAntiCyclone(map, cyclones, currentEye),
-                    IsCounterClockwise = settings.IsCounterClockWise(map, cyclones, currentEye)
-                });
+                cyclones.Add(settings.GetNewCyclone(map, cyclones));
             }
 
             var res = new WindMap(cyclones, map.Width, map.Height, map.AltitudeGenerationSettings.HeightWindBlockingThreshold);
