@@ -6,14 +6,6 @@ namespace lib
 {
     public static class SharpHelper
     {
-        [ThreadStatic] private static Random rnd;
-
-        public static int GetUniformRndInt(int left, int right)
-        {
-            if(rnd == null)
-                rnd = new Random();
-            return rnd.Next(left, right);
-        }
         public static void ForEach<T>(this T[,] arr, Action<T> action, Action<int, int> coordsCallback = null,
             int width = 0, int height = 0)
         {
@@ -23,7 +15,7 @@ namespace lib
             for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
             {
-                action(arr[x, y]);
+                action?.Invoke(arr[x, y]);
                 coordsCallback?.Invoke(x, y);
             }
         }

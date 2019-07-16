@@ -4,66 +4,11 @@ using System.Drawing;
 using System.Linq;
 using lib;
 using log4net;
-using log4net.Repository.Hierarchy;
 using Settings;
 
-namespace GlobalMap.Weather
+namespace GlobalMap.Weather.Wind
 {
-    public class Cyclone
-    {
-        public Tuple<int, int> Eye;
-        public double Power;
-        public double Range => Power * GlobalMapGeneratorMetaSettings.CyclonePowerToRangeMultiplier;
-        public bool IsAntiCyclone;
-        public bool IsCounterClockwise;
-
-        private static int _ahahaMagicMantiss = 3;
-        private static int _ahahaMagicExponent = 100;
-        private static int _ahahaMagicNumber => _ahahaMagicMantiss * _ahahaMagicExponent;
-
-        private static double[] tanh = Enumerable.Range(0, _ahahaMagicNumber)
-            .Select(x => Math.Tanh(_ahahaMagicMantiss - x / (double) _ahahaMagicExponent)).ToArray();
-
-        public Tuple<double, double> GetVecIn(Tuple<int, int> point)
-        {
-            var range = MathHelper.EuclideanRange(point, Eye);
-            if (!IsCounterClockwise)
-            {
-                var buf = point.Minus(Eye);
-                buf = (-buf.Item1).MakeTupleWith(buf.Item2);
-                point = buf.Plus(Eye);
-            }
-
-            var res = range > Range
-                ? 0.0.MakeTupleWith(0.0)
-                : (IsAntiCyclone
-                    ? GetAntiCycloneVec(point)
-                    : GetCycloneVec(point)).Get1Vec()
-                .Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power);
-
-            return IsCounterClockwise ? res : (-res.Item1).MakeTupleWith(res.Item2);
-        }
-
-        private Tuple<double, double> GetCycloneVec(Tuple<int, int> coords)
-        {
-            var p = coords.Minus(Eye);
-            var x = p.Item1;
-            var y = p.Item2;
-            var power = (Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier - 1) / 2.0;
-            return (-x + 2 * y).MakeTupleWith(-5 * x - power * y);
-        }
-
-        private Tuple<double, double> GetAntiCycloneVec(Tuple<int, int> coords)
-        {
-            var p = coords.Minus(Eye);
-            var power = Power * GlobalMapGeneratorMetaSettings.CycloneEigenvalueFromPowerMultiplier;
-            var x = p.Item1;
-            var y = p.Item2;
-            return (power * x + y).MakeTupleWith(-x + power * y);
-        }
-    }
-
-    public class WindMap : IDrawable
+   public class WindMap : IDrawable
     {
         public Tuple<double, double>[,] Map;
         public int Width;
@@ -105,7 +50,7 @@ namespace GlobalMap.Weather
             if (width != Width || height != Height)
                 throw new ArgumentException(
                     $"Sizes of windmap[{Width}, {Height}] and altitude map[{width}, {height}] are incompatible!");
-            var circle = MathHelper.GetCirclePoints(GlobalMapGeneratorMetaSettings.LandscapeRepulsionRadius);
+            var circle = MathHelper.GetCirclePoints(CycloneMetaSettings.LandscapeRepulsionRadius);
             for (int x = 0; x < width; x++)
             {
                 if (x % 10 == 0)
@@ -128,21 +73,21 @@ namespace GlobalMap.Weather
                                 var windAngle = wind.GetAngle().AngleTo0_2Pi();
                                 var mToWAngle = fromMountainToWind.GetAngle().AngleTo0_2Pi();
                                 Map[p.Item1, p.Item2] = Map[p.Item1, p.Item2]
-                                    .RotateAroundZero(GlobalMapGeneratorMetaSettings.HeightPointRepulsionAngle *
+                                    .RotateAroundZero(CycloneMetaSettings.HeightPointRepulsionAngle *
                                                       GetRotationSign(windAngle, mToWAngle) *
-                                                      (GlobalMapGeneratorMetaSettings.LandscapeRepulsionRadius -
-                                                       MathHelper.EuclideanRange(currentPoint, p)) /
-                                                      GlobalMapGeneratorMetaSettings.LandscapeRepulsionRadius);
+                                                      (CycloneMetaSettings.LandscapeRepulsionRadius -
+                                                       MathHelper.GetEuclideanRange(currentPoint, p)) /
+                                                      CycloneMetaSettings.LandscapeRepulsionRadius);
                             });
                         Map[x, y] = Map[x, y]
-                            .Multiply(GlobalMapGeneratorMetaSettings.HeightPointRepulsionPowerDecrease *
+                            .Multiply(CycloneMetaSettings.HeightPointRepulsionPowerDecrease *
                                       Math.Abs(HeightThresholdForWindCorrection - altitudes[x, y]) /
                                       (1 - HeightThresholdForWindCorrection));
                     }
                     else
                     {
                         var endpoint = currentPoint.Plus(Map[currentPoint.Item1, currentPoint.Item2]
-                            .Get1Vec().Multiply(GlobalMapGeneratorMetaSettings.LandscapeTailForWindDecrease)
+                            .Get1Vec().Multiply(CycloneMetaSettings.LandscapeTailForWindDecrease)
                             .Round());
                         if (!endpoint.IsInBorders(Width, Height))
                             continue;
@@ -154,13 +99,6 @@ namespace GlobalMap.Weather
                     }
                 }
             }
-        }
-
-        private int GetRotationSign(double w, double m)
-        {
-            if (w > m)
-                return w - m < Math.PI ? -1 : 1;
-            return m - w < Math.PI ? 1 : -1;
         }
 
         public void DrawOn(Bitmap bitmap)
@@ -182,6 +120,13 @@ namespace GlobalMap.Weather
                     continue;
                 new Arrow(abs, abs / 3, ArrowColor).DrawOn(bitmap, x.MakeTupleWith(y), p.GetAngle());
             }
+        }
+
+        private int GetRotationSign(double w, double m)
+        {
+            if (w > m)
+                return w - m < Math.PI ? -1 : 1;
+            return m - w < Math.PI ? 1 : -1;
         }
     }
 }

@@ -7,6 +7,14 @@ namespace lib
     public static class MathHelper
     {
         private static NormalRandom normalRandom = new NormalRandom(0,1);
+        [ThreadStatic] private static Random rnd;
+
+        public static int GetUniformRndInt(int left, int right)
+        {
+            if(rnd == null)
+                rnd = new Random();
+            return rnd.Next(left, right);
+        }
 
         public static double GetNormalRandomNum()
         {
@@ -87,24 +95,24 @@ namespace lib
             return normal.Divide(abs);
         }
 
-        public static double EuclideanRange(Tuple<int, int> p0, Tuple<int, int> p1)
+        public static double GetEuclideanRange(Tuple<int, int> p0, Tuple<int, int> p1)
         {
             return Math.Sqrt(Math.Pow(p0.Item1 - p1.Item1, 2) + Math.Pow(p0.Item2 - p1.Item2, 2));
         }
 
-        public static double EuclideanRange(Tuple<double, double> p0, Tuple<double, double> p1)
+        public static double GetEuclideanRange(Tuple<double, double> p0, Tuple<double, double> p1)
         {
             return Math.Sqrt(Math.Pow(p0.Item1 - p1.Item1, 2) + Math.Pow(p0.Item2 - p1.Item2, 2));
         }
 
         public static double GetAbs(this Tuple<int, int> p)
         {
-            return EuclideanRange(Tuple.Create(0, 0), p);
+            return GetEuclideanRange(Tuple.Create(0, 0), p);
         }
 
         public static double GetAbs(this Tuple<double, double> p)
         {
-            return EuclideanRange(Tuple.Create(0.0, 0.0), p);
+            return GetEuclideanRange(Tuple.Create(0.0, 0.0), p);
         }
 
         public static Tuple<int, int> RotateAroundZero(this Tuple<int, int> point, double angle)
@@ -183,7 +191,7 @@ namespace lib
                        .Where(n => !exceptions?.Contains(n.Item2) ?? true)
                        .OrderBy(x => x.Item1, comparer)
                        .FirstOrDefault()?.Item2
-                   ?? neighbours[SharpHelper.GetUniformRndInt(0, neighbours.Count)].Item2;
+                   ?? neighbours[GetUniformRndInt(0, neighbours.Count)].Item2;
         }
 
         public static List<Tuple<int, int>> GetLineSegment(Tuple<int, int> fst, Tuple<int, int> snd, int width = 1)
@@ -220,7 +228,7 @@ namespace lib
         public static HashSet<Tuple<int, int>> GetFilledTriangle(Tuple<int, int> a, Tuple<int, int> b,
             Tuple<int, int> c)
         {
-            var sideLengths = new[] {EuclideanRange(a, b), EuclideanRange(a, c), EuclideanRange(b, c)};
+            var sideLengths = new[] {GetEuclideanRange(a, b), GetEuclideanRange(a, c), GetEuclideanRange(b, c)};
             double quant = 1.0 / sideLengths.Max();
             var res = new HashSet<Tuple<int, int>>();
             for (double i = 0; i <= 1; i += quant)

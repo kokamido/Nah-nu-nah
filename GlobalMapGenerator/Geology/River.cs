@@ -37,11 +37,11 @@ namespace GlobalMap
                     if (map.Altitudes[x, y] >= altitudeThreshold)
                         possibleRiverSource.Add(Tuple.Create(x, y));
                 },
-                map.Width, 
+                map.Width,
                 map.Height);
-            
+
             var riverMainstream = new List<Tuple<int, int>>();
-            var source = possibleRiverSource[SharpHelper.GetUniformRndInt(0, possibleRiverSource.Count)];
+            var source = possibleRiverSource[MathHelper.GetUniformRndInt(0, possibleRiverSource.Count)];
             var currentTile = source;
             while (!map.IsUnderSeaLevel(currentTile))
             {
@@ -65,7 +65,7 @@ namespace GlobalMap
                 Log.Debug($"Extended river is {string.Join(", ",extendedRiver)}");
                 Log.Info($"River has been extended. Done!");
             }
-            
+
             return new River(extendedRiver, source);
         }
 

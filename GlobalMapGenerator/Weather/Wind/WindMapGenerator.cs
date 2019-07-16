@@ -4,7 +4,7 @@ using lib;
 using log4net;
 using log4net.Repository.Hierarchy;
 
-namespace GlobalMap.Weather
+namespace GlobalMap.Weather.Wind
 {
     public static class WindMapGenerator
     {

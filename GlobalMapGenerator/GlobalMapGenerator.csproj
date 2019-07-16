@@ -26,4 +26,8 @@
         <None Update="log4net.config" CopyToOutputDirectory="bin\Release\netcoreapp2.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Pics" />
+    </ItemGroup>
+
 </Project>

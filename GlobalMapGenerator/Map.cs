@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using GlobalMap.Weather;
 using log4net;
-using Color = SharpNoise.Utilities.Imaging.Color;
-using ColorDr = System.Drawing.Color;
-using Image = SharpNoise.Utilities.Imaging.Image;
+using System.Drawing;
+using GlobalMap.Weather.Temperature;
+using SharpNoiseColor = SharpNoise.Utilities.Imaging.Color;
+using SharpNoiseImage = SharpNoise.Utilities.Imaging.Image;
+using GlobalMap.Weather.Wind;
 
 namespace GlobalMap
 {
@@ -17,7 +17,8 @@ namespace GlobalMap
         public double[,] Altitudes { get; private set; }
         public AltitudeGenerationSettings AltitudeGenerationSettings { get; private set; }
 
-        public WindMap WindMap { get; private set; }
+        public WindMap WindMap;
+        public TemperatureMap TemperatureMap;
 
         public List<River> Rivers = new List<River>();
         public List<WaterArea> Lakes;
@@ -34,7 +35,7 @@ namespace GlobalMap
 
         private ILog log = LogManager.GetLogger(typeof(Map));
 
-        public Map(Image imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
+        public Map(SharpNoiseImage imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
         {
             AltitudeGenerationSettings = altitudeColorSettings;
             Width = imgGreyscale.Width;
@@ -49,11 +50,6 @@ namespace GlobalMap
             this.ClassifyWaterAreas();
         }
 
-        public void GenerateWinds(CycloneFabric settings)
-        {
-            WindMap = WindMapGenerator.Generate(settings, this);
-        }
-
         private Bitmap ToBitmap(MapDrawingSettings settings, bool debug = false)
         {
             log.Info("Drawing map");
@@ -65,7 +61,7 @@ namespace GlobalMap
                 var layers = AltitudeGenerationSettings.Layers;
                 if (debug)
                 {
-                    layers = layers.Select((l, index) => new KeyValuePair<(double,string), ColorDr>(l.Key, AltitudeGenerationSettings.DebugColors[index]))
+                    layers = layers.Select((l, index) => new KeyValuePair<(double,string), Color>(l.Key, AltitudeGenerationSettings.DebugColors[index]))
                         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 }
 
@@ -101,10 +97,16 @@ namespace GlobalMap
                 WindMap.DrawOn(bitmap);
             }
 
+            if (settings.HasFlag(MapDrawingSettings.Temperature))
+            {
+                log.Info("Drawing temperature");
+                TemperatureMap.DrawOn(bitmap);
+            }
+
             return bitmap;
         }
 
-        private ColorDr GetColor(KeyValuePair<(double level, string name), ColorDr>[] layers, double value)
+        private Color GetColor(KeyValuePair<(double level, string name), Color>[] layers, double value)
         {
             for (int i = 0; i < layers.Length-1; i++)
             {
@@ -115,7 +117,7 @@ namespace GlobalMap
             return layers[layers.Length - 1].Value;
         }
 
-        private double GreyscaleColorToDouble(Color c)
+        private double GreyscaleColorToDouble(SharpNoiseColor c)
         {
             return (double)c.Red / 255;
         }
@@ -124,8 +126,9 @@ namespace GlobalMap
     [Flags]
     public enum MapDrawingSettings
     {
-        Nothing,
-        Altitudes,
-        Winds
+        Nothing = 0,
+        Altitudes = 1,
+        Winds = 1 << 1,
+        Temperature = 1 << 2,
     }
 }

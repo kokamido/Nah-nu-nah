@@ -4,7 +4,7 @@ using System.Linq;
 using lib;
 using log4net;
 
-namespace GlobalMap.Weather
+namespace GlobalMap.Weather.Wind
 {
     public abstract class CycloneFabric
     {
@@ -34,7 +34,7 @@ namespace GlobalMap.Weather
 
         public override int GetCyclonesCount()
         {
-            var res = SharpHelper.GetUniformRndInt(15, 20);
+            var res = MathHelper.GetUniformRndInt(15, 20);
             Log.Info($"There will {res} winds in our world!");
             return res;
         }
@@ -48,14 +48,14 @@ namespace GlobalMap.Weather
 
         private bool IsAntiCyclone(Map map)
         {
-            var res = SharpHelper.GetUniformRndInt(0, 2) == 0;
+            var res = MathHelper.GetUniformRndInt(0, 2) == 0;
             Log.Info($"New wind is " + (res ? "AntiCyclone" : "Cyclone"));
             return res;
         }
 
         private int GetPower(Map map, double delta)
         {
-            var res = (int) (SharpHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3 - Math.Abs(delta)));
+            var res = (int) (MathHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3 - Math.Abs(delta)));
             Log.Info($"New wind's power is {res}");
             return res;
         }
@@ -64,7 +64,7 @@ namespace GlobalMap.Weather
         {
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.EuclideanRange(res, c.Eye)) < map.Width / 40.0)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 40.0)
                 res = GenerateNewCoord(isAntiCyclone, map, delta);
             Log.Info($"New wind's eye is located in {res}");
             return res;
@@ -72,10 +72,10 @@ namespace GlobalMap.Weather
 
         private Tuple<int, int> GenerateNewCoord(bool isAntiCyclone, Map map, double delta)
         {
-            var echelon = isAntiCyclone ? SharpHelper.GetUniformRndInt(0, 2) : SharpHelper.GetUniformRndInt(0, 3);
+            var echelon = isAntiCyclone ? MathHelper.GetUniformRndInt(0, 2) : MathHelper.GetUniformRndInt(0, 3);
             var ye = map.Height / 6;
             var y = (isAntiCyclone ? (2 + 2 * echelon) * ye : (1 + 2 * echelon) * ye) + (int) (delta / 3 * ye);
-            var x = SharpHelper.GetUniformRndInt(0, map.Width);
+            var x = MathHelper.GetUniformRndInt(0, map.Width);
             return new Tuple<int, int>(x, y);
         }
     }

@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using GlobalMap.Weather;
+using GlobalMap.Weather.Temperature;
+using GlobalMap.Weather.Wind;
+using lib;
 using log4net;
 using log4net.Config;
 
@@ -13,7 +17,6 @@ namespace GlobalMap
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
-
             var map = MapGenerator.GenerateAltitudeMap(1024, 768, new DefaultEarthAltitude());
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));
@@ -25,10 +28,14 @@ namespace GlobalMap
             map.Rivers.Add(map.GetCompatibleRiver(4));
             map.Rivers.Add(map.GetCompatibleRiver(4));
 
-            map.GenerateWinds(new CoriolisWind());
+            map.WindMap = WindMapGenerator.Generate(new CoriolisWind(), map);
+            map.TemperatureMap =  new DefaultTemperature(map);
 
             log.Info("drawing");
-            map.GetBitmap().Save("NoiseMap.png");
+            map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Temperature).Save("Pics/AltAndTempMap.png");
+            map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("Pics/AltAndWind.png");
+            map.RedrawBitmap(MapDrawingSettings.Temperature).Save("Pics/Temp.png");
+            map.RedrawBitmap(MapDrawingSettings.Winds).Save("Pics/Wind.png");
             log.Info("drawing complete");
         }
     }
