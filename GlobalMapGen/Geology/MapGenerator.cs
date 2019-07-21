@@ -1,10 +1,5 @@
-using System;
 using log4net;
-using PerlinWrapper;
-using SharpNoise;
-using SharpNoise.Builders;
-using SharpNoise.Modules;
-using SharpNoise.Utilities.Imaging;
+using SharpNoiseWrapper;
 
 namespace GlobalMap
 {

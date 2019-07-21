@@ -5,7 +5,7 @@ using SharpNoise.Builders;
 using SharpNoise.Modules;
 using SharpNoise.Utilities.Imaging;
 
-namespace PerlinWrapper
+namespace SharpNoiseWrapper
 {
     public static class PerlinWrap
     {

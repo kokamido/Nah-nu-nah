@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalMapGenerator", "GlobalMapGenerator\GlobalMapGenerator.csproj", "{C4F5F6B7-EF97-4F59-B0D6-1104E4538FB9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{CC8D6FB6-E742-4679-BB2D-075282A9E63D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "lib\lib.csproj", "{508675E5-648F-478E-BBE9-E9A84112BCC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settings", "Settings\Settings.csproj", "{017A1BDD-152D-44E2-BD58-71CCC8419814}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerlinWrapper", "PerlinWrapper\PerlinWrapper.csproj", "{2E408F2F-2194-43DA-945C-2915036678AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalMapGen", "GlobalMapGen\GlobalMapGen.csproj", "{E0F1CF0F-D1B4-49A3-B2FF-14F137F7318A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoiseWrapper", "SharpNoiseWrapper\SharpNoiseWrapper.csproj", "{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,10 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C4F5F6B7-EF97-4F59-B0D6-1104E4538FB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4F5F6B7-EF97-4F59-B0D6-1104E4538FB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4F5F6B7-EF97-4F59-B0D6-1104E4538FB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4F5F6B7-EF97-4F59-B0D6-1104E4538FB9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC8D6FB6-E742-4679-BB2D-075282A9E63D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CC8D6FB6-E742-4679-BB2D-075282A9E63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC8D6FB6-E742-4679-BB2D-075282A9E63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,9 +28,13 @@ Global
 		{017A1BDD-152D-44E2-BD58-71CCC8419814}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{017A1BDD-152D-44E2-BD58-71CCC8419814}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{017A1BDD-152D-44E2-BD58-71CCC8419814}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E408F2F-2194-43DA-945C-2915036678AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E408F2F-2194-43DA-945C-2915036678AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E408F2F-2194-43DA-945C-2915036678AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E408F2F-2194-43DA-945C-2915036678AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0F1CF0F-D1B4-49A3-B2FF-14F137F7318A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0F1CF0F-D1B4-49A3-B2FF-14F137F7318A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0F1CF0F-D1B4-49A3-B2FF-14F137F7318A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0F1CF0F-D1B4-49A3-B2FF-14F137F7318A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -19,8 +19,7 @@ namespace GlobalMap.Weather.Temperature
         public void DrawOn(Bitmap bitmap)
         {
             for (int x = 0; x < bitmap.Width; x++)
-            for (int y = 0; y < bitmap.Height
-                ; y++)
+            for (int y = 0; y < bitmap.Height; y++)
             {
                 var color = GetColor(bitmap.GetPixel(x, y), Map[x, y]);
                 bitmap.SetPixel(x, y, color);

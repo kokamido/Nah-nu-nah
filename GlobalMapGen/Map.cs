@@ -4,8 +4,6 @@ using System.Linq;
 using log4net;
 using System.Drawing;
 using GlobalMap.Weather.Temperature;
-using SharpNoiseColor = SharpNoise.Utilities.Imaging.Color;
-using SharpNoiseImage = SharpNoise.Utilities.Imaging.Image;
 using GlobalMap.Weather.Wind;
 
 namespace GlobalMap
