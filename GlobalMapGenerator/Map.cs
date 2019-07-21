@@ -35,18 +35,12 @@ namespace GlobalMap
 
         private ILog log = LogManager.GetLogger(typeof(Map));
 
-        public Map(SharpNoiseImage imgGreyscale,AltitudeGenerationSettings altitudeColorSettings)
+        public Map(double[,] altitudes,AltitudeGenerationSettings altitudeColorSettings)
         {
             AltitudeGenerationSettings = altitudeColorSettings;
-            Width = imgGreyscale.Width;
-            Height = imgGreyscale.Height;
-            Altitudes = new double[Width, Height];
-            for (int x = 0; x < Width; x++)
-            for (int y = 0; y < Height; y++)
-            {
-                Altitudes[x, y] = GreyscaleColorToDouble(imgGreyscale[x, y]);
-            }
-
+            Altitudes = altitudes;
+            Width = Altitudes.GetLength(0);
+            Height = Altitudes.GetLength(1);
             this.ClassifyWaterAreas();
         }
 
@@ -115,11 +109,6 @@ namespace GlobalMap
             }
 
             return layers[layers.Length - 1].Value;
-        }
-
-        private double GreyscaleColorToDouble(SharpNoiseColor c)
-        {
-            return (double)c.Red / 255;
         }
     }
 

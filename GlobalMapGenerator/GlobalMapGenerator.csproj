@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\lib\lib.csproj" />
+      <ProjectReference Include="..\PerlinWrapper\PerlinWrapper.csproj" />
       <ProjectReference Include="..\Settings\Settings.csproj" />
     </ItemGroup>
     
