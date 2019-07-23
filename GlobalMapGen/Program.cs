@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using GlobalMap.Weather;
 using GlobalMap.Weather.Temperature;
 using GlobalMap.Weather.Wind;
 using lib;
@@ -35,6 +34,8 @@ namespace GlobalMap
             map.WindMap = WindMapGenerator.Generate(new CoriolisWind(), map);
             map.TemperatureMap =  new DefaultTemperature(map);
 
+            File.WriteAllText("Pics/map.json",map.ToJsonString());
+            map = JsonHelper.ParseJson<Map>(File.ReadAllText("Pics/map.json"));
             log.Info("drawing");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("Pics/AltAndWind.png");

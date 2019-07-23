@@ -3,35 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using log4net;
 using System.Drawing;
+using System.Runtime.Serialization;
 using GlobalMap.Weather.Temperature;
 using GlobalMap.Weather.Wind;
+using lib;
 
 namespace GlobalMap
 {
-    public class Map
+    [DataContract]
+    public class Map : IDrawable
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public double[,] Altitudes { get; private set; }
-        public AltitudeGenerationSettings AltitudeGenerationSettings { get; private set; }
+        [DataMember(EmitDefaultValue = false)] public int Width { get; private set; }
+        [DataMember(EmitDefaultValue = false)] public int Height { get; private set; }
+        [IgnoreDataMember] public double[,] Altitudes { get; private set; }
+        [DataMember(EmitDefaultValue = false)] private double[] altitudes;
+        [DataMember(EmitDefaultValue = false)] public AltitudeGenerationSettings AltitudeGenerationSettings { get; private set; }
 
-        public WindMap WindMap;
-        public TemperatureMap TemperatureMap;
+        [DataMember(EmitDefaultValue = false)] public WindMap WindMap;
+        [DataMember(EmitDefaultValue = false)] public TemperatureMap TemperatureMap;
 
-        public List<River> Rivers = new List<River>();
-        public List<WaterArea> Lakes;
-        public List<WaterArea> Seas;
+        [DataMember(EmitDefaultValue = false)] public List<River> Rivers = new List<River>();
+        [DataMember(EmitDefaultValue = false)] public List<WaterArea> Lakes;
+        [DataMember(EmitDefaultValue = false)] public List<WaterArea> Seas;
 
         public bool IsUnderSeaLevel(Tuple<int, int> t) => Altitudes[t.Item1, t.Item2] < AltitudeGenerationSettings.SeaAltitude;
         public bool IsRiverTile(Tuple<int, int> t) => Rivers.Any(r => r.RiverTiles.Contains(t));
         public bool IsLakeTile(Tuple<int, int> t) => Lakes.Any(r => r.Tiles.Contains(t));
         public int Square => Width*Height;
 
-        private Bitmap bitmap;
+        [IgnoreDataMember] private Bitmap bitmap;
         public Bitmap RedrawBitmap(MapDrawingSettings settings, bool debugAltitude=false) => bitmap = ToBitmap(settings, debugAltitude);
         public Bitmap GetBitmap() => bitmap ?? (bitmap = ToBitmap(MapDrawingSettings.Altitudes| MapDrawingSettings.Winds, false));
 
-        private ILog log = LogManager.GetLogger(typeof(Map));
+        private static ILog log = LogManager.GetLogger(typeof(Map));
 
         public Map(double[,] altitudes,AltitudeGenerationSettings altitudeColorSettings)
         {
@@ -49,49 +53,17 @@ namespace GlobalMap
 
             if (settings.HasFlag(MapDrawingSettings.Altitudes))
             {
-                log.Info("Drawing altitudes");
-                var layers = AltitudeGenerationSettings.Layers;
-                if (debug)
-                {
-                    layers = layers.Select((l, index) => new KeyValuePair<(double,string), Color>(l.Key, AltitudeGenerationSettings.DebugColors[index]))
-                        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                }
-
-                var layersArray = layers.ToArray();
-
-                for (int x = 0; x < Width; x++)
-                for (int y = 0; y < Height; y++)
-                {
-                    var color = GetColor(layersArray, Altitudes[x, y]);
-                    bitmap.SetPixel(x, y, color);
-                }
-
-                foreach (var river in Rivers)
-                {
-                    foreach (var tile in river.RiverTiles)
-                    {
-                        bitmap.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.RiverColor);
-                    }
-                }
-
-                foreach (var lake in Lakes)
-                {
-                    foreach (var tile in lake.Tiles)
-                    {
-                        bitmap.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.LakeColor);
-                    }
-                }
+                DrawOn(bitmap);
             }
 
             if (settings.HasFlag(MapDrawingSettings.Winds))
             {
-                log.Info("Drawing winds");
                 WindMap.DrawOn(bitmap);
             }
 
             if (settings.HasFlag(MapDrawingSettings.Temperature))
             {
-                log.Info("Drawing temperature");
+
                 TemperatureMap.DrawOn(bitmap);
             }
 
@@ -107,6 +79,48 @@ namespace GlobalMap
             }
 
             return layers[layers.Length - 1].Value;
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Altitudes = altitudes.ToDoubleDimension(Width, Height);
+        }
+
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            altitudes = Altitudes.ToSingleDimension();
+        }
+
+        public void DrawOn(Bitmap bitmap)
+        {
+            log.Info("Drawing altitudes");
+            var layers = AltitudeGenerationSettings.Layers;
+            var layersArray = layers.ToArray();
+
+            for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
+            {
+                var color = GetColor(layersArray, Altitudes[x, y]);
+                bitmap.SetPixel(x, y, color);
+            }
+
+            foreach (var river in Rivers)
+            {
+                foreach (var tile in river.RiverTiles)
+                {
+                    bitmap.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.RiverColor);
+                }
+            }
+
+            foreach (var lake in Lakes)
+            {
+                foreach (var tile in lake.Tiles)
+                {
+                    bitmap.SetPixel(tile.Item1, tile.Item2, AltitudeGenerationSettings.LakeColor);
+                }
+            }
         }
     }
 

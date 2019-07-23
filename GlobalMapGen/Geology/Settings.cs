@@ -1,36 +1,23 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace GlobalMap
 {
+    [KnownType(typeof(DefaultEarthAltitude))]
+    [KnownType(typeof(DryLandAltitude))]
+    [DataContract]
     public abstract class AltitudeGenerationSettings
     {
-        public readonly Color[] DebugColors = {
-            Color.FromArgb(byte.MaxValue,0,0,0),
-            Color.FromArgb(byte.MaxValue,128,0,0),
-            Color.FromArgb(byte.MaxValue,0,128,0),
-            Color.FromArgb(byte.MaxValue,0,0,128),
-            Color.FromArgb(byte.MaxValue,128,128,0),
-            Color.FromArgb(byte.MaxValue,128,0,128),
-            Color.FromArgb(byte.MaxValue,0,128,128),
-            Color.FromArgb(byte.MaxValue,128,128,128),
-            Color.FromArgb(byte.MaxValue,255,0,0),
-            Color.FromArgb(byte.MaxValue,0,255,0),
-            Color.FromArgb(byte.MaxValue,0,0,255),
-            Color.FromArgb(byte.MaxValue,255,255,0),
-            Color.FromArgb(byte.MaxValue,255,0,255),
-            Color.FromArgb(byte.MaxValue,0,255,255),
-            Color.FromArgb(byte.MaxValue,255,255,255),
-        };
-
-        public abstract Dictionary<(double level, string name), Color> Layers { get;}
+        [DataMember(EmitDefaultValue = false)] public abstract Dictionary<(double level, string name), Color> Layers { get; set;}
         public Color RiverColor => Color.FromArgb(byte.MaxValue,10,150,255);
         public Color LakeColor => Color.FromArgb(byte.MaxValue,0,200,191);
-        public abstract double SeaAltitude { get; }
-        public abstract double LakeRelativeSquareThreshold { get; }
-        public abstract double HeightWindBlockingThreshold { get; }
+        [DataMember(EmitDefaultValue = false)] public abstract double SeaAltitude { get; set; }
+        [DataMember(EmitDefaultValue = false)] public abstract double LakeRelativeSquareThreshold { get; set; }
+        [DataMember(EmitDefaultValue = false)] public abstract double HeightWindBlockingThreshold { get; set; }
     }
 
+    [DataContract]
     public class DefaultEarthAltitude : AltitudeGenerationSettings
     {
         public DefaultEarthAltitude()
@@ -47,13 +34,17 @@ namespace GlobalMap
                 {(0.925, "Горы"), Color.FromArgb(byte.MaxValue,188, 180, 120)},
                 {(0.9875, "Вершина мира"), Color.FromArgb(byte.MaxValue,byte.MaxValue, byte.MaxValue, byte.MaxValue)},
             };
+            SeaAltitude = 0.455;
+            LakeRelativeSquareThreshold = 0.01;
+            HeightWindBlockingThreshold = 0.815;
         }
-        public override Dictionary<(double level, string name), Color> Layers { get; }
-        public override double SeaAltitude => 0.455;
-        public override double LakeRelativeSquareThreshold => 0.01;
-        public override double HeightWindBlockingThreshold => 0.815;
+        public override Dictionary<(double level, string name), Color> Layers { get; set; }
+        public override double SeaAltitude { get; set; }
+        public override double LakeRelativeSquareThreshold {get; set;}
+        public override double HeightWindBlockingThreshold { get; set; }
     }
 
+    [DataContract]
     public class DryLandAltitude : AltitudeGenerationSettings
     {
         public DryLandAltitude()
@@ -68,10 +59,13 @@ namespace GlobalMap
                 {(0.9, "Горы"), Color.FromArgb(byte.MaxValue,128, 200, 200)},
                 {(0.995, "Вершина мира"), Color.FromArgb(byte.MaxValue,byte.MaxValue, byte.MaxValue, byte.MaxValue)},
             };
+            SeaAltitude = 0.255;
+            LakeRelativeSquareThreshold = 0.03;
+            HeightWindBlockingThreshold = 0.825;
         }
-        public override Dictionary<(double level, string name), Color> Layers { get; }
-        public override double SeaAltitude => 0.255;
-        public override double LakeRelativeSquareThreshold => 0.03;
-        public override double HeightWindBlockingThreshold => 0.825;
+        public override Dictionary<(double level, string name), Color> Layers { get; set; }
+        public override double SeaAltitude { get; set; }
+        public override double LakeRelativeSquareThreshold {get; set;}
+        public override double HeightWindBlockingThreshold { get; set; }
     }
 }

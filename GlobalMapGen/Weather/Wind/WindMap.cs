@@ -2,34 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using lib;
 using log4net;
 using Settings;
 
 namespace GlobalMap.Weather.Wind
 {
+    [DataContract]
    public class WindMap : IDrawable
     {
-        public Tuple<double, double>[,] Map;
-        public int Width;
-        public int Height;
-        public ICollection<Cyclone> Cyclones;
-        public readonly Color EyeColor = Color.Magenta;
-        public readonly Color ArrowColor = Color.Crimson;
-        public readonly double HeightThresholdForWindCorrection;
+        [IgnoreDataMember] public Tuple<double, double>[,] WindVectorsMap;
+        [DataMember(EmitDefaultValue = false)] private Tuple<double, double>[] windVectorsMap;
 
-        private ILog _log = LogManager.GetLogger(typeof(WindMap));
+        [IgnoreDataMember] public double[,] AtmospherePressureMap;
+        [DataMember(EmitDefaultValue = false)] private double[] atmospherePressureMap;
+        [DataMember(EmitDefaultValue = false)] public int Width;
+        [DataMember(EmitDefaultValue = false)] public int Height;
+        [DataMember(EmitDefaultValue = false)] public ICollection<Cyclone> Cyclones;
+        [DataMember(EmitDefaultValue = false)] public readonly Color EyeColor = Color.Magenta;
+        [DataMember(EmitDefaultValue = false)]  public readonly Color ArrowColor = Color.Crimson;
+        [DataMember(EmitDefaultValue = false)] public readonly double HeightThresholdForWindCorrection;
 
-        public WindMap(ICollection<Cyclone> cyclones, int width, int height, double heightThresholdForWindCorrection)
+        private static ILog log = LogManager.GetLogger(typeof(WindMap));
+
+        public WindMap(ICollection<Cyclone> cyclones, int width, int height, double heightThresholdForWindCorrection, Map map)
         {
             Cyclones = cyclones;
-            Map = new Tuple<double, double>[width, height];
+            WindVectorsMap = new Tuple<double, double>[width, height];
             Width = width;
             Height = height;
             HeightThresholdForWindCorrection = heightThresholdForWindCorrection;
             for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
-                Map[x, y] = cyclones.Select(c => c.GetVecIn(x.MakeTupleWith(y)))
+                WindVectorsMap[x, y] = cyclones.Select(c => c.GetVecIn(x.MakeTupleWith(y)))
                     .Aggregate(0.0.MakeTupleWith(0.0), (acc, succ) => acc.Plus(succ));
             foreach (var cyclone in cyclones)
             {
@@ -38,13 +44,16 @@ namespace GlobalMap.Weather.Wind
                     .Where(p => p.IsInBorders(Width, Height));
                 foreach (var t in eyeOfTheStormTiles)
                 {
-                    Map[t.Item1, t.Item2] = 0.0.MakeTupleWith(0.0);
+                    WindVectorsMap[t.Item1, t.Item2] = 0.0.MakeTupleWith(0.0);
                 }
             }
+            ApplyLandscapeCorrection(map.Altitudes);
+            GeneratePressureMap();
         }
 
-        public void ApplyLandscapeCorrection(double[,] altitudes)
+        private void ApplyLandscapeCorrection(double[,] altitudes)
         {
+            log.Info("Start landscape windmap correction");
             var width = altitudes.GetLength(0);
             var height = altitudes.GetLength(1);
             if (width != Width || height != Height)
@@ -53,8 +62,8 @@ namespace GlobalMap.Weather.Wind
             var circle = MathHelper.GetCirclePoints(CycloneMetaSettings.LandscapeRepulsionRadius);
             for (int x = 0; x < width; x++)
             {
-                if (x % 10 == 0)
-                    _log.Info($"Windmap landscape correction progress is {x / (double) width}");
+                if (x % 100 == 0)
+                    log.Info($"Windmap landscape correction progress is {x / (double) width}");
 
                 for (int y = 0; y < height; y++)
                 {
@@ -68,25 +77,25 @@ namespace GlobalMap.Weather.Wind
                             .Where(p => p.IsInBorders(width, height))
                             .ForAll(p =>
                             {
-                                var wind = Map[p.Item1, p.Item2];
+                                var wind = WindVectorsMap[p.Item1, p.Item2];
                                 var fromMountainToWind = currentPoint.Minus(p);
                                 var windAngle = wind.GetAngle().AngleTo0_2Pi();
                                 var mToWAngle = fromMountainToWind.GetAngle().AngleTo0_2Pi();
-                                Map[p.Item1, p.Item2] = Map[p.Item1, p.Item2]
+                                WindVectorsMap[p.Item1, p.Item2] = WindVectorsMap[p.Item1, p.Item2]
                                     .RotateAroundZero(CycloneMetaSettings.HeightPointRepulsionAngle *
                                                       GetRotationSign(windAngle, mToWAngle) *
                                                       (CycloneMetaSettings.LandscapeRepulsionRadius -
                                                        MathHelper.GetEuclideanRange(currentPoint, p)) /
                                                       CycloneMetaSettings.LandscapeRepulsionRadius);
                             });
-                        Map[x, y] = Map[x, y]
+                        WindVectorsMap[x, y] = WindVectorsMap[x, y]
                             .Multiply(CycloneMetaSettings.HeightPointRepulsionPowerDecrease *
                                       Math.Abs(HeightThresholdForWindCorrection - altitudes[x, y]) /
                                       (1 - HeightThresholdForWindCorrection));
                     }
                     else
                     {
-                        var endpoint = currentPoint.Plus(Map[currentPoint.Item1, currentPoint.Item2]
+                        var endpoint = currentPoint.Plus(WindVectorsMap[currentPoint.Item1, currentPoint.Item2]
                             .Get1Vec().Multiply(CycloneMetaSettings.LandscapeTailForWindDecrease)
                             .Round());
                         if (!endpoint.IsInBorders(Width, Height))
@@ -95,14 +104,76 @@ namespace GlobalMap.Weather.Wind
                         var mul = seg.Count(p => altitudes[p.Item1, p.Item2] >= HeightThresholdForWindCorrection) /
                                   (double) seg.Count;
                         if (mul > 0)
-                            Map[x, y] = Map[x, y].Multiply((1 - mul) / 2.0);
+                            WindVectorsMap[x, y] = WindVectorsMap[x, y].Multiply((1 - mul) / 2.0);
                     }
                 }
             }
+            log.Info("End landscape windmap correction");
+        }
+
+         private void GeneratePressureMap()
+        {
+            log.Info("Generating atmospheric pressure map");
+            var map = new double[Width, Height];
+            for(int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
+            {
+                var angle = WindVectorsMap[x, y].GetAngle();
+                var abs = WindVectorsMap[x, y].GetAbs();
+                int xDestination = -1;
+                int yDestination = -1;
+                if (angle >= -Math.PI/8 && angle < Math.PI / 8)
+                {
+                    xDestination = x + 1;
+                    yDestination = y;
+                }
+                if (angle >= Math.PI/8 && angle < 3*Math.PI / 8)
+                {
+                    xDestination = x + 1;
+                    yDestination = y + 1;
+                }
+                if (angle >= 3*Math.PI/8 && angle < 5*Math.PI / 8)
+                {
+                    xDestination = x;
+                    yDestination = y+1;
+                }
+                if (angle >= 5*Math.PI/8 && angle < 7*Math.PI / 8)
+                {
+                    xDestination = x - 1;
+                    yDestination = y + 1;
+                }
+                if (Math.Abs(angle) >= 7*Math.PI/8)
+                {
+                    xDestination = x - 1;
+                    yDestination = y;
+                }
+                if (angle >= -7*Math.PI/8 && angle < -5*Math.PI / 8)
+                {
+                    xDestination = x - 1;
+                    yDestination = y - 1;
+                }
+                if (angle >= -5*Math.PI/8 && angle < -3*Math.PI / 8)
+                {
+                    xDestination = x;
+                    yDestination = y - 1;
+                }
+                if (angle >= -3*Math.PI/8 && angle < -Math.PI / 8)
+                {
+                    xDestination = x + 1;
+                    yDestination = y - 1;
+                }
+
+                if (xDestination >= 0 && xDestination < Width && yDestination > 0 && yDestination < Height)
+                    map[xDestination, yDestination] += abs;
+            }
+
+            AtmospherePressureMap = map;
+            log.Info("Atmospheric pressure map has been generated");
         }
 
         public void DrawOn(Bitmap bitmap)
         {
+            log.Info("Drawing winds");
             foreach (var cyclone in Cyclones)
             {
                 var eye = new Circle(cyclone.Power.Round(), EyeColor);
@@ -112,7 +183,7 @@ namespace GlobalMap.Weather.Wind
             for (int x = 0; x < Width; x += 12)
             for (int y = 0; y < Height; y += 12)
             {
-                var p = Map[x, y];
+                var p = WindVectorsMap[x, y];
                 if (p.Equals(0.0.MakeTupleWith(0.0)))
                     continue;
                 var abs = p.GetAbs().Round();
@@ -127,6 +198,20 @@ namespace GlobalMap.Weather.Wind
             if (w > m)
                 return w - m < Math.PI ? -1 : 1;
             return m - w < Math.PI ? 1 : -1;
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            WindVectorsMap = windVectorsMap.ToDoubleDimension(Width, Height);
+            AtmospherePressureMap = atmospherePressureMap.ToDoubleDimension(Width, Height);
+        }
+
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            windVectorsMap = WindVectorsMap.ToSingleDimension();
+            atmospherePressureMap = AtmospherePressureMap.ToSingleDimension();
         }
     }
 }

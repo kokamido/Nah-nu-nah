@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using lib;
 using log4net;
 
 namespace GlobalMap
 {
+    [DataContract]
     public class River
     {
-        public HashSet<Tuple<int, int>> RiverTiles;
-        public Tuple<int, int> Source;
+        [DataMember(EmitDefaultValue = false)] public HashSet<Tuple<int, int>> RiverTiles;
+        [DataMember(EmitDefaultValue = false)] public Tuple<int, int> Source;
 
         public River(HashSet<Tuple<int, int>> tiles, Tuple<int, int> source)
         {

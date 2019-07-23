@@ -18,10 +18,7 @@ namespace GlobalMap.Weather.Wind
                 cyclones.Add(settings.GetNewCyclone(map, cyclones));
             }
 
-            var res = new WindMap(cyclones, map.Width, map.Height, map.AltitudeGenerationSettings.HeightWindBlockingThreshold);
-            log.Info("Start landscape windmap correction");
-            res.ApplyLandscapeCorrection(map.Altitudes);
-            log.Info("End landscape windmap correction");
+            var res = new WindMap(cyclones, map.Width, map.Height, map.AltitudeGenerationSettings.HeightWindBlockingThreshold,map);
             return res;
         }
     }

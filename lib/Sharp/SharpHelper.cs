@@ -50,5 +50,29 @@ namespace lib
             byte b = (byte) (color.B * amount + backColor.B * (1 - amount));
             return Color.FromArgb(r, g, b);
         }
+
+        public static T[] ToSingleDimension<T>(this T[,] arr)
+        {
+            var width = arr.GetLength(0);
+            var height = arr.GetLength(1);
+            var res = new T[width*height];
+            for(int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+            {
+                res[y * width + x] = arr[x,y];
+            }
+            return res;
+        }
+
+        public static T[,] ToDoubleDimension<T>(this T[] arr, int width, int height)
+        {
+            var res = new T[width,height];
+            for(int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+            {
+                res[x,y] = arr[y * width + x];
+            }
+            return res;
+        }
     }
 }

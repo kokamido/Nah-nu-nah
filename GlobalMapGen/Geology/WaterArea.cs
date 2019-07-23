@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using lib;
 using log4net;
-using Settings;
 
 namespace GlobalMap
 {
+    [DataContract]
     public class WaterArea
     {
-        public HashSet<Tuple<int, int>> Tiles;
+        [DataMember(EmitDefaultValue = false)] public HashSet<Tuple<int, int>> Tiles;
 
         public WaterArea(HashSet<Tuple<int, int>> tiles)
         {
@@ -55,7 +56,7 @@ namespace GlobalMap
 
             var a = new Func<HashSet<Tuple<int,int>>,Tuple<int,int>>[] {t => t.FirstOrDefault(), t => t.LastOrDefault()};
             a.AsParallel().ForAll(Iter);
-            
+
             Log.Info($"Lakes has been found, total {lakes.Count} water areas");
             Log.Info($"Seas has been found, total {seas.Count} water areas");
             map.Lakes = lakes.ToList();

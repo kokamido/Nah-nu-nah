@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using lib;
 
 namespace GlobalMap.Weather.Wind
@@ -14,16 +15,17 @@ namespace GlobalMap.Weather.Wind
         public const double CycloneEigenvalueFromPowerMultiplier = 1/20.0;
     }
 
+    [DataContract]
     public class Cyclone
     {
-        public Tuple<int, int> Eye;
-        public double Power;
+        [DataMember(EmitDefaultValue = false)] public Tuple<int, int> Eye;
+        [DataMember(EmitDefaultValue = false)] public double Power;
         public double Range => Power * CycloneMetaSettings.CyclonePowerToRangeMultiplier;
-        public bool IsAntiCyclone;
-        public bool IsCounterClockwise;
+        [DataMember(EmitDefaultValue = false)] public bool IsAntiCyclone;
+        [DataMember(EmitDefaultValue = false)] public bool IsCounterClockwise;
 
-        private static int _ahahaMagicMantiss = 3;
-        private static int _ahahaMagicExponent = 100;
+        [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicMantiss = 3;
+        [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicExponent = 100;
         private static int _ahahaMagicNumber => _ahahaMagicMantiss * _ahahaMagicExponent;
 
         private static double[] tanh = Enumerable.Range(0, _ahahaMagicNumber)
@@ -65,6 +67,13 @@ namespace GlobalMap.Weather.Wind
             var x = p.Item1;
             var y = p.Item2;
             return (power * x + y).MakeTupleWith(-x + power * y);
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            tanh = Enumerable.Range(0, _ahahaMagicNumber)
+                .Select(x => Math.Tanh(_ahahaMagicMantiss - x / (double) _ahahaMagicExponent)).ToArray();
         }
     }
 }

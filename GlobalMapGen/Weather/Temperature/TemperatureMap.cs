@@ -1,30 +1,37 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using lib;
 using log4net;
 
 namespace GlobalMap.Weather.Temperature
 {
+    [KnownType(typeof(DefaultTemperature))]
+    [DataContract]
     public abstract class TemperatureMap : IDrawable
     {
-        public abstract double[,] Map { get; }
-        public abstract double TemperatureDeltaFromZero { get; }
-        public Color ColdColor = Color.Blue;
-        public Color WarmColor = Color.OrangeRed;
+        [IgnoreDataMember] public abstract double[,] Map { get; set; }
+        [DataMember(EmitDefaultValue = false)] private double[] map;
+        [DataMember(EmitDefaultValue = false)] protected abstract int Цidth { get; set; }
+        [DataMember(EmitDefaultValue = false)] protected abstract int Рeight { get; set; }
+        [DataMember(EmitDefaultValue = false)] public abstract double TemperatureDeltaFromZero { get; set; }
+        public Color ColdColor => Color.Blue;
+        public Color WarmColor => Color.OrangeRed;
 
-        protected ILog Log = LogManager.GetLogger(typeof(TemperatureMap));
+        protected static ILog Log = LogManager.GetLogger(typeof(TemperatureMap));
 
         public void DrawOn(Bitmap bitmap)
         {
+            Log.Info("Drawing temperature");
             for (int x = 0; x < bitmap.Width; x++)
             for (int y = 0; y < bitmap.Height; y++)
             {
                 var color = GetColor(bitmap.GetPixel(x, y), Map[x, y]);
                 bitmap.SetPixel(x, y, color);
             }
-
         }
 
         private Color GetColor(Color bitmapPixel, double temperature)
@@ -32,8 +39,21 @@ namespace GlobalMap.Weather.Temperature
             var mul = (temperature / TemperatureDeltaFromZero + 1)/2;
             return WarmColor.Blend(ColdColor,1- mul).Blend(bitmapPixel, 0.6);
         }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Map = map.ToDoubleDimension(Цidth, Рeight);
+        }
+
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            map = Map.ToSingleDimension();
+        }
     }
 
+    [DataContract]
     public sealed class DefaultTemperature : TemperatureMap
     {
         private const int HeatPointOnEquatorCount = 7;
@@ -41,14 +61,18 @@ namespace GlobalMap.Weather.Temperature
         private const int ColdPointOnEachPoleCount = 4;
         private const double RelativeDeltaFromPoleLineForColdPointSpawn = 0.05;
 
-        public override double TemperatureDeltaFromZero => 50;
-        public override double[,] Map { get; }
+        public override double TemperatureDeltaFromZero { get; set; }
+        public override double[,] Map { get; set; }
+        protected override int Цidth { get; set; }
+        protected override int Рeight { get; set; }
 
         public DefaultTemperature(Map map)
         {
             Log.Info($"Creating new temperature map with width '{map.Width}' and height '{map.Height}'.");
             Map = new double[map.Width, map.Height];
-
+            Цidth = map.Width;
+            Рeight = map.Height;
+            TemperatureDeltaFromZero = 50;
             var coldPointsNord = Enumerable.Range(0, ColdPointOnEachPoleCount)
                 .Select(x => GenerateColdPoint(map, true));
             var coldPointsSouth = Enumerable.Range(0, ColdPointOnEachPoleCount)
