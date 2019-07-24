@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
+using log4net;
 
 namespace lib
 {
     public static class SharpHelper
     {
+        private static ILog log = LogManager.GetLogger(typeof(SharpHelper));
         public static void ForEach<T>(this T[,] arr, Action<T> action, Action<int, int> coordsCallback = null,
             int width = 0, int height = 0)
         {
@@ -73,6 +77,29 @@ namespace lib
                 res[x,y] = arr[y * width + x];
             }
             return res;
+        }
+
+        public static byte[] Compress(this byte[] data)
+        {
+            log.Info($"Compressing byte array of size {data.Length}");
+            MemoryStream output = new MemoryStream();
+            using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+            {
+                dstream.Write(data, 0, data.Length);
+            }
+            return output.ToArray();
+        }
+
+        public static byte[] Decompress(this byte[] data)
+        {
+            log.Info($"Decompressing byte array. Compressed size is {data.Length}");
+            MemoryStream input = new MemoryStream(data);
+            MemoryStream output = new MemoryStream();
+            using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+            {
+                dstream.CopyTo(output);
+            }
+            return output.ToArray();
         }
     }
 }

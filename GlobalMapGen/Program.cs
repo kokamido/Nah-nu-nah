@@ -16,9 +16,6 @@ namespace GlobalMap
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo(@"log4net.config"));
-            Console.WriteLine(logRepository.Name);
-            Console.WriteLine(logRepository.Configured);
-            Console.WriteLine(log.IsInfoEnabled);
             log.Info("Here we go");
             var map = MapGenerator.GenerateAltitudeMap(1024, 768, new DefaultEarthAltitude());
             map.Rivers.Add(map.GetCompatibleRiver(2));
@@ -34,8 +31,8 @@ namespace GlobalMap
             map.WindMap = WindMapGenerator.Generate(new CoriolisWind(), map);
             map.TemperatureMap =  new DefaultTemperature(map);
 
-            File.WriteAllText("Pics/map.json",map.ToJsonString());
-            map = JsonHelper.ParseJson<Map>(File.ReadAllText("Pics/map.json"));
+            File.WriteAllBytes("Pics/map.json",map.ToJson().Compress());
+            map = JsonHelper.ParseJson<Map>(File.ReadAllBytes("Pics/map.json").Decompress());
             log.Info("drawing");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("Pics/AltAndWind.png");
