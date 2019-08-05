@@ -85,7 +85,7 @@ namespace GlobalMap.Weather.Temperature
 
             Log.Info($"Heat points {heatPoints.PrettyPrint()}");
 
-            Map.ForEach(null, (x, y) => Map[x, y] = GetTemperature(x, y, heatPoints, coldPoints));
+            Map.ForEach((_,x, y) => Map[x, y] = GetTemperature(x, y, heatPoints, coldPoints));
             Log.Info("Temperature map has been created.");
         }
 
