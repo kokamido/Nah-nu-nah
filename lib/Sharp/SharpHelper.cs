@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using log4net;
 
 namespace lib
@@ -27,6 +28,21 @@ namespace lib
             {
                 action?.Invoke(arr[x, y],x,y);
             }
+        }
+
+        public static void ForAll<T>(this T[,] arr, Action<T,int,int> action, int degreeOfParallelism, int width = 0, int height = 0)
+        {
+            width = width == 0 ? arr.GetLength(0) : width;
+            height = height == 0 ? arr.GetLength(1) : height;
+
+            var ys = Enumerable.Range(0, height);
+            Enumerable.Range(0,width).SelectMany(x => ys.Select(y => x.MakeTupleWith(y)))
+                .AsParallel()
+                .WithDegreeOfParallelism(degreeOfParallelism)
+                .ForAll(t =>
+                {
+                    action?.Invoke(arr[t.Item1, t.Item2],t.Item1,t.Item2);
+                });
         }
 
         public static TOut[,] Select<TIn, TOut>(this TIn[,] arr, Func<TIn, TOut> func,

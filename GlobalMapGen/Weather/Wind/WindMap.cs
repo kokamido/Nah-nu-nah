@@ -110,14 +110,25 @@ namespace GlobalMap.Weather.Wind
                     }
                 }
             }
-
             log.Info("End landscape windmap correction");
+            log.Info("Start windmap avg correction");
+            var res = new Tuple<double, double>[Width,Height];
+            WindVectorsMap.ForAll((val, x, y) =>
+                {
+                    var xbuf = x;
+                    var ybuf = y;
+                    var center = xbuf.MakeTupleWith(ybuf);
+                    var pointsToAvg = MathHelper.GetCirclePoints(20).Select(p => p.Plus(center)).Where(p => p.IsInBorders(Width,Height)).ToArray();
+                    res[xbuf, ybuf] = pointsToAvg.Select(p => WindVectorsMap[p.Item1, p.Item2]).Aggregate((acc, curr)=>acc.Plus(curr)).Divide(pointsToAvg.Length);
+                }, SystemSettings.AvaliableThreads/2);
+            WindVectorsMap = res;
+            log.Info("End windmap avg correction");
         }
 
         private void GeneratePressureMap()
         {
             log.Info("Generating atmospheric pressure map");
-            var map = new double[Width, Height];
+            var initMap = new double[Width, Height];
             for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
@@ -174,10 +185,11 @@ namespace GlobalMap.Weather.Wind
                 }
 
                 if (xDestination >= 0 && xDestination < Width && yDestination > 0 && yDestination < Height)
-                    map[xDestination, yDestination] += abs;
+                    initMap[xDestination, yDestination] += abs;
             }
 
-            AtmospherePressureMap = map;
+            AtmospherePressureMap = initMap;
+
             log.Info("Atmospheric pressure map has been generated");
         }
 

@@ -19,7 +19,7 @@ namespace GlobalMap.Weather.Wind
         public override Cyclone GetNewCyclone(Map map, List<Cyclone> previousCyclones)
         {
             var isAntiCyclone = IsAntiCyclone(map);
-            var delta = MathHelper.GetNormalRandomNum() * 3;
+            var delta = MathHelper.GetNormalRandomNum() * 2;
             delta = (delta > 3 ? 3 : delta < -3 ? -3 : delta) / 3;
             var coord = GetNexEye(isAntiCyclone, map, delta, previousCyclones);
             var power = GetPower(map, delta);
@@ -34,7 +34,7 @@ namespace GlobalMap.Weather.Wind
 
         public override int GetCyclonesCount()
         {
-            var res = MathHelper.GetUniformRndInt(15, 20);
+            var res = MathHelper.GetUniformRndInt(10, 15);
             Log.Info($"There will {res} winds in our world!");
             return res;
         }
@@ -64,7 +64,7 @@ namespace GlobalMap.Weather.Wind
         {
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 40.0)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 7.0)
                 res = GenerateNewCoord(isAntiCyclone, map, delta);
             Log.Info($"New wind's eye is located in {res}");
             return res;
