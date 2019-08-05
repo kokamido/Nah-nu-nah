@@ -18,8 +18,8 @@ namespace GlobalMap.Weather.Temperature
         [DataMember(EmitDefaultValue = false)] protected abstract int Цidth { get; set; }
         [DataMember(EmitDefaultValue = false)] protected abstract int Рeight { get; set; }
         [DataMember(EmitDefaultValue = false)] public abstract double TemperatureDeltaFromZero { get; set; }
-        public Color ColdColor => Color.Blue;
-        public Color WarmColor => Color.OrangeRed;
+        public Color ColdColor => Color.Black;
+        public Color WarmColor => Color.White;
 
         protected static ILog Log = LogManager.GetLogger(typeof(TemperatureMap));
 
@@ -56,10 +56,10 @@ namespace GlobalMap.Weather.Temperature
     [DataContract]
     public sealed class DefaultTemperature : TemperatureMap
     {
-        private const int HeatPointOnEquatorCount = 7;
-        private const double RelativeDeltaFromEquatorForHeatPointSpawn = 0.05;
-        private const int ColdPointOnEachPoleCount = 4;
-        private const double RelativeDeltaFromPoleLineForColdPointSpawn = 0.05;
+        private const int HeatPointOnEquatorCount = 36;
+        private const double RelativeDeltaFromEquatorForHeatPointSpawn = 0.02;
+        private const int ColdPointOnEachPoleCount = 36;
+        private const double RelativeDeltaFromPoleLineForColdPointSpawn = 0.1;
 
         public override double TemperatureDeltaFromZero { get; set; }
         public override double[,] Map { get; set; }
@@ -118,13 +118,13 @@ namespace GlobalMap.Weather.Temperature
             var avgRangeToHeatPoint = heatPoints
                                           .Select(p => MathHelper.GetEuclideanRange(p, x.MakeTupleWith(y)))
                                           .OrderBy(t => t)
-                                          .Take(3)
-                                          .Sum() / 3;
+                                          .Take(18)
+                                          .Sum() / 18;
             var avgRangeToColdPoint = coldPoints
                                           .Select(p => MathHelper.GetEuclideanRange(p, x.MakeTupleWith(y)))
                                           .OrderBy(t => t)
-                                          .Take(3)
-                                          .Sum() / 3;
+                                          .Take(18)
+                                          .Sum() / 18;
             var multiplier = avgRangeToColdPoint >= avgRangeToHeatPoint
                 ? -1 + avgRangeToHeatPoint / avgRangeToColdPoint
                 : 1 - avgRangeToColdPoint / avgRangeToHeatPoint;

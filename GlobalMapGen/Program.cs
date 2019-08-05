@@ -32,12 +32,12 @@ namespace GlobalMap
             map.TemperatureMap =  new DefaultTemperature(map);
 
             File.WriteAllBytes("Pics/map.json",map.ToJson().Compress());
-            map = JsonHelper.ParseJson<Map>(File.ReadAllBytes("Pics/map.json").Decompress());
             log.Info("drawing");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("Pics/AltAndWind.png");
             map.RedrawBitmap(MapDrawingSettings.Temperature).Save("Pics/Temp.png");
             map.RedrawBitmap(MapDrawingSettings.Winds).Save("Pics/Wind.png");
+            map.WindMap.DrawPressureMap().Save("Pics/Pressure.png");
             log.Info("drawing complete");
         }
     }

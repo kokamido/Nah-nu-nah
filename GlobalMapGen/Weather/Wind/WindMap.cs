@@ -10,7 +10,7 @@ using Settings;
 namespace GlobalMap.Weather.Wind
 {
     [DataContract]
-   public class WindMap : IDrawable
+    public class WindMap : IDrawable
     {
         [IgnoreDataMember] public Tuple<double, double>[,] WindVectorsMap;
         [DataMember(EmitDefaultValue = false)] private Tuple<double, double>[] windVectorsMap;
@@ -21,12 +21,13 @@ namespace GlobalMap.Weather.Wind
         [DataMember(EmitDefaultValue = false)] public int Height;
         [DataMember(EmitDefaultValue = false)] public ICollection<Cyclone> Cyclones;
         [DataMember(EmitDefaultValue = false)] public readonly Color EyeColor = Color.Magenta;
-        [DataMember(EmitDefaultValue = false)]  public readonly Color ArrowColor = Color.Crimson;
+        [DataMember(EmitDefaultValue = false)] public readonly Color ArrowColor = Color.Crimson;
         [DataMember(EmitDefaultValue = false)] public readonly double HeightThresholdForWindCorrection;
 
         private static ILog log = LogManager.GetLogger(typeof(WindMap));
 
-        public WindMap(ICollection<Cyclone> cyclones, int width, int height, double heightThresholdForWindCorrection, Map map)
+        public WindMap(ICollection<Cyclone> cyclones, int width, int height, double heightThresholdForWindCorrection,
+            Map map)
         {
             Cyclones = cyclones;
             WindVectorsMap = new Tuple<double, double>[width, height];
@@ -47,6 +48,7 @@ namespace GlobalMap.Weather.Wind
                     WindVectorsMap[t.Item1, t.Item2] = 0.0.MakeTupleWith(0.0);
                 }
             }
+
             ApplyLandscapeCorrection(map.Altitudes);
             GeneratePressureMap();
         }
@@ -108,56 +110,64 @@ namespace GlobalMap.Weather.Wind
                     }
                 }
             }
+
             log.Info("End landscape windmap correction");
         }
 
-         private void GeneratePressureMap()
+        private void GeneratePressureMap()
         {
             log.Info("Generating atmospheric pressure map");
             var map = new double[Width, Height];
-            for(int x = 0; x < Width; x++)
+            for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
                 var angle = WindVectorsMap[x, y].GetAngle();
                 var abs = WindVectorsMap[x, y].GetAbs();
                 int xDestination = -1;
                 int yDestination = -1;
-                if (angle >= -Math.PI/8 && angle < Math.PI / 8)
+                if (angle >= -Math.PI / 8 && angle < Math.PI / 8)
                 {
                     xDestination = x + 1;
                     yDestination = y;
                 }
-                if (angle >= Math.PI/8 && angle < 3*Math.PI / 8)
+
+                if (angle >= Math.PI / 8 && angle < 3 * Math.PI / 8)
                 {
                     xDestination = x + 1;
                     yDestination = y + 1;
                 }
-                if (angle >= 3*Math.PI/8 && angle < 5*Math.PI / 8)
+
+                if (angle >= 3 * Math.PI / 8 && angle < 5 * Math.PI / 8)
                 {
                     xDestination = x;
-                    yDestination = y+1;
+                    yDestination = y + 1;
                 }
-                if (angle >= 5*Math.PI/8 && angle < 7*Math.PI / 8)
+
+                if (angle >= 5 * Math.PI / 8 && angle < 7 * Math.PI / 8)
                 {
                     xDestination = x - 1;
                     yDestination = y + 1;
                 }
-                if (Math.Abs(angle) >= 7*Math.PI/8)
+
+                if (Math.Abs(angle) >= 7 * Math.PI / 8)
                 {
                     xDestination = x - 1;
                     yDestination = y;
                 }
-                if (angle >= -7*Math.PI/8 && angle < -5*Math.PI / 8)
+
+                if (angle >= -7 * Math.PI / 8 && angle < -5 * Math.PI / 8)
                 {
                     xDestination = x - 1;
                     yDestination = y - 1;
                 }
-                if (angle >= -5*Math.PI/8 && angle < -3*Math.PI / 8)
+
+                if (angle >= -5 * Math.PI / 8 && angle < -3 * Math.PI / 8)
                 {
                     xDestination = x;
                     yDestination = y - 1;
                 }
-                if (angle >= -3*Math.PI/8 && angle < -Math.PI / 8)
+
+                if (angle >= -3 * Math.PI / 8 && angle < -Math.PI / 8)
                 {
                     xDestination = x + 1;
                     yDestination = y - 1;
@@ -191,6 +201,22 @@ namespace GlobalMap.Weather.Wind
                     continue;
                 new Arrow(abs, abs / 3, ArrowColor).DrawOn(bitmap, x.MakeTupleWith(y), p.GetAngle());
             }
+        }
+
+        public Bitmap DrawPressureMap()
+        {
+            var maxPressure = 0.0;
+            AtmospherePressureMap.ForEach((val,x,y)=> maxPressure = Math.Max(maxPressure,val));
+            var res = new Bitmap(Width,Height);
+            AtmospherePressureMap.ForEach((value, x, y) =>
+            {
+                unchecked
+                {
+                    var brightness = (byte) (255 * value / maxPressure);
+                    res.SetPixel(x,y,Color.FromArgb(brightness,brightness,brightness));
+                }
+            });
+            return res;
         }
 
         private int GetRotationSign(double w, double m)
