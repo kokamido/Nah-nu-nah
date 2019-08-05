@@ -33,8 +33,7 @@ namespace GlobalMap
             var altitudeThreshold = MathHelper.GetQuantile(map.Altitudes, 0.9);
             var possibleRiverSource = new List<Tuple<int, int>>();
             map.Altitudes.ForEach(
-                _ => { },
-                (x, y) =>
+                (_, x, y) =>
                 {
                     if (map.Altitudes[x, y] >= altitudeThreshold)
                         possibleRiverSource.Add(Tuple.Create(x, y));
@@ -79,7 +78,7 @@ namespace GlobalMap
             {
                 var buf = new HashSet<Tuple<int,int>>();
                 foreach (var t in res)
-                    buf.UnionWith(map.Altitudes.GetNeighboursIndexes(t));
+                    buf.UnionWith(map.Altitudes.GetNeighboursIndexesInBorders(t));
                 res.UnionWith(buf);
             }
             Log.Debug($"River tile {tile} has been extended to {string.Join(", ",res)}");

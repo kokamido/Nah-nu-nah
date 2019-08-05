@@ -73,7 +73,7 @@ namespace GlobalMap
                 var buf = new HashSet<Tuple<int, int>>();
                 basin.UnionWith(toProcess);
                 foreach (var t in toProcess)
-                    buf.UnionWith(map.Altitudes.GetNeighboursIndexes(t).Where(map.IsUnderSeaLevel));
+                    buf.UnionWith(map.Altitudes.GetNeighboursIndexesInBorders(t).Where(map.IsUnderSeaLevel));
                 buf.ExceptWith(basin);
                 toProcess = buf;
             }

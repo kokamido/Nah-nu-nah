@@ -10,8 +10,14 @@ namespace lib
     public static class SharpHelper
     {
         private static ILog log = LogManager.GetLogger(typeof(SharpHelper));
-        public static void ForEach<T>(this T[,] arr, Action<T> action, Action<int, int> coordsCallback = null,
-            int width = 0, int height = 0)
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (var item in source)
+                action(item);
+        }
+
+        public static void ForEach<T>(this T[,] arr, Action<T,int,int> action,int width = 0, int height = 0)
         {
             width = width == 0 ? arr.GetLength(0) : width;
             height = height == 0 ? arr.GetLength(1) : height;
@@ -19,8 +25,7 @@ namespace lib
             for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
             {
-                action?.Invoke(arr[x, y]);
-                coordsCallback?.Invoke(x, y);
+                action?.Invoke(arr[x, y],x,y);
             }
         }
 

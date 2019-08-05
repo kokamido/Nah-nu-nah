@@ -6,12 +6,12 @@ namespace lib
 {
     public static class MathHelper
     {
-        private static NormalRandom normalRandom = new NormalRandom(0,1);
+        private static NormalRandom normalRandom = new NormalRandom(0, 1);
         [ThreadStatic] private static Random rnd;
 
         public static int GetUniformRndInt(int left, int right)
         {
-            if(rnd == null)
+            if (rnd == null)
                 rnd = new Random();
             return rnd.Next(left, right);
         }
@@ -136,7 +136,7 @@ namespace lib
         public static IEnumerable<Tuple<int, int>> SortPoints(this IEnumerable<Tuple<int, int>> src) =>
             src.OrderBy(p => p.Item1).ThenBy(p => p.Item2);
 
-        public static double AngleTo0_2Pi(this double angle) => angle >= 0 ? angle : angle + 2*Math.PI;
+        public static double AngleTo0_2Pi(this double angle) => angle >= 0 ? angle : angle + 2 * Math.PI;
         public static int Abs(this int a) => Math.Abs(a);
         public static double Abs(this double a) => Math.Abs(a);
         public static int Min(params int[] ints) => ints.Min();
@@ -146,13 +146,13 @@ namespace lib
         public static int Round(this double d) => (int) Math.Round(d);
         public static Tuple<int, int> MakeTupleWith(this int x, int y) => Tuple.Create(x, y);
         public static Tuple<double, double> MakeTupleWith(this double x, double y) => Tuple.Create(x, y);
-        public static Tuple<double, double> MakeTupleWith(this int x, double y) => Tuple.Create((double)x, y);
-        public static Tuple<double, double> MakeTupleWith(this double x, int y) => Tuple.Create(x, (double)y);
+        public static Tuple<double, double> MakeTupleWith(this int x, double y) => Tuple.Create((double) x, y);
+        public static Tuple<double, double> MakeTupleWith(this double x, int y) => Tuple.Create(x, (double) y);
 
         public static bool IsInBorders(this Tuple<int, int> point, int width, int height)
             => point.Item1 >= 0 && point.Item1 < width && point.Item2 >= 0 && point.Item2 < height;
 
-        public static IEnumerable<Tuple<int, int>> GetNeighbours(this Tuple<int, int> p)
+        public static IEnumerable<Tuple<int, int>> GetNeighboursIndexes(this Tuple<int, int> p)
         {
             for (int i = -1; i < 2; i++)
             for (int j = -1; j < 2; j++)
@@ -160,12 +160,12 @@ namespace lib
                     yield return p.Plus(Tuple.Create(i, j));
         }
 
-        public static HashSet<Tuple<int, int>> GetNeighboursIndexes<T>(this T[,] arr, Tuple<int, int> index,
+        public static HashSet<Tuple<int, int>> GetNeighboursIndexesInBorders<T>(this T[,] arr, Tuple<int, int> index,
             bool disableDiag = false)
         {
             var width = arr.GetLength(0) - 1;
             var height = arr.GetLength(1) - 1;
-            var neighbours = new HashSet<Tuple<T, Tuple<int, int>>>();
+            var neighbours = new HashSet<Tuple<int, int>>();
 
             for (int x = -1; x < 2; x++)
             for (int y = -1; y < 2; y++)
@@ -174,16 +174,16 @@ namespace lib
                     continue;
                 var newX = Math.Min(Math.Max(index.Item1 + x, 0), width);
                 var newY = Math.Min(Math.Max(index.Item2 + y, 0), height);
-                neighbours.Add(Tuple.Create(arr[newX, newY], Tuple.Create(newX, newY)));
+                neighbours.Add(Tuple.Create(newX, newY));
             }
 
-            return new HashSet<Tuple<int, int>>(neighbours.Select(t => t.Item2));
+            return neighbours;
         }
 
         public static Tuple<int, int> GetNeighbourByMinCriteria<T>(this T[,] arr, Tuple<int, int> index,
             IComparer<T> comparer, ICollection<Tuple<int, int>> exceptions = null, bool disableDiag = false)
         {
-            var neighbours = GetNeighboursIndexes(arr, index, disableDiag)
+            var neighbours = GetNeighboursIndexesInBorders(arr, index, disableDiag)
                 .Select(n => Tuple.Create(arr[n.Item1, n.Item2], Tuple.Create(n.Item1, n.Item2)))
                 .ToList();
 
@@ -221,7 +221,7 @@ namespace lib
                     .Select(y => Tuple.Create((int) Math.Round((y - addition) / multiplier), y))
                     .ToHashSet();
             for (int i = 1; i < width; i++)
-                res.UnionWith(res.SelectMany(p => p.GetNeighbours()).ToList());
+                res.UnionWith(res.SelectMany(p => p.GetNeighboursIndexes()).ToList());
             return res.ToList();
         }
 
