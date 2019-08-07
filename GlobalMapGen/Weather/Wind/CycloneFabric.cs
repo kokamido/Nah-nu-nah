@@ -64,7 +64,7 @@ namespace GlobalMap.Weather.Wind
         {
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 7.0)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 7.5)
                 res = GenerateNewCoord(isAntiCyclone, map, delta);
             Log.Info($"New wind's eye is located in {res}");
             return res;
