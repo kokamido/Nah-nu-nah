@@ -15,8 +15,6 @@ namespace GlobalMap.Weather.Wind
         [IgnoreDataMember] public Tuple<double, double>[,] WindVectorsMap;
         [DataMember(EmitDefaultValue = false)] private Tuple<double, double>[] windVectorsMap;
 
-        [IgnoreDataMember] public double[,] AtmospherePressureMap;
-        [DataMember(EmitDefaultValue = false)] private double[] atmospherePressureMap;
         [DataMember(EmitDefaultValue = false)] public int Width;
         [DataMember(EmitDefaultValue = false)] public int Height;
         [DataMember(EmitDefaultValue = false)] public ICollection<Cyclone> Cyclones;
@@ -50,7 +48,6 @@ namespace GlobalMap.Weather.Wind
             }
 
             ApplyLandscapeCorrection(map.Altitudes);
-            GeneratePressureMap();
         }
 
         private void ApplyLandscapeCorrection(double[,] altitudes)
@@ -125,74 +122,6 @@ namespace GlobalMap.Weather.Wind
             log.Info("End windmap avg correction");
         }
 
-        private void GeneratePressureMap()
-        {
-            log.Info("Generating atmospheric pressure map");
-            var initMap = new double[Width, Height];
-            for (int x = 0; x < Width; x++)
-            for (int y = 0; y < Height; y++)
-            {
-                var angle = WindVectorsMap[x, y].GetAngle();
-                var abs = WindVectorsMap[x, y].GetAbs();
-                int xDestination = -1;
-                int yDestination = -1;
-                if (angle >= -Math.PI / 8 && angle < Math.PI / 8)
-                {
-                    xDestination = x + 1;
-                    yDestination = y;
-                }
-
-                if (angle >= Math.PI / 8 && angle < 3 * Math.PI / 8)
-                {
-                    xDestination = x + 1;
-                    yDestination = y + 1;
-                }
-
-                if (angle >= 3 * Math.PI / 8 && angle < 5 * Math.PI / 8)
-                {
-                    xDestination = x;
-                    yDestination = y + 1;
-                }
-
-                if (angle >= 5 * Math.PI / 8 && angle < 7 * Math.PI / 8)
-                {
-                    xDestination = x - 1;
-                    yDestination = y + 1;
-                }
-
-                if (Math.Abs(angle) >= 7 * Math.PI / 8)
-                {
-                    xDestination = x - 1;
-                    yDestination = y;
-                }
-
-                if (angle >= -7 * Math.PI / 8 && angle < -5 * Math.PI / 8)
-                {
-                    xDestination = x - 1;
-                    yDestination = y - 1;
-                }
-
-                if (angle >= -5 * Math.PI / 8 && angle < -3 * Math.PI / 8)
-                {
-                    xDestination = x;
-                    yDestination = y - 1;
-                }
-
-                if (angle >= -3 * Math.PI / 8 && angle < -Math.PI / 8)
-                {
-                    xDestination = x + 1;
-                    yDestination = y - 1;
-                }
-
-                if (xDestination >= 0 && xDestination < Width && yDestination > 0 && yDestination < Height)
-                    initMap[xDestination, yDestination] += abs;
-            }
-
-            AtmospherePressureMap = initMap;
-
-            log.Info("Atmospheric pressure map has been generated");
-        }
-
         public void DrawOn(Bitmap bitmap)
         {
             log.Info("Drawing winds");
@@ -215,22 +144,6 @@ namespace GlobalMap.Weather.Wind
             }
         }
 
-        public Bitmap DrawPressureMap()
-        {
-            var maxPressure = 0.0;
-            AtmospherePressureMap.ForEach((val,x,y)=> maxPressure = Math.Max(maxPressure,val));
-            var res = new Bitmap(Width,Height);
-            AtmospherePressureMap.ForEach((value, x, y) =>
-            {
-                unchecked
-                {
-                    var brightness = (byte) (255 * value / maxPressure);
-                    res.SetPixel(x,y,Color.FromArgb(brightness,brightness,brightness));
-                }
-            });
-            return res;
-        }
-
         private int GetRotationSign(double w, double m)
         {
             if (w > m)
@@ -242,14 +155,12 @@ namespace GlobalMap.Weather.Wind
         private void OnDeserialized(StreamingContext context)
         {
             WindVectorsMap = windVectorsMap.ToDoubleDimension(Width, Height);
-            AtmospherePressureMap = atmospherePressureMap.ToDoubleDimension(Width, Height);
         }
 
         [OnSerializing]
         private void OnSerializing(StreamingContext context)
         {
             windVectorsMap = WindVectorsMap.ToSingleDimension();
-            atmospherePressureMap = AtmospherePressureMap.ToSingleDimension();
         }
     }
 }

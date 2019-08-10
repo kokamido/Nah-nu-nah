@@ -37,6 +37,12 @@ namespace lib
         public static Tuple<int, int> Plus(this Tuple<int, int> left, Tuple<int, int> right)
             => Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
 
+        public static Tuple<double, double> Plus(this Tuple<int, int> left, Tuple<double, double> right)
+            => Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
+
+        public static Tuple<double, double> Plus(this Tuple<double, double> left, Tuple<int, int> right)
+            => Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
+
         public static Tuple<double, double> Plus(this Tuple<double, double> left, Tuple<double, double> right)
             => Tuple.Create(left.Item1 + right.Item1, left.Item2 + right.Item2);
 
@@ -151,6 +157,14 @@ namespace lib
 
         public static bool IsInBorders(this Tuple<int, int> point, int width, int height)
             => point.Item1 >= 0 && point.Item1 < width && point.Item2 >= 0 && point.Item2 < height;
+
+        public static bool IsInBorders(this Tuple<double, double> point, int width, int height)
+            => point.Item1 >= 0 && point.Item1 < width && point.Item2 >= 0 && point.Item2 < height;
+
+        public static Tuple<int, int> ToBorders(this Tuple<double, double> point, int width, int height)
+            => point.Item1.ToBorders(0, width).MakeTupleWith(point.Item2.ToBorders(0, height));
+
+        public static int ToBorders(this double val, int min, int max) => (int)Math.Min(max, Math.Max(min, val));
 
         public static IEnumerable<Tuple<int, int>> GetNeighboursIndexes(this Tuple<int, int> p)
         {

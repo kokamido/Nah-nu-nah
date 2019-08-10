@@ -36,7 +36,6 @@ namespace GlobalMap
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("Pics/AltAndWind.png");
             map.RedrawBitmap(MapDrawingSettings.Temperature).Save("Pics/Temp.png");
             map.RedrawBitmap(MapDrawingSettings.Winds).Save("Pics/Wind.png");
-            map.WindMap.DrawPressureMap().Save("Pics/Pressure.png");
             log.Info("drawing complete");
         }
     }

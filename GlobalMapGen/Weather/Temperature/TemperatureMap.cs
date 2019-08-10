@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using GlobalMap.Weather.Wind;
 using lib;
 using log4net;
+using Settings;
 
 namespace GlobalMap.Weather.Temperature
 {
@@ -15,10 +15,12 @@ namespace GlobalMap.Weather.Temperature
     {
         [IgnoreDataMember] public abstract double[,] Map { get; set; }
         [DataMember(EmitDefaultValue = false)] private double[] map;
-        [DataMember(EmitDefaultValue = false)] protected abstract int Цidth { get; set; }
-        [DataMember(EmitDefaultValue = false)] protected abstract int Рeight { get; set; }
+        [DataMember(EmitDefaultValue = false)] protected abstract int Width { get; set; }
+        [DataMember(EmitDefaultValue = false)] protected abstract int Height { get; set; }
         [DataMember(EmitDefaultValue = false)] public abstract double TemperatureDeltaFromZero { get; set; }
-        public Color ColdColor => Color.Black;
+        [DataMember(EmitDefaultValue = false)] public abstract double WindAbsConvectionMultiplier { get; set; }
+        public Color ColdColor => Color.Blue;
+        public Color MidColor => Color.Red;
         public Color WarmColor => Color.White;
 
         protected static ILog Log = LogManager.GetLogger(typeof(TemperatureMap));
@@ -36,14 +38,18 @@ namespace GlobalMap.Weather.Temperature
 
         private Color GetColor(Color bitmapPixel, double temperature)
         {
-            var mul = (temperature / TemperatureDeltaFromZero + 1)/2;
-            return WarmColor.Blend(ColdColor,1- mul).Blend(bitmapPixel, 0.6);
+            if (Math.Abs(temperature) > TemperatureDeltaFromZero)
+                Log.Info("sas");
+            var mul = (temperature / TemperatureDeltaFromZero + 1) / 2;
+            return mul >= 0.5
+                ? WarmColor.Blend(MidColor, (mul - 0.5) * 2).Blend(bitmapPixel, 0.85)
+                : MidColor.Blend(ColdColor, mul * 2).Blend(bitmapPixel, 0.85);
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Map = map.ToDoubleDimension(Цidth, Рeight);
+            Map = map.ToDoubleDimension(Width, Height);
         }
 
         [OnSerializing]
@@ -56,79 +62,85 @@ namespace GlobalMap.Weather.Temperature
     [DataContract]
     public sealed class DefaultTemperature : TemperatureMap
     {
-        private const int HeatPointOnEquatorCount = 36;
-        private const double RelativeDeltaFromEquatorForHeatPointSpawn = 0.02;
-        private const int ColdPointOnEachPoleCount = 36;
-        private const double RelativeDeltaFromPoleLineForColdPointSpawn = 0.1;
-
         public override double TemperatureDeltaFromZero { get; set; }
+        public override double WindAbsConvectionMultiplier { get; set; }
         public override double[,] Map { get; set; }
-        protected override int Цidth { get; set; }
-        protected override int Рeight { get; set; }
+        protected override int Width { get; set; }
+        protected override int Height { get; set; }
 
         public DefaultTemperature(Map map)
         {
             Log.Info($"Creating new temperature map with width '{map.Width}' and height '{map.Height}'.");
             Map = new double[map.Width, map.Height];
-            Цidth = map.Width;
-            Рeight = map.Height;
+            Width = map.Width;
+            Height = map.Height;
             TemperatureDeltaFromZero = 50;
-            var coldPointsNord = Enumerable.Range(0, ColdPointOnEachPoleCount)
-                .Select(x => GenerateColdPoint(map, true));
-            var coldPointsSouth = Enumerable.Range(0, ColdPointOnEachPoleCount)
-                .Select(x => GenerateColdPoint(map, false));
-            var coldPoints = coldPointsNord.Concat(coldPointsSouth).ToList();
-            Log.Info($"Cold points {coldPoints.PrettyPrint()}");
-            var heatPoints = Enumerable.Range(0, HeatPointOnEquatorCount)
-                .Select(x => GenerateHeatPoint(map))
-                .ToList();
+            WindAbsConvectionMultiplier = 10;
 
-            Log.Info($"Heat points {heatPoints.PrettyPrint()}");
-
-            Map.ForEach((_,x, y) => Map[x, y] = GetTemperature(x, y, heatPoints, coldPoints));
+            Log.Info("Generating temperature map");
+            Map.ForEach((_, x, y) => Map[x, y] = GetTemperature(x, y));
+            CorrectTemperatureByWind(map.WindMap);
             Log.Info("Temperature map has been created.");
         }
 
-        private Tuple<int, int> GenerateHeatPoint(Map map)
+        private void CorrectTemperatureByWind(WindMap map)
         {
-            var width = MathHelper.GetUniformRndInt(0,map.Width);
-            var height = MathHelper.GetUniformRndInt(
-                (map.Height * (0.5 - RelativeDeltaFromEquatorForHeatPointSpawn)).Round(),
-                (map.Height * (0.5 + RelativeDeltaFromEquatorForHeatPointSpawn)).Round());
-            return width.MakeTupleWith(height);
+            Log.Info("Start correcting temperature map by wind");
+            var res = new double[Width, Height];
+            Map.ForEach((val, x, y) => res[x, y] = val);
+            map.WindVectorsMap.ForEachWithShuffle((val, x, y) =>
+            {
+                if (x % 15 != 0 || y % 15 != 0)
+                    return;
+                var start = x.MakeTupleWith(y);
+                var end = x.MakeTupleWith(y)
+                    .Plus(map.WindVectorsMap[x, y].Multiply(WindAbsConvectionMultiplier))
+                    .ToBorders(Width - 1, Height - 1);
+                MathHelper.GetLineSegment(start, end).ForEach(p =>
+                {
+                    var airBatch = MathHelper.GetCirclePoints((int) Math.Min(map.WindVectorsMap[x, y].GetAbs(), 30));
+                    airBatch.ForEach(batch =>
+                    {
+                        var p1 = p.Plus(batch);
+                        var x1 = x + batch.Item1;
+                        var y1 = x + batch.Item2;
+                        if (!p1.Equals(start) && p1.IsInBorders(Width, Height) &&
+                            x1.MakeTupleWith(y1).IsInBorders(Width, Height))
+                        {
+                            var delta = res[x1, y1] - res[p1.Item1, p1.Item2];
+                            res[x1, y1] -= delta / 4;
+                            res[p1.Item1, p1.Item2] += delta / 4;
+                        }
+                    });
+                });
+            });
+            Map = res;
+            Log.Info("First stage of correcting temperature map by wind has been finished");
+            Log.Info("Start second stage of correcting temperature map by wind");
+            res = new double[Width, Height];
+            Map.ForAll((val, x, y) =>
+                {
+                    var xbuf = x;
+                    var ybuf = y;
+                    var center = xbuf.MakeTupleWith(ybuf);
+                    var pointsToAvg = MathHelper.GetCirclePoints(20).Select(p => p.Plus(center))
+                        .Where(p => p.IsInBorders(Width, Height)).ToArray();
+                    res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
+                }, SystemSettings.AvaliableThreads / 2);
+            Log.Info("Second stage of correcting temperature map by wind has been finished");
+            Map = res;
+            Log.Info("Start third stage of correcting temperature map by wind");
+            Map = Map.Select((t, x, y) =>
+            {
+                var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
+                return t * (1 - cock) + GetTemperature(x, y) * cock;
+            });
+            Log.Info("Third stage of correcting temperature map by wind has been finished");
         }
 
-        private Tuple<int, int> GenerateColdPoint(Map map, bool isNordPole)
+        private double GetTemperature(int x, int y)
         {
-            var lowerBound = isNordPole
-                ? 0
-                : (map.Height * (1 - RelativeDeltaFromPoleLineForColdPointSpawn)).Round();
-
-            var upperBound = isNordPole
-                ? (map.Height * RelativeDeltaFromPoleLineForColdPointSpawn).Round()
-                : map.Height;
-            var width =  MathHelper.GetUniformRndInt(0,map.Width);
-            var height = MathHelper.GetUniformRndInt(lowerBound, upperBound);
-            return width.MakeTupleWith(height);
-        }
-
-        private double GetTemperature(int x, int y, IEnumerable<Tuple<int, int>> heatPoints,
-            IEnumerable<Tuple<int, int>> coldPoints)
-        {
-            var avgRangeToHeatPoint = heatPoints
-                                          .Select(p => MathHelper.GetEuclideanRange(p, x.MakeTupleWith(y)))
-                                          .OrderBy(t => t)
-                                          .Take(18)
-                                          .Sum() / 18;
-            var avgRangeToColdPoint = coldPoints
-                                          .Select(p => MathHelper.GetEuclideanRange(p, x.MakeTupleWith(y)))
-                                          .OrderBy(t => t)
-                                          .Take(18)
-                                          .Sum() / 18;
-            var multiplier = avgRangeToColdPoint >= avgRangeToHeatPoint
-                ? -1 + avgRangeToHeatPoint / avgRangeToColdPoint
-                : 1 - avgRangeToColdPoint / avgRangeToHeatPoint;
-            return TemperatureDeltaFromZero * multiplier;
+            return (Math.Pow(1-Math.Abs(y / (Height / 2.0) - 1), 1.5)-0.5) * 2 * TemperatureDeltaFromZero;
         }
     }
 }

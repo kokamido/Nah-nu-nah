@@ -9,7 +9,7 @@ namespace GlobalMap.Weather.Wind
     public abstract class CycloneFabric
     {
         public abstract Cyclone GetNewCyclone(Map map, List<Cyclone> previousCyclones);
-        public abstract int GetCyclonesCount();
+        public abstract int GetCyclonesCount(Map map);
     }
 
     public class CoriolisWind : CycloneFabric
@@ -32,9 +32,9 @@ namespace GlobalMap.Weather.Wind
             };
         }
 
-        public override int GetCyclonesCount()
+        public override int GetCyclonesCount(Map map)
         {
-            var res = MathHelper.GetUniformRndInt(10, 15);
+            var res = MathHelper.GetUniformRndInt((map.Width/150.0).Round(), (map.Width/85.0).Round());
             Log.Info($"There will {res} winds in our world!");
             return res;
         }
@@ -64,7 +64,7 @@ namespace GlobalMap.Weather.Wind
         {
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 7.5)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 8.0)
                 res = GenerateNewCoord(isAntiCyclone, map, delta);
             Log.Info($"New wind's eye is located in {res}");
             return res;

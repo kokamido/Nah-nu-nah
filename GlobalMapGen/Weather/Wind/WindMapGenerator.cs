@@ -12,7 +12,7 @@ namespace GlobalMap.Weather.Wind
         public static WindMap Generate(CycloneFabric settings, Map map)
         {
             var cyclones = new List<Cyclone>();
-            var cycCount = settings.GetCyclonesCount();
+            var cycCount = settings.GetCyclonesCount(map);
             for (int i = 0; i < cycCount; i++)
             {
                 cyclones.Add(settings.GetNewCyclone(map, cyclones));

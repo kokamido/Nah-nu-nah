@@ -30,6 +30,20 @@ namespace lib
             }
         }
 
+        public static void ForEachWithShuffle<T>(this T[,] arr, Action<T,int,int> action,int width = 0, int height = 0)
+        {
+            width = width == 0 ? arr.GetLength(0) : width;
+            height = height == 0 ? arr.GetLength(1) : height;
+            var rnd = new Random();
+            var ys = Enumerable.Range(0, height);
+            Enumerable.Range(0,width).SelectMany(x => ys.Select(y => x.MakeTupleWith(y)))
+                .OrderBy(x=>rnd.Next())
+                .ForEach(t =>
+                {
+                    action?.Invoke(arr[t.Item1, t.Item2],t.Item1,t.Item2);
+                });
+        }
+
         public static void ForAll<T>(this T[,] arr, Action<T,int,int> action, int degreeOfParallelism, int width = 0, int height = 0)
         {
             width = width == 0 ? arr.GetLength(0) : width;
@@ -45,8 +59,7 @@ namespace lib
                 });
         }
 
-        public static TOut[,] Select<TIn, TOut>(this TIn[,] arr, Func<TIn, TOut> func,
-            Action<int, int> coordsCallback = null, int width = 0, int height = 0)
+        public static TOut[,] Select<TIn, TOut>(this TIn[,] arr, Func<TIn, int, int, TOut> func, int width = 0, int height = 0)
         {
             width = width == 0 ? arr.GetLength(0) : width;
             height = height == 0 ? arr.GetLength(1) : height;
@@ -56,10 +69,8 @@ namespace lib
             for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
             {
-                res[x, y] = func(arr[x, y]);
-                coordsCallback?.Invoke(x, y);
+                res[x, y] = func(arr[x, y],x,y);
             }
-
             return res;
         }
 
