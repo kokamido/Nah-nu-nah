@@ -103,7 +103,7 @@ namespace GlobalMap.Weather.Temperature
                     {
                         var p1 = p.Plus(batch);
                         var x1 = x + batch.Item1;
-                        var y1 = x + batch.Item2;
+                        var y1 = y + batch.Item2;
                         if (!p1.Equals(start) && p1.IsInBorders(Width, Height) &&
                             x1.MakeTupleWith(y1).IsInBorders(Width, Height))
                         {
