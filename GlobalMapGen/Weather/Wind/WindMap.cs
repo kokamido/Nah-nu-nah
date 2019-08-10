@@ -131,13 +131,13 @@ namespace GlobalMap.Weather.Wind
                 eye.DrawOn(bitmap, cyclone.Eye, 0);
             }
 
-            for (int x = 0; x < Width; x += 6)
-            for (int y = 0; y < Height; y += 6)
+            for (int x = 0; x < Width; x += 7)
+            for (int y = 0; y < Height; y += 7)
             {
                 var p = WindVectorsMap[x, y];
                 if (p.Equals(0.0.MakeTupleWith(0.0)))
                     continue;
-                var abs = (p.GetAbs()/1.5).Round();
+                var abs = (p.GetAbs()/1.25).Round();
                 if (abs == 0)
                     continue;
                 new Arrow(abs, abs / 3, ArrowColor).DrawOn(bitmap, x.MakeTupleWith(y), p.GetAngle());

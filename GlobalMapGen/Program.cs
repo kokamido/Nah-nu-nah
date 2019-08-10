@@ -30,7 +30,7 @@ namespace GlobalMap
             map.WindMap = WindMapGenerator.Generate(new CoriolisWind(), map);
             map.TemperatureMap =  new DefaultTemperature(map);
 
-            File.WriteAllBytes("Pics/map.json",map.ToJson().Compress());
+            File.WriteAllBytes("Pics/map.json",map.ToJson());
             log.Info("drawing");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapDrawingSettings.Altitudes | MapDrawingSettings.Winds).Save("Pics/AltAndWind.png");
