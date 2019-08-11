@@ -84,12 +84,13 @@ namespace GlobalMap.Weather.Temperature
 
             Log.Info("Generating temperature map");
             Map.ForEach((_, x, y) => Map[x, y] = GetTemperature(x, y));
-            CorrectTemperatureByWind(map.WindMap);
+            CorrectTemperatureByWind(map);
             Log.Info("Temperature map has been created.");
         }
 
-        private void CorrectTemperatureByWind(WindMap map)
+        private void CorrectTemperatureByWind(Map mapp)
         {
+            var map = mapp.WindMap;
             Log.Info("Start correcting temperature map by wind");
             var res = new double[Width, Height];
             Map.ForEach((val, x, y) => res[x, y] = val);
@@ -138,7 +139,11 @@ namespace GlobalMap.Weather.Temperature
             Map = Map.Select((t, x, y) =>
             {
                 var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
-                return t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
+                var dick = t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
+                var penis = mapp.Altitudes[x, y] > 0.75
+                    ? (0.75 + Math.Abs(1 - mapp.Altitudes[x, y])) * dick
+                    : dick;
+                return penis;
             });
             Log.Info("Third stage of correcting temperature map has been finished");
         }

@@ -44,7 +44,12 @@ namespace GlobalMap.Weather.Mousture
 
         private double[,] GetInitialMoisture(Map map)
         {
-            return null;
+            return map.TemperatureMap.Map.Select((val, x, y) =>
+            {
+                if (!map.IsUnderSeaLevel(x.MakeTupleWith(y)) || val <= 0)
+                    return 0.0;
+                return val * 10;
+            });
         }
 
         protected override Color GetColor(Color bitmapPixel, int x, int y)
