@@ -31,13 +31,14 @@ namespace GlobalMap
             map.TemperatureMap =  new DefaultTemperature(map);
 
             File.WriteAllBytes("Pics/map.json",map.ToJson());
+            File.WriteAllBytes("Pics/TempMap.json",map.TemperatureMap.ToJson());
             log.Info("drawing");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Winds).Save("Pics/AltAndWind.png");
-            map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Moisture).Save("Pics/AltAndMoisture.png");
+            //map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Moisture).Save("Pics/AltAndMoisture.png");
             map.RedrawBitmap(MapLayer.Temperature).Save("Pics/Temp.png");
             map.RedrawBitmap(MapLayer.Winds).Save("Pics/Wind.png");
-            map.RedrawBitmap(MapLayer.Moisture).Save("Pics/Moisture.png");
+            //map.RedrawBitmap(MapLayer.Moisture).Save("Pics/Moisture.png");
             log.Info("drawing complete");
         }
     }

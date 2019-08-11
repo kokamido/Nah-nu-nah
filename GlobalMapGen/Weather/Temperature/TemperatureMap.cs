@@ -138,7 +138,7 @@ namespace GlobalMap.Weather.Temperature
                 var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
                 return t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
             });
-            Log.Info("Third stage of correcting temperature map by wind has been finished");
+            Log.Info("Third stage of correcting temperature map has been finished");
         }
 
         private double GetTemperature(int x, int y)

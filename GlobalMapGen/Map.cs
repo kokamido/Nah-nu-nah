@@ -86,7 +86,7 @@ namespace GlobalMap
                 TemperatureMap.DrawOn(bitmap);
             }
 
-            if (settings.HasFlag(MapLayer.Temperature))
+            if (settings.HasFlag(MapLayer.Moisture))
             {
 
                 MoistureMap.DrawOn(bitmap);
