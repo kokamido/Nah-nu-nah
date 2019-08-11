@@ -39,7 +39,7 @@ namespace GlobalMap.Weather.Temperature
 
         protected Color GetColor(Color bitmapPixel, double temperature)
         {
-            if (Math.Abs(temperature) > TemperatureDeltaFromZero)
+            if (Math.Abs(temperature-TemperatureShift) > TemperatureDeltaFromZero)
                 Log.Info("sas");
             var mul = ((temperature-TemperatureShift) / TemperatureDeltaFromZero + 1) / 2;
             return mul >= 0.5
