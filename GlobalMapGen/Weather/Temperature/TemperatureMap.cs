@@ -150,7 +150,7 @@ namespace GlobalMap.Weather.Temperature
 
         private double GetTemperature(int x, int y)
         {
-            return (Math.Pow(1-Math.Abs(y / (Height / 2.0) - 1), 1.5)-0.5) * 2 * TemperatureDeltaFromZero;
+            return (Math.Pow(1-Math.Abs(y / (Height / 2.0) - 1), 1)-0.5) * 2 * TemperatureDeltaFromZero;
         }
     }
 }
