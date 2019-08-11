@@ -141,7 +141,7 @@ namespace GlobalMap.Weather.Temperature
                 var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
                 var dick = t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
                 var penis = mapp.Altitudes[x, y] > 0.75 && dick > 0
-                    ? (0.75 + Math.Abs(1 - mapp.Altitudes[x, y])) * dick
+                    ? (0.5 + Math.Abs(1 - mapp.Altitudes[x, y])) * dick
                     : dick;
                 return penis;
             });
