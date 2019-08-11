@@ -104,7 +104,7 @@ namespace GlobalMap.Weather.Temperature
                     .ToBorders(Width - 1, Height - 1);
                 MathHelper.GetLineSegment(start, end).ForEach(p =>
                 {
-                    var airBatch = MathHelper.GetCirclePoints((int) Math.Min(map.WindVectorsMap[x, y].GetAbs(), 30));
+                    var airBatch = MathHelper.GetCirclePoints((int) Math.Min(map.WindVectorsMap[x, y].GetAbs(), 20));
                     airBatch.ForEach(batch =>
                     {
                         var p1 = p.Plus(batch);
@@ -129,7 +129,7 @@ namespace GlobalMap.Weather.Temperature
                     var xbuf = x;
                     var ybuf = y;
                     var center = xbuf.MakeTupleWith(ybuf);
-                    var pointsToAvg = MathHelper.GetCirclePoints(20).Select(p => p.Plus(center))
+                    var pointsToAvg = MathHelper.GetCirclePoints(10).Select(p => p.Plus(center))
                         .Where(p => p.IsInBorders(Width, Height)).ToArray();
                     res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
                 }, SystemSettings.AvaliableThreads / 2);
@@ -141,7 +141,7 @@ namespace GlobalMap.Weather.Temperature
                 var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
                 var dick = t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
                 var penis = mapp.Altitudes[x, y] > 0.75 && dick > 0
-                    ? (0.5 + Math.Abs(1 - mapp.Altitudes[x, y])) * dick
+                    ? (0.75 + 1 - mapp.Altitudes[x, y]) * dick
                     : dick;
                 return penis;
             });
