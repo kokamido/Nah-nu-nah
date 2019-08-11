@@ -18,6 +18,7 @@ namespace GlobalMap.Weather.Temperature
         [DataMember(EmitDefaultValue = false)] protected abstract int Width { get; set; }
         [DataMember(EmitDefaultValue = false)] protected abstract int Height { get; set; }
         [DataMember(EmitDefaultValue = false)] public abstract double TemperatureDeltaFromZero { get; set; }
+        [DataMember(EmitDefaultValue = false)] public abstract double TemperatureShift { get; set; }
         [DataMember(EmitDefaultValue = false)] public abstract double WindAbsConvectionMultiplier { get; set; }
         public Color ColdColor => Color.Blue;
         public Color MidColor => Color.Red;
@@ -36,11 +37,11 @@ namespace GlobalMap.Weather.Temperature
             }
         }
 
-        private Color GetColor(Color bitmapPixel, double temperature)
+        protected Color GetColor(Color bitmapPixel, double temperature)
         {
             if (Math.Abs(temperature) > TemperatureDeltaFromZero)
                 Log.Info("sas");
-            var mul = (temperature / TemperatureDeltaFromZero + 1) / 2;
+            var mul = ((temperature-TemperatureShift) / TemperatureDeltaFromZero + 1) / 2;
             return mul >= 0.5
                 ? WarmColor.Blend(MidColor, (mul - 0.5) * 2).Blend(bitmapPixel, 0.85)
                 : MidColor.Blend(ColdColor, mul * 2).Blend(bitmapPixel, 0.85);
@@ -67,7 +68,7 @@ namespace GlobalMap.Weather.Temperature
         public override double[,] Map { get; set; }
         protected override int Width { get; set; }
         protected override int Height { get; set; }
-        public int TemperatureShift = 5;
+        public override double TemperatureShift { get; set; }
 
         public DefaultTemperature(Map map)
         {
@@ -79,6 +80,7 @@ namespace GlobalMap.Weather.Temperature
             Height = map.Height;
             TemperatureDeltaFromZero = 25;
             WindAbsConvectionMultiplier = 10;
+            TemperatureShift = 5;
 
             Log.Info("Generating temperature map");
             Map.ForEach((_, x, y) => Map[x, y] = GetTemperature(x, y));
