@@ -14,7 +14,7 @@ namespace GlobalMap.Weather.Temperature
     public abstract class TemperatureMap : IDrawable
     {
         [IgnoreDataMember] public abstract double[,] Map { get; set; }
-        [DataMember(EmitDefaultValue = false)] private double[] map;
+        [DataMember(EmitDefaultValue = false)] protected double[] map;
         [DataMember(EmitDefaultValue = false)] protected abstract int Width { get; set; }
         [DataMember(EmitDefaultValue = false)] protected abstract int Height { get; set; }
         [DataMember(EmitDefaultValue = false)] public abstract double TemperatureDeltaFromZero { get; set; }
@@ -67,14 +67,17 @@ namespace GlobalMap.Weather.Temperature
         public override double[,] Map { get; set; }
         protected override int Width { get; set; }
         protected override int Height { get; set; }
+        public int TemperatureShift = 5;
 
         public DefaultTemperature(Map map)
         {
+            if(!map.CreatedLayers.HasFlag(MapLayer.Winds))
+                throw new ArgumentException("Can't create a temperature map without windmap, you need to create it first.");
             Log.Info($"Creating new temperature map with width '{map.Width}' and height '{map.Height}'.");
             Map = new double[map.Width, map.Height];
             Width = map.Width;
             Height = map.Height;
-            TemperatureDeltaFromZero = 50;
+            TemperatureDeltaFromZero = 25;
             WindAbsConvectionMultiplier = 10;
 
             Log.Info("Generating temperature map");
@@ -116,7 +119,7 @@ namespace GlobalMap.Weather.Temperature
             });
             Map = res;
             Log.Info("First stage of correcting temperature map by wind has been finished");
-            Log.Info("Start second stage of correcting temperature map by wind");
+            Log.Info("Start second stage of correcting temperature map. Smoothing");
             res = new double[Width, Height];
             Map.ForAll((val, x, y) =>
                 {
@@ -127,13 +130,13 @@ namespace GlobalMap.Weather.Temperature
                         .Where(p => p.IsInBorders(Width, Height)).ToArray();
                     res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
                 }, SystemSettings.AvaliableThreads / 2);
-            Log.Info("Second stage of correcting temperature map by wind has been finished");
+            Log.Info("Second stage of correcting temperature map has been finished");
             Map = res;
-            Log.Info("Start third stage of correcting temperature map by wind");
+            Log.Info($"Start third stage of correcting temperature map. Shifting dealing with anomalies, shifting tamp by {TemperatureShift}");
             Map = Map.Select((t, x, y) =>
             {
                 var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
-                return t * (1 - cock) + GetTemperature(x, y) * cock;
+                return t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
             });
             Log.Info("Third stage of correcting temperature map by wind has been finished");
         }

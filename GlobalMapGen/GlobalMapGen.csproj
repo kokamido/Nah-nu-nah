@@ -51,6 +51,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Weather\Mousture\MoistureMap.cs" />
     <Compile Include="Weather\Temperature\TemperatureMap.cs" />
     <Compile Include="Weather\Wind\Cyclone.cs" />
     <Compile Include="Weather\Wind\CycloneFabric.cs" />

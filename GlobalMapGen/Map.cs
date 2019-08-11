@@ -4,6 +4,7 @@ using System.Linq;
 using log4net;
 using System.Drawing;
 using System.Runtime.Serialization;
+using GlobalMap.Weather.Mousture;
 using GlobalMap.Weather.Temperature;
 using GlobalMap.Weather.Wind;
 using lib;
@@ -21,10 +22,28 @@ namespace GlobalMap
 
         [DataMember(EmitDefaultValue = false)] public WindMap WindMap;
         [DataMember(EmitDefaultValue = false)] public TemperatureMap TemperatureMap;
+        [DataMember(EmitDefaultValue = false)] public MoistureMap MoistureMap;
 
         [DataMember(EmitDefaultValue = false)] public List<River> Rivers = new List<River>();
         [DataMember(EmitDefaultValue = false)] public List<WaterArea> Lakes;
         [DataMember(EmitDefaultValue = false)] public List<WaterArea> Seas;
+
+        [DataMember(EmitDefaultValue = false)] public MapLayer CreatedLayers
+        {
+            get
+            {
+                var res = MapLayer.Nothing;
+                if (Altitudes != null)
+                    res |= MapLayer.Altitudes;
+                if (WindMap != null)
+                    res |= MapLayer.Winds;
+                if (TemperatureMap != null)
+                    res |= MapLayer.Temperature;
+                if (MoistureMap != null)
+                    res |= MapLayer.Moisture;
+                return res;
+            }
+        }
 
         public bool IsUnderSeaLevel(Tuple<int, int> t) => Altitudes[t.Item1, t.Item2] < AltitudeGenerationSettings.SeaAltitude;
         public bool IsRiverTile(Tuple<int, int> t) => Rivers.Any(r => r.RiverTiles.Contains(t));
@@ -32,8 +51,8 @@ namespace GlobalMap
         public int Square => Width*Height;
 
         [IgnoreDataMember] private Bitmap bitmap;
-        public Bitmap RedrawBitmap(MapDrawingSettings settings, bool debugAltitude=false) => bitmap = ToBitmap(settings, debugAltitude);
-        public Bitmap GetBitmap() => bitmap ?? (bitmap = ToBitmap(MapDrawingSettings.Altitudes| MapDrawingSettings.Winds, false));
+        public Bitmap RedrawBitmap(MapLayer settings, bool debugAltitude=false) => bitmap = ToBitmap(settings, debugAltitude);
+        public Bitmap GetBitmap() => bitmap ?? (bitmap = ToBitmap(MapLayer.Altitudes| MapLayer.Winds, false));
 
         private static ILog log = LogManager.GetLogger(typeof(Map));
 
@@ -46,25 +65,31 @@ namespace GlobalMap
             this.ClassifyWaterAreas();
         }
 
-        private Bitmap ToBitmap(MapDrawingSettings settings, bool debug = false)
+        private Bitmap ToBitmap(MapLayer settings, bool debug = false)
         {
             log.Info("Drawing map");
             bitmap = new Bitmap(Width, Height);
 
-            if (settings.HasFlag(MapDrawingSettings.Altitudes))
+            if (settings.HasFlag(MapLayer.Altitudes))
             {
                 DrawOn(bitmap);
             }
 
-            if (settings.HasFlag(MapDrawingSettings.Winds))
+            if (settings.HasFlag(MapLayer.Winds))
             {
                 WindMap.DrawOn(bitmap);
             }
 
-            if (settings.HasFlag(MapDrawingSettings.Temperature))
+            if (settings.HasFlag(MapLayer.Temperature))
             {
 
                 TemperatureMap.DrawOn(bitmap);
+            }
+
+            if (settings.HasFlag(MapLayer.Temperature))
+            {
+
+                MoistureMap.DrawOn(bitmap);
             }
 
             return bitmap;
@@ -125,11 +150,12 @@ namespace GlobalMap
     }
 
     [Flags]
-    public enum MapDrawingSettings
+    public enum MapLayer
     {
         Nothing = 0,
         Altitudes = 1,
         Winds = 1 << 1,
         Temperature = 1 << 2,
+        Moisture = 1 << 3,
     }
 }
