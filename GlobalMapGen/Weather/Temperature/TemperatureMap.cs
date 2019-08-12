@@ -130,7 +130,7 @@ namespace GlobalMap.Weather.Temperature
                     var xbuf = x;
                     var ybuf = y;
                     var center = xbuf.MakeTupleWith(ybuf);
-                    var pointsToAvg = MathHelper.GetCirclePoints(10).Select(p => p.Plus(center))
+                    var pointsToAvg = MathHelper.GetCirclePoints(15).Select(p => p.Plus(center))
                         .Where(p => p.IsInBorders(Width, Height)).ToArray();
                     res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
                 }, SystemSettings.AvaliableThreads / 2);

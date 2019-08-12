@@ -35,7 +35,7 @@ namespace GlobalMap.Weather.Mousture
 
         protected Color GetColor(Color bitmapPixel, int x, int y, double min, double max)
         {
-            var mul = (Map[x, y] + min) / (max - min);
+            var mul = (Map[x, y] - min) / (max - min);
             return MoistColor.Blend(DryColor, mul).Blend(bitmapPixel, 0.75);
         }
 
