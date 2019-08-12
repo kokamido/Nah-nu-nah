@@ -55,7 +55,7 @@ namespace GlobalMap.Weather.Mousture
     [DataContract]
     public class DefaultMoisture : MoistureMap
     {
-        [DataMember(EmitDefaultValue = false)]private double WindAbsConvectionMultiplier = 20;
+        [DataMember(EmitDefaultValue = false)]private double WindAbsConvectionMultiplier = 15;
         public DefaultMoisture(Map map)
         {
             if(!map.CreatedLayers.HasFlag(MapLayer.Winds) || !map.CreatedLayers.HasFlag(MapLayer.Temperature))
