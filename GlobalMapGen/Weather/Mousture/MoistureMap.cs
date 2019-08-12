@@ -87,8 +87,9 @@ namespace GlobalMap.Weather.Mousture
                             x1.MakeTupleWith(y1).IsInBorders(width, height))
                         {
                             var delta = res[x1, y1] - res[p1.Item1, p1.Item2];
-                            res[x1, y1] -= delta / 2;
-                            res[p1.Item1, p1.Item2] += delta / 2;
+                            var diffusionCoeff = (MathHelper.GetNormalRandomNum() * 3).ToBorders(2.5, 5);
+                            res[x1, y1] -= delta / diffusionCoeff;
+                            res[p1.Item1, p1.Item2] += delta / diffusionCoeff;
                         }
                     });
                 });
@@ -102,7 +103,7 @@ namespace GlobalMap.Weather.Mousture
                     var xbuf = x;
                     var ybuf = y;
                     var center = xbuf.MakeTupleWith(ybuf);
-                    var pointsToAvg = MathHelper.GetCirclePoints(10).Select(p => p.Plus(center))
+                    var pointsToAvg = MathHelper.GetCirclePoints(7).Select(p => p.Plus(center))
                         .Where(p => p.IsInBorders(width, height)).ToArray();
                     res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
                 }, SystemSettings.AvaliableThreads / 2);

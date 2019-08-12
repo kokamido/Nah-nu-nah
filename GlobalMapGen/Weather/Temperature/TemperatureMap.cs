@@ -88,9 +88,9 @@ namespace GlobalMap.Weather.Temperature
             Log.Info("Temperature map has been created.");
         }
 
-        private void CorrectTemperatureByWind(Map mapp)
+        private void CorrectTemperatureByWind(Map globalMap)
         {
-            var map = mapp.WindMap;
+            var map = globalMap.WindMap;
             Log.Info("Start correcting temperature map by wind");
             var res = new double[Width, Height];
             Map.ForEach((val, x, y) => res[x, y] = val);
@@ -114,8 +114,9 @@ namespace GlobalMap.Weather.Temperature
                             x1.MakeTupleWith(y1).IsInBorders(Width, Height))
                         {
                             var delta = res[x1, y1] - res[p1.Item1, p1.Item2];
-                            res[x1, y1] -= delta / 4;
-                            res[p1.Item1, p1.Item2] += delta / 4;
+                            var diffusionCoeff = (MathHelper.GetNormalRandomNum() * 4).ToBorders(3, 6);
+                            res[x1, y1] -= delta / diffusionCoeff;
+                            res[p1.Item1, p1.Item2] += delta / diffusionCoeff;
                         }
                     });
                 });
@@ -140,8 +141,8 @@ namespace GlobalMap.Weather.Temperature
             {
                 var cock = Math.Abs(y / (Height / 2.0) - 1) / 2 + 0.3;
                 var dick = t * (1 - cock) + GetTemperature(x, y) * cock + TemperatureShift;
-                var penis = mapp.Altitudes[x, y] > 0.75 && dick > 0
-                    ? (0.75 + 1 - mapp.Altitudes[x, y]) * dick
+                var penis = globalMap.Altitudes[x, y] > 0.75 && dick > 0
+                    ? (0.75 + 1 - globalMap.Altitudes[x, y]) * dick
                     : dick;
                 return penis;
             });

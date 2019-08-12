@@ -63,9 +63,17 @@ namespace GlobalMap.Weather.Wind
         private Tuple<int, int> GetNexEye(bool isAntiCyclone, Map map, double delta, List<Cyclone> previousCyclones)
         {
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
+            int count = 0;
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 8.0)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < 7)
+            {
+                if (count++ >= 20)
+                {
+                    Log.Error("Cant place the wind, skip it");
+                    break;
+                }
                 res = GenerateNewCoord(isAntiCyclone, map, delta);
+            }
             Log.Info($"New wind's eye is located in {res}");
             return res;
         }

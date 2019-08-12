@@ -165,6 +165,7 @@ namespace lib
             => point.Item1.ToBorders(0, width).MakeTupleWith(point.Item2.ToBorders(0, height));
 
         public static int ToBorders(this double val, int min, int max) => (int)Math.Min(max, Math.Max(min, val));
+        public static double ToBorders(this double val, double min, double max) => (int)Math.Min(max, Math.Max(min, val));
 
         public static IEnumerable<Tuple<int, int>> GetNeighboursIndexes(this Tuple<int, int> p)
         {

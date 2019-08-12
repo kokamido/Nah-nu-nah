@@ -25,9 +25,9 @@ namespace GlobalMap
             Layers = new Dictionary<(double level, string name), Color>
             {
                 {(0, "Глубокая вода"), Color.FromArgb(byte.MaxValue,0, 0, 128)},
-                {(0.4, "Вода"), Color.FromArgb(byte.MaxValue,32, 64, 128)},
-                {(0.45, "Мелкая вода"), Color.FromArgb(byte.MaxValue,64, 96, 128)},
-                {(0.455, "Береговая линия"), Color.FromArgb(byte.MaxValue,192, 192, 128)},
+                {(0.35, "Вода"), Color.FromArgb(byte.MaxValue,32, 64, 128)},
+                {(0.4, "Мелкая вода"), Color.FromArgb(byte.MaxValue,64, 96, 128)},
+                {(0.405, "Береговая линия"), Color.FromArgb(byte.MaxValue,192, 192, 128)},
                 {(0.55, "Прибрежная зона"), Color.FromArgb(byte.MaxValue,0, 192, 0)},
                 {(0.625, "Равнина"), Color.FromArgb(byte.MaxValue,192, 192, 0)},
                 {(0.76, "Предгорья"), Color.FromArgb(byte.MaxValue,160, 96, 64)},
