@@ -65,7 +65,7 @@ namespace GlobalMap.Weather.Wind
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             int count = 0;
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < 7)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < 7.5)
             {
                 if (count++ >= 20)
                 {
