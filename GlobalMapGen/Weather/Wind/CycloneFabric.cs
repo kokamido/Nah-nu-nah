@@ -34,7 +34,7 @@ namespace GlobalMap.Weather.Wind
 
         public override int GetCyclonesCount(Map map)
         {
-            var res = MathHelper.GetUniformRndInt((map.Width/150.0).Round(), (map.Width/85.0).Round());
+            var res = MathHelper.GetUniformRndInt((map.Width / 150.0).Round(), (map.Width / 85.0).Round());
             Log.Info($"There will {res} winds in our world!");
             return res;
         }
@@ -53,9 +53,9 @@ namespace GlobalMap.Weather.Wind
             return res;
         }
 
-        private int GetPower(Map map, double delta)
+        private double GetPower(Map map, double delta)
         {
-            var res = (int) (MathHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3 - Math.Abs(delta)));
+            var res = 1.25 * (MathHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3 - Math.Abs(delta)));
             Log.Info($"New wind's power is {res}");
             return res;
         }
@@ -65,15 +65,17 @@ namespace GlobalMap.Weather.Wind
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             int count = 0;
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width/7.5)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 7.5)
             {
                 if (count++ >= 100)
                 {
                     Log.Error("Cant place the wind, skip it");
                     break;
                 }
+
                 res = GenerateNewCoord(isAntiCyclone, map, delta);
             }
+
             Log.Info($"New wind's eye is located in {res}");
             return res;
         }

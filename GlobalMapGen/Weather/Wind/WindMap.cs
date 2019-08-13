@@ -137,7 +137,7 @@ namespace GlobalMap.Weather.Wind
                 var p = WindVectorsMap[x, y];
                 if (p.Equals(0.0.MakeTupleWith(0.0)))
                     continue;
-                var abs = (p.GetAbs()/1.25).Round();
+                var abs = p.GetAbs().Round();
                 if (abs == 0)
                     continue;
                 new Arrow(abs, abs / 3, ArrowColor).DrawOn(bitmap, x.MakeTupleWith(y), p.GetAngle());

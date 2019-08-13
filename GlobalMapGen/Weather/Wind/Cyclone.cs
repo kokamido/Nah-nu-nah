@@ -24,12 +24,14 @@ namespace GlobalMap.Weather.Wind
         [DataMember(EmitDefaultValue = false)] public bool IsAntiCyclone;
         [DataMember(EmitDefaultValue = false)] public bool IsCounterClockwise;
 
-        [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicMantiss = 3;
+        [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicMantiss = 5;
         [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicExponent = 100;
         private static int _ahahaMagicNumber => _ahahaMagicMantiss * _ahahaMagicExponent;
 
-        private static double[] tanh = Enumerable.Range(0, _ahahaMagicNumber)
-            .Select(x => Math.Tanh(_ahahaMagicMantiss - x / (double) _ahahaMagicExponent)).ToArray();
+        private static double[] preCalculatedSigmoid = Enumerable.Range(0, _ahahaMagicNumber)
+            .Select(x => -(Sigmoid(- 2.5 + x / (double) _ahahaMagicExponent)*0.53-0.4929)).ToArray();
+
+        private static double Sigmoid(double x) => x / Math.Sqrt(1 + x * x);
 
         public Tuple<double, double> GetVecIn(Tuple<int, int> point)
         {
@@ -46,7 +48,7 @@ namespace GlobalMap.Weather.Wind
                 : (IsAntiCyclone
                     ? GetAntiCycloneVec(point)
                     : GetCycloneVec(point)).Get1Vec()
-                .Multiply(tanh[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power);
+                .Multiply(preCalculatedSigmoid[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power);
 
             return IsCounterClockwise ? res : (-res.Item1).MakeTupleWith(res.Item2);
         }
@@ -72,7 +74,7 @@ namespace GlobalMap.Weather.Wind
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            tanh = Enumerable.Range(0, _ahahaMagicNumber)
+            preCalculatedSigmoid = Enumerable.Range(0, _ahahaMagicNumber)
                 .Select(x => Math.Tanh(_ahahaMagicMantiss - x / (double) _ahahaMagicExponent)).ToArray();
         }
     }
