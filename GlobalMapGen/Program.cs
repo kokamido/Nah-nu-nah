@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using GlobalMap.Weather.Biomes;
 using GlobalMap.Weather.Mousture;
 using GlobalMap.Weather.Temperature;
 using GlobalMap.Weather.Wind;
@@ -45,17 +46,20 @@ namespace GlobalMap
             map.WindMap = WindMapGenerator.Generate(new CoriolisWind(), map);
             map.TemperatureMap =  new DefaultTemperature(map);
             map.MoistureMap = new DefaultMoisture(map);
+            map.BiomeMap = new DefaultBiomeMap(map);
 
-            File.WriteAllBytes("Pics/map.json",map.ToJson());
+            File.WriteAllBytes("Pics/map.json",map.ToJson().Compress());
             File.WriteAllBytes("Pics/TempMap.json",map.TemperatureMap.ToJson());
             File.WriteAllBytes("Pics/MoistureMap.json",map.MoistureMap.ToJson());
             log.Info("drawing");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Winds).Save("Pics/AltAndWind.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Moisture).Save("Pics/AltAndMoisture.png");
+            map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Biome).Save("Pics/AltAndBiome.png");
             map.RedrawBitmap(MapLayer.Temperature).Save("Pics/Temp.png");
             map.RedrawBitmap(MapLayer.Winds).Save("Pics/Wind.png");
             map.RedrawBitmap(MapLayer.Moisture).Save("Pics/Moisture.png");
+            map.RedrawBitmap(MapLayer.Biome).Save("Pics/Biome.png");
             log.Info("drawing complete");
         }
     }

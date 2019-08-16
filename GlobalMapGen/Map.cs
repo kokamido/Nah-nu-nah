@@ -4,6 +4,7 @@ using System.Linq;
 using log4net;
 using System.Drawing;
 using System.Runtime.Serialization;
+using GlobalMap.Weather.Biomes;
 using GlobalMap.Weather.Mousture;
 using GlobalMap.Weather.Temperature;
 using GlobalMap.Weather.Wind;
@@ -23,6 +24,7 @@ namespace GlobalMap
         [DataMember(EmitDefaultValue = false)] public WindMap WindMap;
         [DataMember(EmitDefaultValue = false)] public TemperatureMap TemperatureMap;
         [DataMember(EmitDefaultValue = false)] public MoistureMap MoistureMap;
+        [DataMember(EmitDefaultValue = false)] public BiomeMap BiomeMap;
 
         [DataMember(EmitDefaultValue = false)] public List<River> Rivers = new List<River>();
         [DataMember(EmitDefaultValue = false)] public List<WaterArea> Lakes;
@@ -41,6 +43,8 @@ namespace GlobalMap
                     res |= MapLayer.Temperature;
                 if (MoistureMap != null)
                     res |= MapLayer.Moisture;
+                if (BiomeMap != null)
+                    res |= MapLayer.Biome;
                 return res;
             }
         }
@@ -71,26 +75,19 @@ namespace GlobalMap
             bitmap = new Bitmap(Width, Height);
 
             if (settings.HasFlag(MapLayer.Altitudes))
-            {
                 DrawOn(bitmap);
-            }
 
             if (settings.HasFlag(MapLayer.Winds))
-            {
                 WindMap.DrawOn(bitmap);
-            }
 
             if (settings.HasFlag(MapLayer.Temperature))
-            {
-
                 TemperatureMap.DrawOn(bitmap);
-            }
 
             if (settings.HasFlag(MapLayer.Moisture))
-            {
-
                 MoistureMap.DrawOn(bitmap);
-            }
+
+            if (settings.HasFlag(MapLayer.Biome))
+                BiomeMap.DrawOn(bitmap);
 
             return bitmap;
         }
@@ -157,5 +154,6 @@ namespace GlobalMap
         Winds = 1 << 1,
         Temperature = 1 << 2,
         Moisture = 1 << 3,
+        Biome = 1 << 4,
     }
 }

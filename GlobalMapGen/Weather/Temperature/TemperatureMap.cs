@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
-using GlobalMap.Weather.Wind;
 using lib;
 using log4net;
 using Settings;
@@ -80,7 +79,7 @@ namespace GlobalMap.Weather.Temperature
             Height = map.Height;
             TemperatureDeltaFromZero = 20;
             WindAbsConvectionMultiplier = 10;
-            TemperatureShift = 9;
+            TemperatureShift = 10;
 
             Log.Info("Generating temperature map");
             Map.ForEach((_, x, y) => Map[x, y] = GetTemperature(x, y));
