@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using lib;
 using NUnit.Framework;
@@ -243,6 +244,77 @@ namespace ConsoleApplication1.lib
             var v = 1.MakeTupleWith(-1);
             var ans = 1.MakeTupleWith(1).Divide(System.Math.Sqrt(2));
             Assert.AreEqual(ans,v.Get1Normal());
+        }
+
+        [Test]
+        public void ТочкаВнутриКвадрата()
+        {
+            var square = new List<Tuple<int, int>>
+            {
+                Tuple.Create(0, 0),
+                Tuple.Create(0, 2),
+                Tuple.Create(2, 0),
+                Tuple.Create(2, 2),
+            };
+            Assert.IsTrue(Tuple.Create(1,1).IsPointInsidePolygon(square));
+        }
+
+        [Test]
+        public void ТочкаСнаружиКвадрата()
+        {
+            var square = new List<Tuple<int, int>>
+            {
+                Tuple.Create(0, 0),
+                Tuple.Create(0, 2),
+                Tuple.Create(2, 0),
+                Tuple.Create(2, 2),
+            };
+            Assert.IsFalse(Tuple.Create(3,1).IsPointInsidePolygon(square));
+        }
+
+        [Test]
+        public void ТочкаСнаружиМногоугольника()
+        {
+            var square = new List<Tuple<int, int>>
+            {
+                Tuple.Create(0, 0),
+                Tuple.Create(0, 1),
+                Tuple.Create(1, 2),
+                Tuple.Create(2, 3),
+                Tuple.Create(5, 0),
+
+            };
+            Assert.IsFalse(Tuple.Create(2,-1).IsPointInsidePolygon(square));
+        }
+
+        [Test]
+        public void ТочкаВнутриМногоугольника()
+        {
+            var square = new List<Tuple<int, int>>
+            {
+                Tuple.Create(0, 0),
+                Tuple.Create(0, 1),
+                Tuple.Create(1, 2),
+                Tuple.Create(2, 3),
+                Tuple.Create(5, 0),
+
+            };
+            Assert.IsTrue(Tuple.Create(3,1).IsPointInsidePolygon(square));
+        }
+
+        [Test]
+        public void ТочкаВнутриМногоугольника1()
+        {
+            var square = new List<Tuple<int, int>>
+            {
+                Tuple.Create(0, 0),
+                Tuple.Create(0, 1),
+                Tuple.Create(1, 2),
+                Tuple.Create(2, 3),
+                Tuple.Create(5, 0),
+
+            };
+            Assert.IsTrue(Tuple.Create(0,1).IsPointInsidePolygon(square));
         }
     }
 }

@@ -164,8 +164,10 @@ namespace lib
         public static Tuple<int, int> ToBorders(this Tuple<double, double> point, int width, int height)
             => point.Item1.ToBorders(0, width).MakeTupleWith(point.Item2.ToBorders(0, height));
 
-        public static int ToBorders(this double val, int min, int max) => (int)Math.Min(max, Math.Max(min, val));
-        public static double ToBorders(this double val, double min, double max) => (int)Math.Min(max, Math.Max(min, val));
+        public static int ToBorders(this double val, int min, int max) => (int) Math.Min(max, Math.Max(min, val));
+
+        public static double ToBorders(this double val, double min, double max) =>
+            (int) Math.Min(max, Math.Max(min, val));
 
         public static IEnumerable<Tuple<int, int>> GetNeighboursIndexes(this Tuple<int, int> p)
         {
@@ -266,6 +268,37 @@ namespace lib
             }
 
             return res;
+        }
+
+        private static Func<double, double> GetLineEquation(Tuple<int, int> fst, Tuple<int, int> snd)
+        {
+            if (snd.Item2 == fst.Item2)
+                throw new ArgumentException($"Can't create the equation for points {fst} and {snd}");
+            var k = (snd.Item2 - fst.Item2) / (snd.Item1 - fst.Item1);
+            var b = fst.Item2 - k * fst.Item1;
+            return x => k * x + b;
+        }
+
+        public static bool IsPointInsidePolygon(this Tuple<int, int> point, List<Tuple<int, int>> polygon)
+        {
+            int res = 1;
+            for (int i = 0; i < polygon.Count - 1; i++)
+                res *= ZaloopaFromHabr(polygon[i], polygon[i + 1], point);
+            return res * ZaloopaFromHabr(polygon.Last(), polygon.First(), point) < 1;
+        }
+
+        private static int ZaloopaFromHabr(Tuple<int, int> a, Tuple<int, int> b, Tuple<int, int> middle)
+        {
+            long ax = a.Item1 - middle.Item1;
+            long ay = a.Item2 - middle.Item2;
+            long bx = b.Item1 - middle.Item1;
+            long by = b.Item2 - middle.Item2;
+            int s = Math.Sign(ax * by - ay * bx);
+            if (s == 0 && (ay == 0 || by == 0) && ax * bx <= 0)
+                return 0;
+            if (ay < 0 ^ by < 0)
+                return by < 0 ? s : -s;
+            return 1;
         }
     }
 }
