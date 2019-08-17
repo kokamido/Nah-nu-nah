@@ -13,29 +13,20 @@ namespace GlobalMap.Weather.Biomes
 
     public class DefaultBiomes : IBiomeSettings
     {
-        private Dictionary<BiomeType, List<Tuple<int, int>>> biomeBorders =
-            new Dictionary<BiomeType, List<Tuple<int, int>>>
+        private Dictionary<BiomeType, Tuple<int, int>> biomeCenters =
+            new Dictionary<BiomeType, Tuple<int,int>>
             {
-                [BiomeType.Тундра] = new List<Tuple<int, int>>
-                    {(-10).MakeTupleWith(0), (0).MakeTupleWith(100), (-1).MakeTupleWith(25), (-3).MakeTupleWith(0)},
-                [BiomeType.Тайга] = new List<Tuple<int, int>>
-                    {(-1).MakeTupleWith(25), (0).MakeTupleWith(100), (7).MakeTupleWith(200), (6).MakeTupleWith(60),},
-                [BiomeType.Степь] = new List<Tuple<int, int>>
-                    {(-3).MakeTupleWith(0), (-1).MakeTupleWith(15), (21).MakeTupleWith(50), (18).MakeTupleWith(0)},
-                [BiomeType.Редколесье] = new List<Tuple<int, int>>
-                    {(-1).MakeTupleWith(25), (22).MakeTupleWith(125), (21).MakeTupleWith(50)},
-                [BiomeType.Саванна] = new List<Tuple<int, int>>
-                    {(21).MakeTupleWith(50), (22).MakeTupleWith(125), (32).MakeTupleWith(150), (33).MakeTupleWith(100)},
-                [BiomeType.ШироколиственныйЛес] = new List<Tuple<int, int>>
-                    {(6).MakeTupleWith(60), (7).MakeTupleWith(180), (22).MakeTupleWith(220), (22).MakeTupleWith(120)},
-                [BiomeType.УмеренныйТропическийЛес] = new List<Tuple<int, int>>
-                    {(6).MakeTupleWith(175), (7).MakeTupleWith(200), (23).MakeTupleWith(330), (22).MakeTupleWith(230)},
-                [BiomeType.МуссонныйЛес] = new List<Tuple<int, int>>
-                    {(22).MakeTupleWith(125), (22).MakeTupleWith(230), (32).MakeTupleWith(280), (32).MakeTupleWith(150)},
-                [BiomeType.ТропическийЛес] = new List<Tuple<int, int>>
-                    {(22).MakeTupleWith(230), (23).MakeTupleWith(330), (26).MakeTupleWith(450), 32.MakeTupleWith(280)},
-                [BiomeType.Пустыня] = new List<Tuple<int, int>>
-                    {(18).MakeTupleWith(0), (21).MakeTupleWith(50), (33).MakeTupleWith(100), (34).MakeTupleWith(0)},
+                [BiomeType.Пустыня] = Tuple.Create(25,30),
+                [BiomeType.Саванна] = Tuple.Create(27,100),
+                [BiomeType.МуссонныйЛес] = Tuple.Create(27,190),
+                [BiomeType.ТропическийЛес] = Tuple.Create(27,350),
+                [BiomeType.Степь] = Tuple.Create(9,20),
+                [BiomeType.Редколесье] = Tuple.Create(10,50),
+                [BiomeType.ШироколиственныйЛес] = Tuple.Create(15,150),
+                [BiomeType.УмеренныйТропическийЛес] = Tuple.Create(15,220),
+                [BiomeType.Тайга] = Tuple.Create(4,90),
+                [BiomeType.Тундра] = Tuple.Create(-4,30),
+                [BiomeType.АрктическаяПустыня] = Tuple.Create(-10,10),
             };
 
         public BiomeType GetBiome(double temperature, double moisture, bool isUnderwater)
@@ -43,9 +34,10 @@ namespace GlobalMap.Weather.Biomes
             if (isUnderwater)
                 return BiomeType.Water;
             var point = temperature.Round().MakeTupleWith(moisture.Round());
-            return biomeBorders
-                       .Select(kvp => Tuple.Create(kvp.Key, point.IsPointInsidePolygon(kvp.Value)))
-                       .FirstOrDefault(t => t.Item2)?.Item1 ?? BiomeType.None;
+            return biomeCenters
+                       .Select(kvp => Tuple.Create(kvp.Key, MathHelper.GetEuclideanRange(point,kvp.Value)))
+                       .OrderBy(t => t.Item2)
+                       .First().Item1;
         }
     }
 
@@ -63,6 +55,7 @@ namespace GlobalMap.Weather.Biomes
         МуссонныйЛес,
         ТропическийЛес,
         Пустыня,
+        АрктическаяПустыня,
     }
 
     public static class BiomeHelper
@@ -71,18 +64,19 @@ namespace GlobalMap.Weather.Biomes
 
         public static readonly Dictionary<BiomeType, Color> BiomesToColor = new Dictionary<BiomeType, Color>
         {
-            [BiomeType.Water] = Color.DodgerBlue,
-            [BiomeType.None] = DefaultColor,
-            [BiomeType.Тундра] = Color.SlateGray,
-            [BiomeType.Тайга] = Color.Green,
-            [BiomeType.Степь] = Color.Goldenrod,
-            [BiomeType.Редколесье] = Color.YellowGreen,
-            [BiomeType.МуссонныйЛес] = Color.PaleGoldenrod,
-            [BiomeType.Саванна] = Color.Gold,
-            [BiomeType.ШироколиственныйЛес] = Color.PaleGreen,
+            [BiomeType.Water] = Color.FromArgb(0,0,250),
+            [BiomeType.None] = Color.Black,
+            [BiomeType.Тундра] = Color.FromArgb(255,255,0),
+            [BiomeType.Тайга] = Color.FromArgb(0,0,128),
+            [BiomeType.Степь] = Color.FromArgb(0,128,0),
+            [BiomeType.Редколесье] = Color.FromArgb(0,128,128),
+            [BiomeType.МуссонныйЛес] = Color.FromArgb(128,128,0),
+            [BiomeType.Саванна] =Color.FromArgb(128,128,128),
+            [BiomeType.ШироколиственныйЛес] = Color.FromArgb(128,128,255),
             [BiomeType.УмеренныйТропическийЛес] = Color.LimeGreen,
-            [BiomeType.ТропическийЛес] = Color.Lime,
-            [BiomeType.Пустыня] = Color.Wheat,
+            [BiomeType.ТропическийЛес] = Color.FromArgb(128,255,128),
+            [BiomeType.Пустыня] = Color.FromArgb(128,255,255),
+            [BiomeType.АрктическаяПустыня] = Color.FromArgb(255,0,0),
         };
 
         public static Color GetColorOrDefault(this BiomeType type) =>

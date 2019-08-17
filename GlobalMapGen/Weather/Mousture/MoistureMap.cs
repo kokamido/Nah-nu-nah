@@ -118,7 +118,7 @@ namespace GlobalMap.Weather.Mousture
             {
                 if (!map.IsUnderSeaLevel(x.MakeTupleWith(y)))
                     return (map.TemperatureMap.Map[x,y]+map.TemperatureMap.TemperatureDeltaFromZero-map.TemperatureMap.TemperatureShift+1)*2;
-                return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 20;
+                return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 13;
             });
         }
     }

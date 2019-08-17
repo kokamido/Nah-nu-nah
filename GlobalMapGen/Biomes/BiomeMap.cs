@@ -48,7 +48,7 @@ namespace GlobalMap.Weather.Biomes
         {
             if(!map.CreatedLayers.HasFlag(MapLayer.Temperature) || !map.CreatedLayers.HasFlag(MapLayer.Moisture))
                 throw new ArgumentException("Can't create a biome map without temperature map and moisture map, you need to create it first.");
-            Map = map.TemperatureMap.Map.Select((val, x, y) => Settings.GetBiome(val, map.MoistureMap.Map[x, y], map.IsUnderSeaLevel(x.MakeTupleWith(y))));
+            Map = map.TemperatureMap.Map.Select((val, x, y) => Settings.GetBiome(val, map.MoistureMap.Map[x, y], map.IsWater(x.MakeTupleWith(y))));
         }
     }
 }

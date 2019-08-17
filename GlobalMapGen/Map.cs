@@ -52,6 +52,7 @@ namespace GlobalMap
         public bool IsUnderSeaLevel(Tuple<int, int> t) => Altitudes[t.Item1, t.Item2] < AltitudeGenerationSettings.SeaAltitude;
         public bool IsRiverTile(Tuple<int, int> t) => Rivers.Any(r => r.RiverTiles.Contains(t));
         public bool IsLakeTile(Tuple<int, int> t) => Lakes.Any(r => r.Tiles.Contains(t));
+        public bool IsWater(Tuple<int, int> t) => IsUnderSeaLevel(t) || IsRiverTile(t);
         public int Square => Width*Height;
 
         [IgnoreDataMember] private Bitmap bitmap;
