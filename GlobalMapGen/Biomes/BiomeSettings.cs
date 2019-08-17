@@ -19,14 +19,14 @@ namespace GlobalMap.Weather.Biomes
             {
                 [BiomeType.Пустыня] = Tuple.Create(25*zaloopa,30),
                 [BiomeType.Саванна] = Tuple.Create(24*zaloopa,90),
-                [BiomeType.МуссонныйЛес] = Tuple.Create(21*zaloopa,160),
+                [BiomeType.МуссонныйЛес] = Tuple.Create(19*zaloopa,150),
                 [BiomeType.ТропическийЛес] = Tuple.Create(24*zaloopa,220),
                 [BiomeType.Степь] = Tuple.Create(9*zaloopa,20),
                 [BiomeType.Редколесье] = Tuple.Create(10*zaloopa,50),
-                [BiomeType.ШироколиственныйЛес] = Tuple.Create(15*zaloopa,170),
-                [BiomeType.УмеренныйТропическийЛес] = Tuple.Create(17*zaloopa,200),
+                [BiomeType.ШироколиственныйЛес] = Tuple.Create(15*zaloopa,150),
+                [BiomeType.УмеренныйТропическийЛес] = Tuple.Create(17*zaloopa,165),
                 [BiomeType.Тайга] = Tuple.Create(4*zaloopa,55),
-                [BiomeType.Тундра] = Tuple.Create(-6*zaloopa,20),
+                [BiomeType.Тундра] = Tuple.Create(-6*zaloopa,30),
                 [BiomeType.АрктическаяПустыня] = Tuple.Create(-10*zaloopa,10),
             };
 

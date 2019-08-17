@@ -77,8 +77,8 @@ namespace GlobalMap.Weather.Temperature
             Map = new double[map.Width, map.Height];
             Width = map.Width;
             Height = map.Height;
-            TemperatureDeltaFromZero = 20;
-            WindAbsConvectionMultiplier = 10;
+            TemperatureDeltaFromZero = 23;
+            WindAbsConvectionMultiplier = 13;
             TemperatureShift = 10;
 
             Log.Info("Generating temperature map");
