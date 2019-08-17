@@ -64,19 +64,19 @@ namespace GlobalMap.Weather.Biomes
 
         public static readonly Dictionary<BiomeType, Color> BiomesToColor = new Dictionary<BiomeType, Color>
         {
-            [BiomeType.Water] = Color.FromArgb(0,0,250),
+            [BiomeType.Water] = Color.FromArgb(192,236,247),
             [BiomeType.None] = Color.Black,
-            [BiomeType.Тундра] = Color.FromArgb(255,255,0),
-            [BiomeType.Тайга] = Color.FromArgb(0,0,128),
-            [BiomeType.Степь] = Color.FromArgb(0,128,0),
-            [BiomeType.Редколесье] = Color.FromArgb(0,128,128),
-            [BiomeType.МуссонныйЛес] = Color.FromArgb(128,128,0),
-            [BiomeType.Саванна] =Color.FromArgb(128,128,128),
-            [BiomeType.ШироколиственныйЛес] = Color.FromArgb(128,128,255),
-            [BiomeType.УмеренныйТропическийЛес] = Color.LimeGreen,
-            [BiomeType.ТропическийЛес] = Color.FromArgb(128,255,128),
-            [BiomeType.Пустыня] = Color.FromArgb(128,255,255),
-            [BiomeType.АрктическаяПустыня] = Color.FromArgb(255,0,0),
+            [BiomeType.Тундра] = Color.FromArgb(187,161,208),
+            [BiomeType.Тайга] = Color.FromArgb(2,190,105),
+            [BiomeType.Степь] = Color.FromArgb(254,255,175),
+            [BiomeType.Редколесье] = Color.FromArgb(186,215,138),
+            [BiomeType.МуссонныйЛес] = Color.FromArgb(151,174,218),
+            [BiomeType.Саванна] =Color.FromArgb(202,215,136),
+            [BiomeType.ШироколиственныйЛес] = Color.FromArgb(122,213,96),
+            [BiomeType.УмеренныйТропическийЛес] = Color.FromArgb(205,107,0),
+            [BiomeType.ТропическийЛес] = Color.FromArgb(0,196,186),
+            [BiomeType.Пустыня] = Color.FromArgb(255,203,159),
+            [BiomeType.АрктическаяПустыня] = Color.FromArgb(239,255,255),
         };
 
         public static Color GetColorOrDefault(this BiomeType type) =>
