@@ -13,27 +13,28 @@ namespace GlobalMap.Weather.Biomes
 
     public class DefaultBiomes : IBiomeSettings
     {
+        private static int zaloopa = 10;
         private Dictionary<BiomeType, Tuple<int, int>> biomeCenters =
             new Dictionary<BiomeType, Tuple<int,int>>
             {
-                [BiomeType.Пустыня] = Tuple.Create(25,30),
-                [BiomeType.Саванна] = Tuple.Create(27,100),
-                [BiomeType.МуссонныйЛес] = Tuple.Create(27,190),
-                [BiomeType.ТропическийЛес] = Tuple.Create(27,350),
-                [BiomeType.Степь] = Tuple.Create(9,20),
-                [BiomeType.Редколесье] = Tuple.Create(10,50),
-                [BiomeType.ШироколиственныйЛес] = Tuple.Create(15,150),
-                [BiomeType.УмеренныйТропическийЛес] = Tuple.Create(15,220),
-                [BiomeType.Тайга] = Tuple.Create(4,90),
-                [BiomeType.Тундра] = Tuple.Create(-4,30),
-                [BiomeType.АрктическаяПустыня] = Tuple.Create(-10,10),
+                [BiomeType.Пустыня] = Tuple.Create(25*zaloopa,30),
+                [BiomeType.Саванна] = Tuple.Create(27*zaloopa,100),
+                [BiomeType.МуссонныйЛес] = Tuple.Create(25*zaloopa,160),
+                [BiomeType.ТропическийЛес] = Tuple.Create(26*zaloopa,220),
+                [BiomeType.Степь] = Tuple.Create(9*zaloopa,20),
+                [BiomeType.Редколесье] = Tuple.Create(10*zaloopa,50),
+                [BiomeType.ШироколиственныйЛес] = Tuple.Create(15*zaloopa,170),
+                [BiomeType.УмеренныйТропическийЛес] = Tuple.Create(17*zaloopa,200),
+                [BiomeType.Тайга] = Tuple.Create(4*zaloopa,55),
+                [BiomeType.Тундра] = Tuple.Create(-6*zaloopa,20),
+                [BiomeType.АрктическаяПустыня] = Tuple.Create(-10*zaloopa,10),
             };
 
         public BiomeType GetBiome(double temperature, double moisture, bool isUnderwater)
         {
             if (isUnderwater)
                 return BiomeType.Water;
-            var point = (temperature).Round().MakeTupleWith((moisture).Round());
+            var point = (temperature*zaloopa).Round().MakeTupleWith((moisture).Round());
 
             return biomeCenters
                        .Select(kvp => Tuple.Create(kvp.Key, MathHelper.GetEuclideanRange(point,kvp.Value)))
