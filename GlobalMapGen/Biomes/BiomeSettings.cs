@@ -33,7 +33,8 @@ namespace GlobalMap.Weather.Biomes
         {
             if (isUnderwater)
                 return BiomeType.Water;
-            var point = temperature.Round().MakeTupleWith(moisture.Round());
+            var point = (temperature).Round().MakeTupleWith((moisture).Round());
+
             return biomeCenters
                        .Select(kvp => Tuple.Create(kvp.Key, MathHelper.GetEuclideanRange(point,kvp.Value)))
                        .OrderBy(t => t.Item2)

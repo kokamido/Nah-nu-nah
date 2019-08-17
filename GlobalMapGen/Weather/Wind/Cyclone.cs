@@ -7,7 +7,7 @@ namespace GlobalMap.Weather.Wind
 {
     public static class CycloneMetaSettings
     {
-        public const int CyclonePowerToRangeMultiplier = 20;
+        public const int CyclonePowerToRangeMultiplier = 23;
         public const int LandscapeRepulsionRadius = 10;
         public const double LandscapeTailForWindDecrease = 75;
         public const double HeightPointRepulsionAngle = Math.PI/200;
