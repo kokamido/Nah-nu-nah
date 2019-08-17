@@ -18,7 +18,7 @@ namespace GlobalMap.Weather.Biomes
             new Dictionary<BiomeType, Tuple<int,int>>
             {
                 [BiomeType.Пустыня] = Tuple.Create(25*zaloopa,30),
-                [BiomeType.Саванна] = Tuple.Create(24*zaloopa,100),
+                [BiomeType.Саванна] = Tuple.Create(24*zaloopa,90),
                 [BiomeType.МуссонныйЛес] = Tuple.Create(21*zaloopa,160),
                 [BiomeType.ТропическийЛес] = Tuple.Create(24*zaloopa,220),
                 [BiomeType.Степь] = Tuple.Create(9*zaloopa,20),
