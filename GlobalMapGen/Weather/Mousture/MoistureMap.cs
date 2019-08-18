@@ -124,7 +124,7 @@ namespace GlobalMap.Weather.Mousture
             });
         }
 
-        private void CorrectMoisture()
+        private void CorrectMoisture() //Dirty hack bcz i can't calculate real climate model on user's pcs)))
         {
             var height = Map.GetLength(1);
             var min = double.MaxValue;
