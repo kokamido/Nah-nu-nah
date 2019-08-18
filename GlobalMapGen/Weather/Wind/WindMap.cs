@@ -122,7 +122,7 @@ namespace GlobalMap.Weather.Wind
             log.Info("End windmap avg correction");
         }
 
-        public void DrawOn(Bitmap bitmap)
+        public void DrawOn(Bitmap bitmap, bool needBlend)
         {
             log.Info("Drawing winds");
             foreach (var cyclone in Cyclones)

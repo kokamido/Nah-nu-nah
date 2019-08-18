@@ -25,25 +25,24 @@ namespace GlobalMap.Weather.Temperature
 
         protected static ILog Log = LogManager.GetLogger(typeof(TemperatureMap));
 
-        public void DrawOn(Bitmap bitmap)
+        public void DrawOn(Bitmap bitmap, bool needBlend)
         {
             Log.Info("Drawing temperature");
             for (int x = 0; x < bitmap.Width; x++)
             for (int y = 0; y < bitmap.Height; y++)
             {
-                var color = GetColor(bitmap.GetPixel(x, y), Map[x, y]);
+                var color = GetColor(bitmap.GetPixel(x, y), Map[x, y],needBlend);
                 bitmap.SetPixel(x, y, color);
             }
         }
 
-        protected Color GetColor(Color bitmapPixel, double temperature)
+        protected Color GetColor(Color bitmapPixel, double temperature, bool needBlend)
         {
-            if (Math.Abs(temperature-TemperatureShift) > TemperatureDeltaFromZero)
-                Log.Info("sas");
             var mul = ((temperature-TemperatureShift) / TemperatureDeltaFromZero + 1) / 2;
-            return mul >= 0.5
-                ? WarmColor.Blend(MidColor, (mul - 0.5) * 2).Blend(bitmapPixel, 0.85)
-                : MidColor.Blend(ColdColor, mul * 2).Blend(bitmapPixel, 0.85);
+            var res = mul >= 0.5
+                ? WarmColor.Blend(MidColor, (mul - 0.5) * 2)
+                : MidColor.Blend(ColdColor, mul * 2);
+            return needBlend ? res.Blend(bitmapPixel, 0.85) : res;
         }
 
         [OnDeserialized]

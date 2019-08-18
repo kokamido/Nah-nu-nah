@@ -20,7 +20,7 @@ namespace GlobalMap.Weather.Mousture
         protected Color MoistColor = Color.White;
 
 
-        public void DrawOn(Bitmap bitmap)
+        public void DrawOn(Bitmap bitmap, bool needBlend)
         {
             log.Info("Drawing moisture map");
             var min = double.MaxValue;
@@ -30,13 +30,13 @@ namespace GlobalMap.Weather.Mousture
                 min = Math.Min(val, min);
                 max = Math.Max(val, max);
             });
-            Map.ForEach((val,x,y)=> bitmap.SetPixel(x,y,GetColor(bitmap.GetPixel(x,y),x,y,min, max)));
+            Map.ForEach((val,x,y)=> bitmap.SetPixel(x,y,GetColor(bitmap.GetPixel(x,y),x,y,min, max, needBlend)));
         }
 
-        protected Color GetColor(Color bitmapPixel, int x, int y, double min, double max)
+        protected Color GetColor(Color bitmapPixel, int x, int y, double min, double max, bool needBlend)
         {
             var mul = (Map[x, y] - min) / (max - min);
-            return MoistColor.Blend(DryColor, mul).Blend(bitmapPixel, 0.75);
+            return needBlend ? MoistColor.Blend(DryColor, mul).Blend(bitmapPixel, 0.75) : MoistColor.Blend(DryColor, mul);
         }
 
         [OnDeserialized]

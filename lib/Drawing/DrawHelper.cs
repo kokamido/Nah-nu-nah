@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.ConstrainedExecution;
 
 namespace lib
 {
@@ -12,7 +11,7 @@ namespace lib
 
     public interface IDrawable
     {
-        void DrawOn(Bitmap bitmap);
+        void DrawOn(Bitmap bitmap, bool needBlend);
     }
 
     public class ColoredPoint

@@ -56,10 +56,10 @@ namespace GlobalMap
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Winds).Save("Pics/AltAndWind.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Moisture).Save("Pics/AltAndMoisture.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Biome).Save("Pics/AltAndBiome.png");
-            map.RedrawBitmap(MapLayer.Temperature).Save("Pics/Temp.png");
-            map.RedrawBitmap(MapLayer.Winds).Save("Pics/Wind.png");
-            map.RedrawBitmap(MapLayer.Moisture).Save("Pics/Moisture.png");
-            map.RedrawBitmap(MapLayer.Biome).Save("Pics/Biome.png");
+            map.RedrawBitmap(MapLayer.Temperature,false).Save("Pics/Temp.png");
+            map.RedrawBitmap(MapLayer.Winds,false).Save("Pics/Wind.png");
+            map.RedrawBitmap(MapLayer.Moisture,false).Save("Pics/Moisture.png");
+            map.RedrawBitmap(MapLayer.Biome,false).Save("Pics/Biome.png");
             log.Info("drawing complete");
         }
     }

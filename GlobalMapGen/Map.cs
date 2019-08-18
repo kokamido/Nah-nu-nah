@@ -56,7 +56,7 @@ namespace GlobalMap
         public int Square => Width*Height;
 
         [IgnoreDataMember] private Bitmap bitmap;
-        public Bitmap RedrawBitmap(MapLayer settings, bool debugAltitude=false) => bitmap = ToBitmap(settings, debugAltitude);
+        public Bitmap RedrawBitmap(MapLayer settings, bool needBlend=true) => bitmap = ToBitmap(settings, needBlend);
         public Bitmap GetBitmap() => bitmap ?? (bitmap = ToBitmap(MapLayer.Altitudes| MapLayer.Winds, false));
 
         private static ILog log = LogManager.GetLogger(typeof(Map));
@@ -70,25 +70,25 @@ namespace GlobalMap
             this.ClassifyWaterAreas();
         }
 
-        private Bitmap ToBitmap(MapLayer settings, bool debug = false)
+        private Bitmap ToBitmap(MapLayer settings, bool needBlend = true)
         {
             log.Info("Drawing map");
             bitmap = new Bitmap(Width, Height);
 
             if (settings.HasFlag(MapLayer.Altitudes))
-                DrawOn(bitmap);
+                DrawOn(bitmap, needBlend);
 
             if (settings.HasFlag(MapLayer.Winds))
-                WindMap.DrawOn(bitmap);
+                WindMap.DrawOn(bitmap, needBlend);
 
             if (settings.HasFlag(MapLayer.Temperature))
-                TemperatureMap.DrawOn(bitmap);
+                TemperatureMap.DrawOn(bitmap, needBlend);
 
             if (settings.HasFlag(MapLayer.Moisture))
-                MoistureMap.DrawOn(bitmap);
+                MoistureMap.DrawOn(bitmap, needBlend);
 
             if (settings.HasFlag(MapLayer.Biome))
-                BiomeMap.DrawOn(bitmap);
+                BiomeMap.DrawOn(bitmap, needBlend);
 
             return bitmap;
         }
@@ -116,7 +116,7 @@ namespace GlobalMap
             altitudes = Altitudes.ToSingleDimension();
         }
 
-        public void DrawOn(Bitmap bitmap)
+        public void DrawOn(Bitmap bitmap, bool needBlend)
         {
             log.Info("Drawing altitudes");
             var layers = AltitudeGenerationSettings.Layers;

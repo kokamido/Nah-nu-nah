@@ -15,12 +15,12 @@ namespace GlobalMap.Weather.Biomes
         [IgnoreDataMember] public abstract BiomeType[,] Map { get; set; }
         [DataMember(EmitDefaultValue = false)] protected BiomeType[] map;
 
-        public void DrawOn(Bitmap bitmap)
+        public void DrawOn(Bitmap bitmap, bool needBlend)
         {
             Log.Info("Drawing biomes");
             Map.ForEach((val, x, y) =>
             {
-                bitmap.SetPixel(x, y, val.GetColorOrDefault().Blend(bitmap.GetPixel(x, y), 0.75));
+                bitmap.SetPixel(x, y, needBlend ? val.GetColorOrDefault().Blend(bitmap.GetPixel(x, y), 0.75) : val.GetColorOrDefault());
             });
         }
 
