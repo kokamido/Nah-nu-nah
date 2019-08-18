@@ -55,7 +55,8 @@ namespace GlobalMap.Weather.Mousture
     [DataContract]
     public class DefaultMoisture : MoistureMap
     {
-        [DataMember(EmitDefaultValue = false)]private double WindAbsConvectionMultiplier = 15;
+        private const double WindAbsConvectionMultiplier = 15;
+        private const double MaxMoisture = 450;
         public DefaultMoisture(Map map)
         {
             if(!map.CreatedLayers.HasFlag(MapLayer.Winds) || !map.CreatedLayers.HasFlag(MapLayer.Temperature))
@@ -107,8 +108,9 @@ namespace GlobalMap.Weather.Mousture
                         .Where(p => p.IsInBorders(width, height)).ToArray();
                     res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
                 }, SystemSettings.AvaliableThreads / 2);
-            log.Info("Second stage of correcting temperature map has been finished");
+            log.Info("Second stage of correcting moisture map has been finished");
             Map = res;
+            CorrectMoisture();
             log.Info("Moisture map has been generated");
         }
 
@@ -119,6 +121,18 @@ namespace GlobalMap.Weather.Mousture
                 if (!map.IsUnderSeaLevel(x.MakeTupleWith(y)))
                     return (map.TemperatureMap.Map[x,y]+map.TemperatureMap.TemperatureDeltaFromZero-map.TemperatureMap.TemperatureShift+1)*2;
                 return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 10.4;
+            });
+        }
+
+        private void CorrectMoisture()
+        {
+            var height = Map.GetLength(1);
+            var min = double.MaxValue;
+            Map.ForEach((val, x, y) => min = Math.Min(val, min));
+            Map.ForEach((val, x, y) =>
+            {
+                Map[x,y] += Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 100+min;
+                Map[x, y] = Math.Max(0,Math.Min(MaxMoisture, Map[x, y]));
             });
         }
     }
