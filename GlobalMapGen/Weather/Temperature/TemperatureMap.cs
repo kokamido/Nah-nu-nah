@@ -77,9 +77,9 @@ namespace GlobalMap.Weather.Temperature
             Map = new double[map.Width, map.Height];
             Width = map.Width;
             Height = map.Height;
-            TemperatureDeltaFromZero = 23;
+            TemperatureDeltaFromZero = 25;
             WindAbsConvectionMultiplier = 13;
-            TemperatureShift = 10;
+            TemperatureShift = 5;
 
             Log.Info("Generating temperature map");
             Map.ForEach((_, x, y) => Map[x, y] = GetTemperature(x, y));
@@ -143,7 +143,7 @@ namespace GlobalMap.Weather.Temperature
                 var penis = globalMap.Altitudes[x, y] > 0.75 && dick > 0
                     ? (0.75 + 1 - globalMap.Altitudes[x, y]) * dick
                     : dick;
-                return penis;
+                return Math.Min(TemperatureShift+TemperatureDeltaFromZero, Math.Max(-TemperatureDeltaFromZero + TemperatureShift + penis, penis));
             });
             Log.Info("Third stage of correcting temperature map has been finished");
         }

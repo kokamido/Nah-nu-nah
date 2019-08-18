@@ -65,9 +65,9 @@ namespace GlobalMap.Weather.Wind
             var res = GenerateNewCoord(isAntiCyclone, map, delta);
             int count = 0;
             while (!map.IsUnderSeaLevel(res) || previousCyclones.Any() &&
-                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 7.5)
+                   previousCyclones.Min(c => MathHelper.GetEuclideanRange(res, c.Eye)) < map.Width / 6.0)
             {
-                if (count++ >= 100)
+                if (count++ >= 1000)
                 {
                     Log.Error("Cant place the wind, skip it");
                     break;
