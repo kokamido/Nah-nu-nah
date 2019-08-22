@@ -131,7 +131,7 @@ namespace GlobalMap.Weather.Mousture
             Map.ForEach((val, x, y) => min = Math.Min(val, min));
             Map.ForEach((val, x, y) =>
             {
-                Map[x,y] += Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 100+min;
+                Map[x,y] += Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 60 - 60;
                 Map[x, y] = Math.Max(0,Math.Min(MaxMoisture, Map[x, y]));
             });
         }

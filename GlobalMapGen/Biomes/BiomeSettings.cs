@@ -20,14 +20,14 @@ namespace GlobalMap.Weather.Biomes
                 [BiomeType.Тундра] = new List<Tuple<int, int>>{Tuple.Create(-16,18),Tuple.Create(0,450),Tuple.Create(-5,18)},
                 [BiomeType.Тайга] = new List<Tuple<int, int>>{Tuple.Create(0,450),Tuple.Create(4,450),Tuple.Create(4,45),Tuple.Create(-5,45)},
                 [BiomeType.УмеренныйВлажныйЛес] = new List<Tuple<int, int>>{Tuple.Create(4,450),Tuple.Create(20,450),Tuple.Create(20,215),Tuple.Create(4,145)},
-                [BiomeType.ТропическийЛес] = new List<Tuple<int, int>>{Tuple.Create(20,450),Tuple.Create(24,450),Tuple.Create(28,235),Tuple.Create(20,215)},
+                [BiomeType.ТропическийЛес] = new List<Tuple<int, int>>{Tuple.Create(20,450),Tuple.Create(32,450),Tuple.Create(32,235),Tuple.Create(20,215)},
                 [BiomeType.УмеренныйШироколиственныйЛес] = new List<Tuple<int, int>>{Tuple.Create(4,145),Tuple.Create(20,215),Tuple.Create(20,135),Tuple.Create(4,45)},
-                [BiomeType.ТропическийМуссонныйЛес] = new List<Tuple<int, int>>{Tuple.Create(20,215),Tuple.Create(28,235),Tuple.Create(28,135),Tuple.Create(20,135)},
+                [BiomeType.ТропическийМуссонныйЛес] = new List<Tuple<int, int>>{Tuple.Create(20,215),Tuple.Create(32,235),Tuple.Create(31,135),Tuple.Create(20,135)},
                 [BiomeType.Лесостепь] = new List<Tuple<int, int>>{Tuple.Create(4,45),Tuple.Create(20,135),Tuple.Create(20,90)},
-                [BiomeType.ЖестколиственныйЛес] = new List<Tuple<int, int>>{Tuple.Create(20,135),Tuple.Create(28,135),Tuple.Create(20,90)},
+                [BiomeType.ЖестколиственныйЛес] = new List<Tuple<int, int>>{Tuple.Create(20,135),Tuple.Create(31,135),Tuple.Create(20,90)},
                 [BiomeType.Степь] = new List<Tuple<int, int>>{Tuple.Create(-5,18),Tuple.Create(-5,45),Tuple.Create(4,45),Tuple.Create(20,90),Tuple.Create(20,36)},
-                [BiomeType.Саванна] = new List<Tuple<int, int>>{Tuple.Create(20,90),Tuple.Create(28,135),Tuple.Create(30,45),Tuple.Create(20,36)},
-                [BiomeType.Пустыня] = new List<Tuple<int, int>>{Tuple.Create(0,0),Tuple.Create(-5,18),Tuple.Create(20,36),Tuple.Create(30,45),Tuple.Create(28,135),Tuple.Create(28,235),Tuple.Create(24,450),Tuple.Create(35,450),Tuple.Create(35,0)},
+                [BiomeType.Саванна] = new List<Tuple<int, int>>{Tuple.Create(20,90),Tuple.Create(31,135),Tuple.Create(30,45),Tuple.Create(20,36)},
+                [BiomeType.Пустыня] = new List<Tuple<int, int>>{Tuple.Create(0,0),Tuple.Create(-5,18),Tuple.Create(20,36),Tuple.Create(30,45),Tuple.Create(31,135),Tuple.Create(32,235),Tuple.Create(32,450),Tuple.Create(35,450),Tuple.Create(35,0)},
             };
 
         public BiomeType GetBiome(double temperature, double moisture, bool isUnderwater)
