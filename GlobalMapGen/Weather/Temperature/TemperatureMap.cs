@@ -148,8 +148,8 @@ namespace GlobalMap.Weather.Temperature
         private double GetTemperature(int x, int y, double altitude)
         {
             var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
-            var solarActivity = relativeLatitude < 0.3 ? 1 
-                 : relativeLatitude < 0.4 ? (Math.Cos((relativeLatitude - 0.3) / 0.1 * Math.PI) / 4.0 + 0.75) 
+            var solarActivity = relativeLatitude < 0.233 ? 1 
+                 : relativeLatitude < 0.433 ? (Math.Cos((relativeLatitude - 0.233) / 0.2 * Math.PI) / 4.0 + 0.75) 
                  : relativeLatitude < 0.7 ? 0.5
                  : Math.Cos((relativeLatitude - 0.7) / 0.6 * Math.PI) / 2.0;
             var relativeAltitude = (altitude - 0.455) / 0.545;
