@@ -138,8 +138,8 @@ namespace GlobalMap.Weather.Temperature
             Map = Map.Select((t, x, y) =>
             {
                 var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
-                var latitudeCorrection = 1;//relativeLatitude / 2 + 0.3;
-                var temperature = (t*(1-latitudeCorrection) + GetTemperature(x, y, globalMap.Altitudes[x, y])*latitudeCorrection);                
+                var latitudeCorrection = relativeLatitude / 2 + 0.3;
+                var temperature = (t*latitudeCorrection + GetTemperature(x, y, globalMap.Altitudes[x, y])*(1-latitudeCorrection));                
                 return Math.Min(TemperatureShift+TemperatureDeltaFromZero, Math.Max(-TemperatureDeltaFromZero + TemperatureShift, temperature));
             });
             Log.Info("Third stage of correcting temperature map has been finished");
@@ -148,9 +148,12 @@ namespace GlobalMap.Weather.Temperature
         private double GetTemperature(int x, int y, double altitude)
         {
             var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
-            var solarActivity = (relativeLatitude < 0.3 ? 1 : (Math.Cos((relativeLatitude - 0.3) / 0.7 * Math.PI) / 2.0 + 0.5));
+            var solarActivity = relativeLatitude < 0.3 ? 1 
+                 : relativeLatitude < 0.4 ? (Math.Cos((relativeLatitude - 0.3) / 0.1 * Math.PI) / 4.0 + 0.75) 
+                 : relativeLatitude < 0.7 ? 0.5
+                 : Math.Cos((relativeLatitude - 0.7) / 0.6 * Math.PI) / 2.0;
             var relativeAltitude = (altitude - 0.455) / 0.545;
-            var altitudeCorrection = -(altitude > 0.455 ? relativeAltitude * relativeAltitude * 50 : 0);
+            var altitudeCorrection = -(altitude > 0.455 ? relativeAltitude * relativeAltitude * 35 : 0);
             return ( solarActivity) * (2* TemperatureDeltaFromZero + TemperatureShift) - TemperatureDeltaFromZero + altitudeCorrection;
         }
     }
