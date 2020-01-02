@@ -51,6 +51,7 @@ namespace GlobalMap
             File.WriteAllBytes("Pics/map.json",map.ToJson().Compress());
             File.WriteAllBytes("Pics/TempMap.json",map.TemperatureMap.ToJson());
             File.WriteAllBytes("Pics/MoistureMap.json",map.MoistureMap.ToJson());
+            File.WriteAllBytes("Pics/WindMap.json",map.WindMap.ToJson());
             log.Info("drawing");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Winds).Save("Pics/AltAndWind.png");
