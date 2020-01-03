@@ -55,7 +55,7 @@ namespace GlobalMap.Weather.Mousture
     [DataContract]
     public class DefaultMoisture : MoistureMap
     {
-        private const double WindAbsConvectionMultiplier = 14.5;
+        private const double WindAbsConvectionMultiplier = 10;
         private const double MaxMoisture = 450;
         public DefaultMoisture(Map map)
         {
