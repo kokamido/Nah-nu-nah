@@ -59,6 +59,7 @@ namespace GlobalMap
             map.RedrawBitmap(MapLayer.Winds,false).Save("Pics/Wind.png");
             map.RedrawBitmap(MapLayer.Moisture,false).Save("Pics/Moisture.png");
             map.RedrawBitmap(MapLayer.Biome,false).Save("Pics/Biome.png");
+            map.RedrawBitmap(MapLayer.Altitudes,false).Save("Pics/Landscape.png");
             log.Info("drawing complete");
         }
     }

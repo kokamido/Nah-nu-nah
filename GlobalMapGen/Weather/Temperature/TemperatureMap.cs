@@ -76,9 +76,9 @@ namespace GlobalMap.Weather.Temperature
             Map = new double[map.Width, map.Height];
             Width = map.Width;
             Height = map.Height;
-            TemperatureDeltaFromZero = 25;
+            TemperatureDeltaFromZero = 20;
             WindAbsConvectionMultiplier = 13;
-            TemperatureShift = 5;
+            TemperatureShift = 4.25;
 
             Log.Info("Generating temperature map");
             Map.ForEach((_, x, y) => Map[x, y] = GetTemperature(x, y, map.Altitudes[x, y]));
@@ -92,7 +92,7 @@ namespace GlobalMap.Weather.Temperature
             Log.Info("Start correcting temperature map by wind");
             var res = new double[Width, Height];
             Map.ForEach((val, x, y) => res[x, y] = val);
-            map.WindVectorsMap.ForEachWithShuffle((val, x, y) =>
+            map.WindVectorsMap.ForEach((val, x, y) =>
             {
                 if (x % 15 != 0 || y % 15 != 0)
                     return;
@@ -139,7 +139,7 @@ namespace GlobalMap.Weather.Temperature
             {
                 var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
                 var latitudeCorrection = relativeLatitude / 2 + 0.3;
-                var temperature = (t*latitudeCorrection + GetTemperature(x, y, globalMap.Altitudes[x, y])*(1-latitudeCorrection));                
+                var temperature = (t*latitudeCorrection + GetTemperature(x, y, globalMap.Altitudes[x, y])*(1-latitudeCorrection));
                 return Math.Min(TemperatureShift+TemperatureDeltaFromZero, Math.Max(-TemperatureDeltaFromZero + TemperatureShift, temperature));
             });
             Log.Info("Third stage of correcting temperature map has been finished");
@@ -148,8 +148,8 @@ namespace GlobalMap.Weather.Temperature
         private double GetTemperature(int x, int y, double altitude)
         {
             var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
-            var solarActivity = relativeLatitude < 0.233 ? 1 
-                 : relativeLatitude < 0.433 ? (Math.Cos((relativeLatitude - 0.233) / 0.2 * Math.PI) / 4.0 + 0.75) 
+            var solarActivity = relativeLatitude < 0.233 ? 1
+                 : relativeLatitude < 0.433 ? (Math.Cos((relativeLatitude - 0.233) / 0.2 * Math.PI) / 4.0 + 0.75)
                  : relativeLatitude < 0.7 ? 0.5
                  : Math.Cos((relativeLatitude - 0.7) / 0.6 * Math.PI) / 2.0;
             var relativeAltitude = (altitude - 0.455) / 0.545;

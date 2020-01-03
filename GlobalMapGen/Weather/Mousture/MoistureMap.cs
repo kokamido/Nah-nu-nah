@@ -55,7 +55,7 @@ namespace GlobalMap.Weather.Mousture
     [DataContract]
     public class DefaultMoisture : MoistureMap
     {
-        private const double WindAbsConvectionMultiplier = 15;
+        private const double WindAbsConvectionMultiplier = 14.5;
         private const double MaxMoisture = 450;
         public DefaultMoisture(Map map)
         {
@@ -68,7 +68,7 @@ namespace GlobalMap.Weather.Mousture
             log.Info("Start correcting moisture map by wind");
             var res = new double[width, height];
             Map.ForEach((val, x, y) => res[x, y] = val);
-            map.WindMap.WindVectorsMap.ForEachWithShuffle((val, x, y) =>
+            map.WindMap.WindVectorsMap.ForEach((val, x, y) =>
             {
                 if (x % 10 != 0 || y % 10 != 0)
                     return;
@@ -119,8 +119,8 @@ namespace GlobalMap.Weather.Mousture
             return map.TemperatureMap.Map.Select((val, x, y) =>
             {
                 if (!map.IsUnderSeaLevel(x.MakeTupleWith(y)))
-                    return (map.TemperatureMap.Map[x,y]+map.TemperatureMap.TemperatureDeltaFromZero-map.TemperatureMap.TemperatureShift+1)*2;
-                return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 10.4;
+                    return (map.TemperatureMap.Map[x,y]+map.TemperatureMap.TemperatureDeltaFromZero-map.TemperatureMap.TemperatureShift+1)*3;
+                return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 9.5;
             });
         }
 
@@ -131,8 +131,8 @@ namespace GlobalMap.Weather.Mousture
             Map.ForEach((val, x, y) => min = Math.Min(val, min));
             Map.ForEach((val, x, y) =>
             {
-                Map[x,y] += Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 60 - 58;
-                Map[x, y] = Math.Max(0,Math.Min(MaxMoisture, Map[x, y]));
+                Map[x,y] += Math.Max(-10,Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 60 - 58);
+                Map[x, y] = Math.Max(10,Math.Min(MaxMoisture, Map[x, y]));
             });
         }
     }
