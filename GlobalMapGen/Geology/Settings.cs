@@ -25,14 +25,14 @@ namespace GlobalMap
             Layers = new Dictionary<(double level, string name), Color>
             {
                 {(0, "Глубокая вода"), Color.FromArgb(byte.MaxValue,0, 0, 128)},
-                {(0.45, "Вода"), Color.FromArgb(byte.MaxValue,32, 64, 128)},
-                {(0.5, "Мелкая вода"), Color.FromArgb(byte.MaxValue,64, 96, 128)},
-                {(0.505, "Береговая линия"), Color.FromArgb(byte.MaxValue,192, 192, 128)},
-                {(0.55, "Прибрежная зона"), Color.FromArgb(byte.MaxValue,0, 192, 0)},
-                {(0.7, "Равнина"), Color.FromArgb(byte.MaxValue,192, 192, 0)},
-                {(0.8, "Предгорья"), Color.FromArgb(byte.MaxValue,160, 96, 64)},
-                {(0.925, "Горы"), Color.FromArgb(byte.MaxValue,188, 180, 120)},
-                {(0.9875, "Вершина мира"), Color.FromArgb(byte.MaxValue,byte.MaxValue, byte.MaxValue, byte.MaxValue)},
+                {(0.4, "Вода"), Color.FromArgb(byte.MaxValue,32, 64, 128)},
+                {(0.425, "Мелкая вода"), Color.FromArgb(byte.MaxValue,64, 96, 128)},
+                {(0.4255, "Береговая линия"), Color.FromArgb(byte.MaxValue,192, 192, 128)},
+                {(0.43, "Прибрежная зона"), Color.FromArgb(byte.MaxValue,0, 192, 0)},
+                {(0.6, "Равнина"), Color.FromArgb(byte.MaxValue,192, 192, 0)},
+                {(0.7, "Предгорья"), Color.FromArgb(byte.MaxValue,160, 96, 64)},
+                {(0.85, "Горы"), Color.FromArgb(byte.MaxValue,188, 180, 120)},
+                {(0.975, "Вершина мира"), Color.FromArgb(byte.MaxValue,byte.MaxValue, byte.MaxValue, byte.MaxValue)},
             };
             SeaAltitude = 0.455;
             LakeRelativeSquareThreshold = 0.01;

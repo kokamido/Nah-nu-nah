@@ -55,7 +55,7 @@ namespace GlobalMap.Weather.Mousture
     [DataContract]
     public class DefaultMoisture : MoistureMap
     {
-        private const double WindAbsConvectionMultiplier = 10;
+        private const double WindAbsConvectionMultiplier = 11;
         private const double MaxMoisture = 450;
         public DefaultMoisture(Map map)
         {
@@ -120,7 +120,7 @@ namespace GlobalMap.Weather.Mousture
             {
                 if (!map.IsUnderSeaLevel(x.MakeTupleWith(y)))
                     return (map.TemperatureMap.Map[x,y]+map.TemperatureMap.TemperatureDeltaFromZero-map.TemperatureMap.TemperatureShift+1)*3;
-                return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 9.5;
+                return (val-map.TemperatureMap.TemperatureShift+map.TemperatureMap.TemperatureDeltaFromZero) * 10.5;
             });
         }
 
@@ -131,7 +131,7 @@ namespace GlobalMap.Weather.Mousture
             Map.ForEach((val, x, y) => min = Math.Min(val, min));
             Map.ForEach((val, x, y) =>
             {
-                Map[x,y] += Math.Max(-10,Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 60 - 58);
+                Map[x,y] += 0.8*Math.Max(-10,Math.Cos((y / (height / 2.0) - 1) * 3*Math.PI) * 60 - 58);
                 Map[x, y] = Math.Max(10,Math.Min(MaxMoisture, Map[x, y]));
             });
         }
