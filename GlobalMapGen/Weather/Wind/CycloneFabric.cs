@@ -34,7 +34,7 @@ namespace GlobalMap.Weather.Wind
 
         public override int GetCyclonesCount(Map map)
         {
-            var res = MathHelper.GetUniformRndInt((map.Width / 150.0).Round(), (map.Width / 85.0).Round());
+            var res = MathHelper.GetUniformRndInt((map.Width / 200.0).Round(), (map.Width / 125.0).Round());
             Log.Info($"There will {res} winds in our world!");
             return res;
         }
@@ -55,7 +55,7 @@ namespace GlobalMap.Weather.Wind
 
         private double GetPower(Map map, double delta)
         {
-            var res = 1.25 * (MathHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3 - Math.Abs(delta)));
+            var res = MathHelper.GetUniformRndInt(map.Width / 250, map.Width / 130) * (3 - Math.Abs(delta));
             Log.Info($"New wind's power is {res}");
             return res;
         }

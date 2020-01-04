@@ -25,7 +25,7 @@ namespace GlobalMap.Weather.Wind
         [DataMember(EmitDefaultValue = false)] public bool IsCounterClockwise;
 
         [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicMantiss = 5;
-        [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicExponent = 100;
+        [DataMember(EmitDefaultValue = false)] private static int _ahahaMagicExponent = 200;
         private static int _ahahaMagicNumber => _ahahaMagicMantiss * _ahahaMagicExponent;
 
         private static double[] preCalculatedSigmoid = Enumerable.Range(0, _ahahaMagicNumber)
