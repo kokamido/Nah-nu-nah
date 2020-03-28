@@ -38,8 +38,10 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Entity.cs" />
-        <Compile Include="Material.cs" />
+        <Compile Include="Life\Organ.cs" />
+        <Compile Include="Primitives\Entity.cs" />
+        <Compile Include="Primitives\Material.cs" />
+        <Compile Include="Primitives\Thing.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

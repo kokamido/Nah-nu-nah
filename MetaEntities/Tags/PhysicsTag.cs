@@ -1,4 +1,4 @@
-namespace MetaEntities
+namespace MetaEntities.Tags
 {
     public class PhysicsTag
     {

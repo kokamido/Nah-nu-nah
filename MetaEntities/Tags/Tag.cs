@@ -1,6 +1,6 @@
-namespace MetaEntities
+namespace MetaEntities.Tags
 {
-    public class Tag
+    public class Tag  
     {
         public readonly string Value;
         public Tag(string value) => Value = value;
@@ -16,5 +16,5 @@ namespace MetaEntities
         public override int GetHashCode() => Value != null ? Value.GetHashCode() : 0;      
         protected bool Equals(Tag other) => string.Equals(Value, other.Value);
         
-    }
+    } 
 }

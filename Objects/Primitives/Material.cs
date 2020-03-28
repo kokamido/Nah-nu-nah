@@ -1,4 +1,4 @@
-namespace Objects
+namespace Objects.Primitives
 {
     public class Material : Entity
     {
