@@ -1,10 +1,13 @@
+using System.Runtime.Serialization;
+
 namespace Objects.Primitives
 {
     /// <summary>
     /// All properties must be in [0, 1]
     /// </summary>
+    [DataContract]
     public class MechanicalProperties
     {
-        public double Sharpness;
+        [DataMember] public double Sharpness;
     }
 }

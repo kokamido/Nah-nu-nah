@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using MetaEntities.Tags;
 
 namespace Objects.Primitives
 {
+    [DataContract]
     public class TagableEntity
     {
-        protected HashSet<Tag> tags;
+        [DataMember] protected HashSet<Tag> tags;
         public bool TrySetTag(Tag t) => tags.Add(t);
         public bool ContainsTag(Tag t) => tags.Contains(t);
 

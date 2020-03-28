@@ -1,6 +1,6 @@
-using System;
 using System.Linq;
 using lib;
+using log4net;
 using Objects.Primitives;
 
 namespace Objects.Life
@@ -21,36 +21,82 @@ namespace Objects.Life
 
     public static class OrganHelper
     {
-        public static bool GetPiercedPart(this Organ o, out Thing piercedPart)
+        private static ILog Log = LogManager.GetLogger(typeof(OrganHelper));
+        public static void Smash(this Organ o, Thing smashing, double smashingProbability)
         {
+            Log.Debug($"Smashing\n\t'{o.GetType()} - {o.ToJsonString()}'\n\tWith '{smashing.GetType()} - {smashing.ToJsonString()}'\n\tProbability is '{smashingProbability}'");
+            if (!smashingProbability.CheckProbability())
+            {
+                Log.Debug("Not smashed");
+                return;
+            }
+            
+            o.State = o.State == OrganState.Healthy 
+                ? OrganState.Damaged 
+                : OrganState.Broken;
+
+            if (o.Parts?.DefaultIfEmpty() == null)
+            {
+                Log.Debug("There is no inner part to smash");
+                return;
+            }
+           
+            var reducedProbability = o.ReduceSmashing(smashing, smashingProbability);
+            Log.Debug($"Smashing probability has been reduced from '{smashingProbability}' to '{reducedProbability}'");
+            foreach (var p in o.Parts)
+            {
+                if(p is Organ organ)
+                    organ.Smash(smashing,reducedProbability);
+            }
+        }
+        
+        public static void Pierce(this Organ o, Thing piercing, double piercingProbability)
+        {
+            Log.Debug($"Piercing\n\t'{o.GetType()} - {o.ToJsonString()}'\n\tWith '{piercing.GetType()} - {piercing.ToJsonString()}'\n\tProbability is '{piercingProbability}'");
+            if (!piercingProbability.CheckProbability())
+            {
+                Log.Debug("Not pierced");
+                return;
+            }
+
+            o.State = o.State == OrganState.Healthy
+                ? OrganState.Damaged
+                : OrganState.Broken;
+
+            if (o.GetPiercedPart(out var p) && p is Organ organ)
+                Pierce(organ, piercing, o.ReducePiercing(piercing, piercingProbability));
+        }
+
+        private static bool GetPiercedPart(this Organ o, out Thing piercedPart)
+        {
+            Log.Debug($"Getting inner part of '{o.GetType()} - {o.ToJsonString()}' to pierce");
             piercedPart = null;
             if (o.Parts?.DefaultIfEmpty() == null)
+            {
+                Log.Debug($"There is no inner part to pierce");
                 return false;
+            }
             var rnd = MathHelper.GetUniformRndInt(0, o.Parts.Sum(p => p.Volume));
             var totalProcessedVolume = 0;
             foreach (var p in o.Parts)
             {
+                if (!(p is Organ))
+                {
+                    Log.Debug($"'{p.GetType()} - {p.ToJsonString()}' is not Organ, skipping it");
+                    continue;
+                }
+                
                 totalProcessedVolume += p.Volume;
                 if (totalProcessedVolume >= rnd)
                 {
+                    Log.Debug($"Part to new pierce is '{p.GetType()} - {p.ToJsonString()}'");
                     piercedPart = p;
                     return true;
                 }
             }
-            throw new Exception("Нас не должно тут быть");
+            Log.Debug("No one part has been pierced");
+            return false;
         }
-        public static void Hit(this Organ o, Thing piercing, double piercingProbability)
-        {
-           o.State = o.State == OrganState.Healthy 
-                ? OrganState.Damaged 
-                : OrganState.Broken;
-
-            if (piercingProbability.CheckProbability() && o.GetPiercedPart(out var p))
-            {
-                if(p is Organ organ)
-                    Hit(organ, piercing, o.ReducePiercing(piercing,piercingProbability));
-            }
-            
-        }
+        
     }
 }
