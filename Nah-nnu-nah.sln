@@ -10,6 +10,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalMapGen", "GlobalMapGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpNoiseWrapper", "SharpNoiseWrapper\SharpNoiseWrapper.csproj", "{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Objects", "Objects\Objects.csproj", "{70D4AA3D-2773-4ECB-A8D3-B7E45B6E0C59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaEntities", "MetaEntities\MetaEntities.csproj", "{63D898BC-AA87-4D12-8B32-5C5C57F265C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD69CAEF-53E1-49C7-B443-A71E207FFCAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70D4AA3D-2773-4ECB-A8D3-B7E45B6E0C59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70D4AA3D-2773-4ECB-A8D3-B7E45B6E0C59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70D4AA3D-2773-4ECB-A8D3-B7E45B6E0C59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70D4AA3D-2773-4ECB-A8D3-B7E45B6E0C59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63D898BC-AA87-4D12-8B32-5C5C57F265C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63D898BC-AA87-4D12-8B32-5C5C57F265C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63D898BC-AA87-4D12-8B32-5C5C57F265C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D898BC-AA87-4D12-8B32-5C5C57F265C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
