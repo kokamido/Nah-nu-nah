@@ -11,7 +11,6 @@ namespace Objects
         public readonly float Hardness; // твёрдость
         public readonly float Toughness; // ударная вязкость
         public readonly float Plasticity; // пластичность
-        public readonly bool WaterPermeability;
         
     }
 }
