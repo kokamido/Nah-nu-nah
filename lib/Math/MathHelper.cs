@@ -13,7 +13,8 @@ namespace lib
         {
             if (rnd == null)
                 rnd = new Random();
-            return rnd.Next(left, right);
+            lock (rnd)
+               return rnd.Next(left, right);
         }
 
         public static double GetNormalRandomNum()
@@ -21,6 +22,9 @@ namespace lib
             lock (normalRandom)
                 return normalRandom.Next();
         }
+
+        public static bool CheckProbability(this double p) => GetUniformRndInt(0, 100000) <= p * 100000;
+        
 
         public static Tuple<int, int> Minus(this Tuple<int, int> left, Tuple<int, int> right)
             => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);

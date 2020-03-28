@@ -5,15 +5,15 @@ namespace lib
     public class NormalRandom
     {
         private readonly Random _randi;
-        private readonly double m;
-        private readonly double t;
+        private readonly double expectation;
+        private readonly double dispersion;
         private double? _buffer;
 
-        public NormalRandom(double m, double t, int? seed = null)
+        public NormalRandom(double expectation, double dispersion, int? seed = null)
         {
             _randi = seed.HasValue? new Random(seed.Value) : new Random();
-            this.m = m;
-            this.t = t;
+            this.expectation = expectation;
+            this.dispersion = dispersion;
             _buffer = null;
         }
 
@@ -26,8 +26,8 @@ namespace lib
                 return rs;
             }
             var (z1, z2) = GetNormalRandom(_randi.NextDouble(), _randi.NextDouble());
-            _buffer = m + t * z2;
-            return m + t * z1;
+            _buffer = expectation + dispersion * z2;
+            return expectation + dispersion * z1;
 
         }
 

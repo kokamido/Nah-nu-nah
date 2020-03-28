@@ -31,20 +31,6 @@ namespace lib
             }
         }
 
-        public static void ForEachWithShuffle<T>(this T[,] arr, Action<T,int,int> action,int width = 0, int height = 0)
-        {
-            width = width == 0 ? arr.GetLength(0) : width;
-            height = height == 0 ? arr.GetLength(1) : height;
-            var rnd = new Random();
-            var ys = Enumerable.Range(0, height);
-            Enumerable.Range(0,width).SelectMany(x => ys.Select(y => x.MakeTupleWith(y)))
-                .OrderBy(x=>rnd.Next())
-                .ForEach(t =>
-                {
-                    action?.Invoke(arr[t.Item1, t.Item2],t.Item1,t.Item2);
-                });
-        }
-
         public static void ForAll<T>(this T[,] arr, Action<T,int,int> action, int degreeOfParallelism, int width = 0, int height = 0)
         {
             width = width == 0 ? arr.GetLength(0) : width;

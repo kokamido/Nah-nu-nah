@@ -1,16 +1,15 @@
 namespace Objects.Primitives
 {
-    public class Material : Entity
+    public class Material : TagableEntity
     {
-        public readonly float Density;
-        public readonly float Transcalency;
-        public readonly float HeatCapacity;
-        public readonly float SoundAbsorption;
-        public readonly float WaterAbsorption;
-        public readonly float Durability; //прочность
-        public readonly float Hardness; // твёрдость
-        public readonly float Toughness; // ударная вязкость
-        public readonly float Plasticity; // пластичность
-        
+        public readonly double Density;
+        public readonly double Transcalency;
+        public readonly double HeatCapacity;
+        public readonly double SoundAbsorption;
+        public readonly double WaterAbsorption;
+        public readonly double Durability; //прочность
+        public readonly double Hardness; // твёрдость
+        public readonly double Toughness; // ударная вязкость
+        public readonly double Plasticity; // пластичность
     }
 }
