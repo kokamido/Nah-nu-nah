@@ -32,9 +32,14 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a">
+          <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Drawing" />
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
@@ -42,6 +47,10 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\GlobalMapGen\GlobalMapGen.csproj">
+        <Project>{e0f1cf0f-d1b4-49a3-b2ff-14f137f7318a}</Project>
+        <Name>GlobalMapGen</Name>
+      </ProjectReference>
       <ProjectReference Include="..\lib\lib.csproj">
         <Project>{508675e5-648f-478e-bbe9-e9a84112bcc2}</Project>
         <Name>lib</Name>
@@ -51,7 +60,19 @@
         <Name>Objects</Name>
       </ProjectReference>
     </ItemGroup>
+    <ItemGroup>
+      <None Include="log4net.config">
+        <CopyToOutputDirectory>bin\Debug\netcoreapp2.2</CopyToOutputDirectory>
+      </None>
+      <None Include="packages.config" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Target Name="MakeLogsDir" AfterTargets="Build">
+        <MakeDir Directories="$(OutDir)logs" />
+    </Target>
+    <Target Name="MakePicsDir" AfterTargets="Build">
+        <MakeDir Directories="$(OutDir)Pics" />
+    </Target>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">

@@ -16,7 +16,9 @@ namespace Objects.Life
         Limb = 1 << 1,
         Viscera = 1 << 2,
         Sensory = 1 << 3,
-        NotVital = 1 << 4
+        NotVital = 1 << 4,
+        Bones = 1 << 5,
+        Muscle = 1 << 6,
     }
     
     [DataContract]
@@ -27,7 +29,9 @@ namespace Objects.Life
         [DataMember] private string knownBasicMaterial;
         [DataMember(Order = 1)] private string state;
         [DataMember(Order = 2)] private string type;
-
+        [DataMember(Order = 3)] private (OrganType type, int min, int max) necessaryInnerParts;
+        [DataMember(Order = 4)] private (OrganType type, int min, int max) possibleInnerParts;
+        
         public Organ(Material material) : base(material){}
         
         [OnSerializing]

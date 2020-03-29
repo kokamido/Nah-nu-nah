@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Objects.Primitives;
 using Objects.Primitives.Tags;
 
 namespace Objects.Life

@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "ToughSkin",
+    "tags": [],
+    "Density": 1200,
+    "Durability": 0,
+    "Hardness": 0.2,
+    "HeatCapacity": 1510,
+    "Plasticity": 1,
+    "SoundAbsorption": 0.3,
+    "Toughness": 0.2,
+    "Transcalency": 0.3,
+    "WaterAbsorption": 0
+  }
+]

@@ -14,7 +14,7 @@ namespace Objects.Primitives.Materials
         [DataMember] public double Transcalency; //Теплопроводность
         [DataMember] public double Durability; //прочность
         [DataMember] public double Hardness; // твёрдость Моос/10 https://ru.wikipedia.org/wiki/%D0%A8%D0%BA%D0%B0%D0%BB%D0%B0_%D0%9C%D0%BE%D0%BE%D1%81%D0%B0
-        [DataMember] public double Toughness; // ударная вязкость 0-100
+        [DataMember] public double Toughness; // ударная вязкость 0-100 / 100
         [DataMember] public double Plasticity; // пластичность
     }
 }

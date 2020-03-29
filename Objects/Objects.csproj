@@ -47,7 +47,6 @@
         <Compile Include="Life\Organ.cs" />
         <Compile Include="Life\OrganGenerator.cs" />
         <Compile Include="Life\Organism.cs" />
-        <Compile Include="Primitives\Materials\BasicMaterials.cs" />
         <Compile Include="Primitives\Materials\Material.cs" />
         <Compile Include="Primitives\Tags\TagableEntity.cs" />
         <Compile Include="Primitives\Tags\Tags.cs" />
