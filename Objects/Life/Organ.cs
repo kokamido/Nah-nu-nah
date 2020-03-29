@@ -1,13 +1,15 @@
 using System.Linq;
+using System.Runtime.Serialization;
 using lib;
 using log4net;
 using Objects.Primitives;
 
 namespace Objects.Life
 {
+    [DataContract]
     public class Organ : Thing
     {
-        public OrganState State;
+        [DataMember] public OrganState State;
 
         public Organ(Material material) : base(material){}
     }
@@ -35,7 +37,7 @@ namespace Objects.Life
                 ? OrganState.Damaged 
                 : OrganState.Broken;
 
-            if (o.Parts?.DefaultIfEmpty() == null)
+            if (o.InnerParts?.DefaultIfEmpty() == null)
             {
                 Log.Debug("There is no inner part to smash");
                 return;
@@ -43,7 +45,7 @@ namespace Objects.Life
            
             var reducedProbability = o.ReduceSmashing(smashing, smashingProbability);
             Log.Debug($"Smashing probability has been reduced from '{smashingProbability}' to '{reducedProbability}'");
-            foreach (var p in o.Parts)
+            foreach (var p in o.InnerParts)
             {
                 if(p is Organ organ)
                     organ.Smash(smashing,reducedProbability);
@@ -71,14 +73,14 @@ namespace Objects.Life
         {
             Log.Debug($"Getting inner part of '{o.GetType()} - {o.ToJsonString()}' to pierce");
             piercedPart = null;
-            if (o.Parts?.DefaultIfEmpty() == null)
+            if (o.InnerParts?.DefaultIfEmpty() == null)
             {
                 Log.Debug($"There is no inner part to pierce");
                 return false;
             }
-            var rnd = MathHelper.GetUniformRndInt(0, o.Parts.Sum(p => p.Volume));
-            var totalProcessedVolume = 0;
-            foreach (var p in o.Parts)
+            var rnd = MathHelper.GetUniformRndDouble(0, o.InnerParts.Sum(p => p.Volume));
+            var totalProcessedVolume = 0.0;
+            foreach (var p in o.InnerParts)
             {
                 if (!(p is Organ))
                 {

@@ -1,8 +1,11 @@
+using System.Runtime.Serialization;
+
 namespace MetaEntities.Tags
 {
+    [DataContract]
     public class Tag  
     {
-        public readonly string Value;
+        [DataMember] public readonly string Value;
         public Tag(string value) => Value = value;
 
         public override bool Equals(object obj)

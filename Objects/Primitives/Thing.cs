@@ -10,10 +10,15 @@ namespace Objects.Primitives
     public abstract class Thing : TagableEntity
     {
         [DataMember] public readonly Material Material;
-        [DataMember] public int Volume;
+        [DataMember] public double Volume; //m^3
         [DataMember] public MechanicalProperties MechanicalProperties;
-        [DataMember] public List<Thing> Parts;
-        public Thing(Material material) => Material = material;
+        [DataMember] public List<Thing> InnerParts;
+
+        public Thing(Material material, MechanicalProperties mechanicalProperties = null)
+        {
+            Material = material;
+            MechanicalProperties = mechanicalProperties ?? new MechanicalProperties();
+        }
         public double Mass => Volume * Material.Density;
     }
 
@@ -25,12 +30,12 @@ namespace Objects.Primitives
                 return 0;
             return Math.Min(0.95,
                        piercing.Material.Hardness / pierced.Material.Hardness *
-                       (1 + piercing.MechanicalProperties.Sharpness)) * oldProbability;
+                       (0.8 + piercing.MechanicalProperties.Sharpness)) * oldProbability;
         }
 
         public static double ReduceSmashing(this Thing smashed, Thing smashing, double oldProbability)
         {
-            if (smashed.Volume / smashing.Volume > 100)
+            if (smashed.Mass / smashing.Mass > 1000)
                 return 0;
             return Math.Min(0.6, 1 - (smashed.Material.Toughness - smashing.Material.Hardness)) * oldProbability;
         }
