@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Objects.Primitives
+namespace Objects.Primitives.Things
 {
     /// <summary>
     /// All properties must be in [0, 1]

@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Objects.Life;
+using Objects.Primitives.Materials;
+using Objects.Primitives.Tags;
 
-namespace Objects.Primitives
+namespace Objects.Primitives.Things
 {
     [DataContract]
     [KnownType(typeof(Organ))]
     public abstract class Thing : TagableEntity
     {
-        [DataMember] public readonly Material Material;
+        [DataMember] public Material Material;
         [DataMember] public double Volume; //m^3
         [DataMember] public MechanicalProperties MechanicalProperties;
         [DataMember] public List<Thing> InnerParts;

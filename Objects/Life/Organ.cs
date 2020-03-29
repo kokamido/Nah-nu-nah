@@ -1,24 +1,50 @@
+using System;
 using System.Linq;
 using System.Runtime.Serialization;
 using lib;
 using log4net;
-using Objects.Primitives;
+using Objects.Primitives.Materials;
+using Objects.Primitives.Things;
 
 namespace Objects.Life
 {
+    [Flags]
+    public enum OrganType
+    {
+        Cover = 0,
+        BodyPart = 1,
+        Limb = 1 << 1,
+        Viscera = 1 << 2,
+        Sensory = 1 << 3,
+        NotVital = 1 << 4
+    }
+    
     [DataContract]
     public class Organ : Thing
     {
-        [DataMember] public OrganState State;
+        [IgnoreDataMember] public OrganState State;
+        [IgnoreDataMember] public OrganType Type;
+        [DataMember] private string knownBasicMaterial;
+        [DataMember(Order = 1)] private string state;
+        [DataMember(Order = 2)] private string type;
 
         public Organ(Material material) : base(material){}
-    }
+        
+        [OnSerializing]
+        private void OnSerializing(StreamingContext context)
+        {
+            state = State.ToString();
+            type = Type.ToString();
+        }
 
-    public enum OrganState
-    {
-        Healthy,
-        Damaged,
-        Broken
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Enum.TryParse(state, true, out State);
+            Enum.TryParse(type, true, out Type);
+            if (!string.IsNullOrEmpty(knownBasicMaterial))
+                Material = Known.Materials[knownBasicMaterial];
+        }
     }
 
     public static class OrganHelper
@@ -99,6 +125,12 @@ namespace Objects.Life
             Log.Debug("No one part has been pierced");
             return false;
         }
-        
+    }
+    
+    public enum OrganState
+    {
+        Healthy,
+        Damaged,
+        Broken
     }
 }

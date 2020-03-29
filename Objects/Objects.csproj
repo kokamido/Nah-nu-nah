@@ -43,12 +43,16 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Known.cs" />
         <Compile Include="Life\Organ.cs" />
+        <Compile Include="Life\OrganGenerator.cs" />
         <Compile Include="Life\Organism.cs" />
-        <Compile Include="Primitives\MechanicalProperties.cs" />
-        <Compile Include="Primitives\TagableEntity.cs" />
-        <Compile Include="Primitives\Material.cs" />
-        <Compile Include="Primitives\Thing.cs" />
+        <Compile Include="Primitives\Materials\BasicMaterials.cs" />
+        <Compile Include="Primitives\Materials\Material.cs" />
+        <Compile Include="Primitives\Tags\TagableEntity.cs" />
+        <Compile Include="Primitives\Tags\Tags.cs" />
+        <Compile Include="Primitives\Things\MechanicalProperties.cs" />
+        <Compile Include="Primitives\Things\Thing.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -63,6 +67,10 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="KnownMaterials" />
+      <Folder Include="KnownOrgans" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

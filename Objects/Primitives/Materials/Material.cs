@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
+using Objects.Primitives.Tags;
 
-namespace Objects.Primitives
+namespace Objects.Primitives.Materials
 {
     [DataContract]
     public class Material : TagableEntity

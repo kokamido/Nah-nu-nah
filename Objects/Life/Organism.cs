@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using MetaEntities.Tags;
 using Objects.Primitives;
+using Objects.Primitives.Tags;
 
 namespace Objects.Life
 {
@@ -10,9 +10,9 @@ namespace Objects.Life
     {
         [DataMember] public List<Organ> Organs;
 
-        public override IEnumerable<Tag> DefaultTags() => new List<Tag>
+        public override IEnumerable<string> DefaultTags() => new List<string>
         {
-            LifeTags.AliveLike
+            LiveTags.AliveLike
         };
     }
 }
