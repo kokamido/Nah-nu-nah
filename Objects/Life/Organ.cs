@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using lib;
@@ -11,14 +12,15 @@ namespace Objects.Life
     [Flags]
     public enum OrganType
     {
-        Cover = 0,
-        BodyPart = 1,
-        Limb = 1 << 1,
-        Viscera = 1 << 2,
-        Sensory = 1 << 3,
-        NotVital = 1 << 4,
-        Bones = 1 << 5,
-        Muscle = 1 << 6,
+        None,
+        BloodVessel,
+        Bones,
+        Muscle,
+        Cover,
+        Viscera,
+        Sensory,
+        NotVital,
+        BodyPartAndLimb,             
     }
     
     [DataContract]
@@ -29,8 +31,8 @@ namespace Objects.Life
         [DataMember] private string knownBasicMaterial;
         [DataMember(Order = 1)] private string state;
         [DataMember(Order = 2)] private string type;
-        [DataMember(Order = 3)] private (OrganType type, int min, int max) necessaryInnerParts;
-        [DataMember(Order = 4)] private (OrganType type, int min, int max) possibleInnerParts;
+        [DataMember(Order = 3)] public List<(OrganType Type, int MinCount, int MaxCount)> NecessaryInnerParts;
+        [DataMember(Order = 4)] public List<(OrganType Type, int MaxCount, double Probability)> PossibleInnerParts;
         
         public Organ(Material material) : base(material){}
         

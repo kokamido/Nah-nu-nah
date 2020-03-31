@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using lib;
 using log4net;
 using Objects.Life;
@@ -36,7 +38,61 @@ namespace Objects
                         list.Add(organ);
                     else
                         Organs[organ.Type] = new List<Organ> {organ};
-                }               
+                }
+
+                foreach (var obj in Enum.GetValues(typeof(OrganType)))
+                {
+                    var type = (OrganType)obj;
+                    if(type == OrganType.None)
+                        continue;
+                    var toRemove = new List<Organ>();
+                    for (int i = 0; i < Organs[type].Count; i++)
+                    {
+                        var badInnerPartType = Organs[type][i].NecessaryInnerParts
+                            .Select(o => o.Type)
+                            .Concat(Organs[type][i].PossibleInnerParts.Select(o => o.Type))
+                            .FirstOrDefault(t => t >= Organs[type][i].Type);
+                        if (badInnerPartType != OrganType.None)
+                        {
+                            Log.Error($"Incorrect organ '{Organs[type][i].ToJsonString()}'. It may contains '{badInnerPartType.ToString()}'");
+                            toRemove.Add(Organs[type][i]);
+                        }
+                        else
+                        {
+                            Log.Debug($"Generating necessary inner parts for '{Organs[type][i].ToJsonString()}'");
+                            foreach (var o in Organs[type][i].NecessaryInnerParts)
+                            {
+                                Log.Debug($"Processing '{o}'");
+                                for (int j = 0; j < MathHelper.GetUniformRndInt(o.MinCount, o.MaxCount); j++)
+                                {
+                                    var newOrgan = Organs[o.Type][MathHelper.GetUniformRndInt(0, Organs[o.Type].Count)];
+                                    Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
+                                    Organs[type][i].InnerParts.Add(newOrgan);
+                                }
+                            }
+                            Log.Debug($"Generating possible inner parts for '{Organs[type][i].ToJsonString()}'");
+                            foreach (var o in Organs[type][i].PossibleInnerParts)
+                            {
+                                Log.Debug($"Processing '{o}'");
+                                for (int j = 0; j < MathHelper.GetUniformRndInt(0, o.MaxCount); j++)
+                                {
+                                    if (o.Probability.CheckProbability())
+                                    {
+                                        var newOrgan = Organs[o.Type][MathHelper.GetUniformRndInt(0, Organs[o.Type].Count)];
+                                        Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
+                                        Organs[type][i].InnerParts.Add(newOrgan);
+                                    }
+                                    else
+                                        Log.Debug("Probability check failed");
+                                }
+                                    
+                            }
+                        }
+                        
+                        
+                    }
+                    Organs[type].RemoveAll(o => toRemove.Contains(o)); //Note Да, можно запилить хэши и сделать О(1). Но пока впадлу.
+                }
             }
         }
 
