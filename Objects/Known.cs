@@ -13,15 +13,15 @@ namespace Objects
     {
         public static Dictionary<OrganType, List<Organ>> Organs;
         public static Dictionary<string, Material> Materials;
-        private const string pathToMaterials= @"C:\Users\Ква\Desktop\Nah-nu-nah\Objects\KnownMaterials";
+        private const string pathToMaterials = @"C:\Users\Ква\Desktop\Nah-nu-nah\Objects\KnownMaterials";
         private const string pathToOrgans = @"C:\Users\Ква\Desktop\Nah-nu-nah\Objects\KnownOrgans";
         private static ILog Log = LogManager.GetLogger(typeof(Known));
         public static int i = 0;
 
         static Known()
         {
-            LoadOrgans(pathToOrgans);
             LoadMaterials(pathToMaterials);
+            LoadOrgans(pathToOrgans); 
         }
 
         private static void LoadOrgans(string pathToData)
@@ -42,10 +42,11 @@ namespace Objects
 
                 foreach (var obj in Enum.GetValues(typeof(OrganType)))
                 {
-                    var type = (OrganType)obj;
-                    if(type == OrganType.None)
+                    var type = (OrganType) obj;
+                    if (type == OrganType.None)
                         continue;
                     var toRemove = new List<Organ>();
+                    
                     for (int i = 0; i < Organs[type].Count; i++)
                     {
                         var badInnerPartType = Organs[type][i].NecessaryInnerParts
@@ -54,7 +55,8 @@ namespace Objects
                             .FirstOrDefault(t => t >= Organs[type][i].Type);
                         if (badInnerPartType != OrganType.None)
                         {
-                            Log.Error($"Incorrect organ '{Organs[type][i].ToJsonString()}'. It may contains '{badInnerPartType.ToString()}'");
+                            Log.Error(
+                                $"Incorrect organ '{Organs[type][i].ToJsonString()}'. It may contains '{badInnerPartType.ToString()}'");
                             toRemove.Add(Organs[type][i]);
                         }
                         else
@@ -70,6 +72,7 @@ namespace Objects
                                     Organs[type][i].InnerParts.Add(newOrgan);
                                 }
                             }
+
                             Log.Debug($"Generating possible inner parts for '{Organs[type][i].ToJsonString()}'");
                             foreach (var o in Organs[type][i].PossibleInnerParts)
                             {
@@ -78,20 +81,21 @@ namespace Objects
                                 {
                                     if (o.Probability.CheckProbability())
                                     {
-                                        var newOrgan = Organs[o.Type][MathHelper.GetUniformRndInt(0, Organs[o.Type].Count)];
+                                        var newOrgan =
+                                            Organs[o.Type][MathHelper.GetUniformRndInt(0, Organs[o.Type].Count)];
                                         Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
                                         Organs[type][i].InnerParts.Add(newOrgan);
                                     }
                                     else
                                         Log.Debug("Probability check failed");
                                 }
-                                    
                             }
                         }
-                        
-                        
                     }
-                    Organs[type].RemoveAll(o => toRemove.Contains(o)); //Note Да, можно запилить хэши и сделать О(1). Но пока впадлу.
+
+                    Organs[type]
+                        .RemoveAll(o =>
+                            toRemove.Contains(o)); //Note Да, можно запилить хэши и сделать О(1). Но пока впадлу.
                 }
             }
         }
@@ -104,7 +108,7 @@ namespace Objects
             {
                 var materials = JsonHelper.ParseJson<List<Material>>(File.ReadAllText(file));
                 Log.Debug($"From '{file}' loaded '{materials.ToJsonString()}'");
-                materials.ForEach(m => Materials[m.Name] = m);        
+                materials.ForEach(m => Materials[m.Name] = m);
             }
         }
     }

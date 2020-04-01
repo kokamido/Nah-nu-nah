@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using lib;
 using log4net;
 using Objects.Primitives.Materials;
+using Objects.Primitives.Tags;
 using Objects.Primitives.Things;
 
 namespace Objects.Life
@@ -16,11 +17,11 @@ namespace Objects.Life
         BloodVessel,
         Bones,
         Muscle,
-        Cover,
         Viscera,
         Sensory,
         NotVital,
-        BodyPartAndLimb,             
+        BodyPartAndLimb,
+        Container
     }
     
     [DataContract]
@@ -56,49 +57,69 @@ namespace Objects.Life
     public static class OrganHelper
     {
         private static ILog Log = LogManager.GetLogger(typeof(OrganHelper));
+             
+        [SensitiveToTag(typeof(PhysicsTags), PhysicsTags.Intangible)]
         public static void Smash(this Organ o, Thing smashing, double smashingProbability)
         {
             Log.Debug($"Smashing\n\t'{o.GetType()} - {o.ToJsonString()}'\n\tWith '{smashing.GetType()} - {smashing.ToJsonString()}'\n\tProbability is '{smashingProbability}'");
-            if (!smashingProbability.CheckProbability())
+            double reducedProbability = smashingProbability;
+           
+            if (!o.ContainsTag(PhysicsTags.Intangible))
             {
-                Log.Debug("Not smashed");
-                return;
-            }
+                if (!smashingProbability.CheckProbability())
+                {
+                    Log.Debug("Not smashed");
+                    return;
+                }
             
-            o.State = o.State == OrganState.Healthy 
-                ? OrganState.Damaged 
-                : OrganState.Broken;
+                o.State = o.State == OrganState.Healthy 
+                    ? OrganState.Damaged 
+                    : OrganState.Broken;
+                
+                reducedProbability = o.ReduceSmashing(smashing, smashingProbability);
+            }
+            else
+                Log.Debug($"{o.ToJsonString()} is intangible!");
+            
 
             if (o.InnerParts?.DefaultIfEmpty() == null)
             {
                 Log.Debug("There is no inner part to smash");
                 return;
             }
-           
-            var reducedProbability = o.ReduceSmashing(smashing, smashingProbability);
+                     
             Log.Debug($"Smashing probability has been reduced from '{smashingProbability}' to '{reducedProbability}'");
             foreach (var p in o.InnerParts)
             {
                 if(p is Organ organ)
-                    organ.Smash(smashing,reducedProbability);
+                    organ.Smash(smashing, reducedProbability);
             }
         }
         
+        [SensitiveToTag(typeof(PhysicsTags), PhysicsTags.Intangible)]
         public static void Pierce(this Organ o, Thing piercing, double piercingProbability)
         {
             Log.Debug($"Piercing\n\t'{o.GetType()} - {o.ToJsonString()}'\n\tWith '{piercing.GetType()} - {piercing.ToJsonString()}'\n\tProbability is '{piercingProbability}'");
-            if (!piercingProbability.CheckProbability())
+            double reducedProbability = piercingProbability;
+            if (!o.ContainsTag(PhysicsTags.Intangible))
             {
-                Log.Debug("Not pierced");
-                return;
-            }
+                if (!piercingProbability.CheckProbability())
+                {
+                    Log.Debug("Not pierced");
+                    return;
+                }
 
-            o.State = o.State == OrganState.Healthy
-                ? OrganState.Damaged
-                : OrganState.Broken;
+                o.State = o.State == OrganState.Healthy
+                    ? OrganState.Damaged
+                    : OrganState.Broken;
+                reducedProbability = o.ReducePiercing(piercing, piercingProbability);
+            }
+            else
+                Log.Debug($"{o.ToJsonString()} is intangible!");
+            
 
             if (o.GetPiercedPart(out var p) && p is Organ organ)
-                Pierce(organ, piercing, o.ReducePiercing(piercing, piercingProbability));
+                Pierce(organ, piercing,reducedProbability);
         }
 
         private static bool GetPiercedPart(this Organ o, out Thing piercedPart)
