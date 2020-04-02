@@ -8,7 +8,7 @@ namespace Objects.Primitives.Materials
     {
         [DataMember] public double Density; //10000 kg/m^3
         [DataMember] public double HeatCapacity;
-        [DataMember] public double WaterAbsorption;
+        [DataMember] public double WaterAbsorption; //от ноля до 1, сколько может впитать воды относительно объёма
         //всё далььнейшее маппим в [0, 1]
         [DataMember] public double SoundAbsorption;
         [DataMember] public double Transcalency; //Теплопроводность

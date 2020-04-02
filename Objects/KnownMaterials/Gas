@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Miasma",
+    "tags": ["Miasma"],
+    "Density": 10,
+    "Durability": 0,
+    "Hardness": 0.0,
+    "HeatCapacity": 1050,
+    "Plasticity": 1,
+    "SoundAbsorption": 0.1,
+    "Toughness": 0.0,
+    "Transcalency": 0.1,
+    "WaterAbsorption": 0
+  }
+]

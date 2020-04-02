@@ -14,6 +14,7 @@ namespace Objects.Life
     public enum OrganType
     {
         None,
+        Fluid,
         BloodVessel,
         Bones,
         Muscle,

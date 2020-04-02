@@ -2,14 +2,53 @@
   {
     "Name": "ToughSkin",
     "tags": [],
-    "Density": 1200,
+    "Density": 1800,
     "Durability": 0,
-    "Hardness": 0.2,
-    "HeatCapacity": 1510,
+    "Hardness": 0.15,
+    "HeatCapacity": 3445,
     "Plasticity": 1,
     "SoundAbsorption": 0.3,
     "Toughness": 0.2,
-    "Transcalency": 0.3,
+    "Transcalency": 0.5,
+    "WaterAbsorption": 0.05
+  },
+  {
+    "Name": "RegularSkin",
+    "tags": [],
+    "Density": 1200,
+    "Durability": 0,
+    "Hardness": 0.025,
+    "HeatCapacity": 2500,
+    "Plasticity": 1,
+    "SoundAbsorption": 0.15,
+    "Toughness": 0.05,
+    "Transcalency": 0.5,
+    "WaterAbsorption": 0.05
+  },
+  {
+    "Name": "Scales",
+    "tags": [],
+    "Density": 1200,
+    "Durability": 0.1,
+    "Hardness": 0.2,
+    "HeatCapacity": 1500,
+    "Plasticity": 0.8,
+    "SoundAbsorption": 0.15,
+    "Toughness": 0.1,
+    "Transcalency": 0.5,
     "WaterAbsorption": 0
+  },
+  {
+    "Name": "Fur",
+    "tags": [],
+    "Density": 1500,
+    "Durability": 0.1,
+    "Hardness": 0.1,
+    "HeatCapacity": 2000,
+    "Plasticity": 0.85,
+    "SoundAbsorption": 0.4,
+    "Toughness": 0.2,
+    "Transcalency": 0.2,
+    "WaterAbsorption": 0.1
   }
 ]
