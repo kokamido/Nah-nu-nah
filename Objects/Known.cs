@@ -16,7 +16,6 @@ namespace Objects
         private const string pathToMaterials = @"C:\Users\Ква\Desktop\Nah-nu-nah\Objects\KnownMaterials";
         private const string pathToOrgans = @"C:\Users\Ква\Desktop\Nah-nu-nah\Objects\KnownOrgans";
         private static ILog Log = LogManager.GetLogger(typeof(Known));
-        public static int i = 0;
 
         static Known()
         {
