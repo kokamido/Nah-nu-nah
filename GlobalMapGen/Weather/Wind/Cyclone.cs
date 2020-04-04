@@ -43,12 +43,15 @@ namespace GlobalMap.Weather.Wind
                 point = buf.Plus(Eye);
             }
 
+            var index = (range / Range * _ahahaMagicNumber).Round();
+            if (double.IsNaN(index))
+                index = _ahahaMagicNumber - 1;
             var res = range > Range
                 ? 0.0.MakeTupleWith(0.0)
                 : (IsAntiCyclone
                     ? GetAntiCycloneVec(point)
                     : GetCycloneVec(point)).Get1Vec()
-                .Multiply(preCalculatedSigmoid[Math.Min(_ahahaMagicNumber - 1, (range / Range * _ahahaMagicNumber).Round())] * Power);
+                .Multiply(preCalculatedSigmoid[Math.Min(_ahahaMagicNumber - 1, index)] * Power);
 
             return IsCounterClockwise ? res : (-res.Item1).MakeTupleWith(res.Item2);
         }
