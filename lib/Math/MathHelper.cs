@@ -14,15 +14,15 @@ namespace lib
             if (rnd == null)
                 rnd = new Random();
             lock (rnd)
-               return rnd.Next(left, right);
+                return rnd.Next(left, right);
         }
-        
+
         public static double GetUniformRndDouble(double left, double right)
         {
             if (rnd == null)
                 rnd = new Random();
             lock (rnd)
-                return rnd.NextDouble()*(right-left)+left;
+                return rnd.NextDouble() * (right - left) + left;
         }
 
         public static double GetNormalRandomNum()
@@ -32,7 +32,7 @@ namespace lib
         }
 
         public static bool CheckProbability(this double p) => GetUniformRndInt(0, 100000) <= p * 100000;
-        
+
 
         public static Tuple<int, int> Minus(this Tuple<int, int> left, Tuple<int, int> right)
             => Tuple.Create(left.Item1 - right.Item1, left.Item2 - right.Item2);
@@ -176,10 +176,9 @@ namespace lib
         public static Tuple<int, int> ToBorders(this Tuple<double, double> point, int width, int height)
             => point.Item1.ToBorders(0, width).MakeTupleWith(point.Item2.ToBorders(0, height));
 
-        public static int ToBorders(this double val, int min, int max) => (int) Math.Min(max, Math.Max(min, val));
+        public static int ToBorders(this double val, int min, int max) => double.IsNaN(val) ? min : (int) Math.Min(max, Math.Max(min, val));
 
-        public static double ToBorders(this double val, double min, double max) =>
-            (int) Math.Min(max, Math.Max(min, val));
+        public static double ToBorders(this double val, double min, double max) => Math.Min(max, Math.Max(min, val));
 
         public static IEnumerable<Tuple<int, int>> GetNeighboursIndexes(this Tuple<int, int> p)
         {

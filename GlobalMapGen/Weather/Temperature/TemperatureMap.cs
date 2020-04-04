@@ -154,7 +154,7 @@ namespace GlobalMap.Weather.Temperature
                  : Math.Cos((relativeLatitude - 0.7) / 0.6 * Math.PI) / 2.0;
             var relativeAltitude = (altitude - 0.455) / 0.545;
             var altitudeCorrection = -(altitude > 0.455 ? relativeAltitude * relativeAltitude * 35 : 0);
-            return ( solarActivity) * (2* TemperatureDeltaFromZero + TemperatureShift) - TemperatureDeltaFromZero + altitudeCorrection;
+            return (solarActivity) * (2 * TemperatureDeltaFromZero + TemperatureShift) - TemperatureDeltaFromZero + altitudeCorrection;
         }
     }
 }

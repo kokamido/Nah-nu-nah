@@ -121,6 +121,6 @@ namespace lib
             return output.ToArray();
         }
 
-        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> src) => new HashSet<T>(src);
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> src) => new HashSet<T>(src.Distinct());
     }
 }
