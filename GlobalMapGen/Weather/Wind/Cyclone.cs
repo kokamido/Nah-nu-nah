@@ -43,7 +43,7 @@ namespace GlobalMap.Weather.Wind
                 point = buf.Plus(Eye);
             }
 
-            var index = (range / Range * _ahahaMagicNumber).Round();
+            var index = (range / Range * _ahahaMagicNumber);
             if (double.IsNaN(index))
                 index = _ahahaMagicNumber - 1;
             var res = range > Range
@@ -51,7 +51,7 @@ namespace GlobalMap.Weather.Wind
                 : (IsAntiCyclone
                     ? GetAntiCycloneVec(point)
                     : GetCycloneVec(point)).Get1Vec()
-                .Multiply(preCalculatedSigmoid[Math.Min(_ahahaMagicNumber - 1, index)] * Power);
+                .Multiply(preCalculatedSigmoid[Math.Min(_ahahaMagicNumber - 1, index.Round())] * Power);
 
             return IsCounterClockwise ? res : (-res.Item1).MakeTupleWith(res.Item2);
         }
