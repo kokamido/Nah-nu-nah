@@ -31,14 +31,14 @@ namespace GlobalMap.Weather.Temperature
             for (int x = 0; x < bitmap.Width; x++)
             for (int y = 0; y < bitmap.Height; y++)
             {
-                var color = GetColor(bitmap.GetPixel(x, y), Map[x, y],needBlend);
+                var color = GetColor(bitmap.GetPixel(x, y), Map[x, y], needBlend);
                 bitmap.SetPixel(x, y, color);
             }
         }
 
         protected Color GetColor(Color bitmapPixel, double temperature, bool needBlend)
         {
-            var mul = ((temperature-TemperatureShift) / TemperatureDeltaFromZero + 1) / 2;
+            var mul = ((temperature - TemperatureShift) / TemperatureDeltaFromZero + 1) / 2;
             var res = mul >= 0.5
                 ? WarmColor.Blend(MidColor, (mul - 0.5) * 2)
                 : MidColor.Blend(ColdColor, mul * 2);
@@ -70,8 +70,9 @@ namespace GlobalMap.Weather.Temperature
 
         public DefaultTemperature(Map map)
         {
-            if(!map.CreatedLayers.HasFlag(MapLayer.Winds))
-                throw new ArgumentException("Can't create a temperature map without windmap, you need to create it first.");
+            if (!map.CreatedLayers.HasFlag(MapLayer.Winds))
+                throw new ArgumentException(
+                    "Can't create a temperature map without windmap, you need to create it first.");
             Log.Info($"Creating new temperature map with width '{map.Width}' and height '{map.Height}'.");
             Map = new double[map.Width, map.Height];
             Width = map.Width;
@@ -124,23 +125,26 @@ namespace GlobalMap.Weather.Temperature
             Log.Info("Start second stage of correcting temperature map. Smoothing");
             res = new double[Width, Height];
             Map.ForAll((val, x, y) =>
-                {
-                    var xbuf = x;
-                    var ybuf = y;
-                    var center = xbuf.MakeTupleWith(ybuf);
-                    var pointsToAvg = MathHelper.GetCirclePoints(15).Select(p => p.Plus(center))
-                        .Where(p => p.IsInBorders(Width, Height)).ToArray();
-                    res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
-                }, SystemSettings.AvaliableThreads / 2);
+            {
+                var xbuf = x;
+                var ybuf = y;
+                var center = xbuf.MakeTupleWith(ybuf);
+                var pointsToAvg = MathHelper.GetCirclePoints(15).Select(p => p.Plus(center))
+                    .Where(p => p.IsInBorders(Width, Height)).ToArray();
+                res[xbuf, ybuf] = pointsToAvg.Select(p => Map[p.Item1, p.Item2]).Sum() / pointsToAvg.Length;
+            }, SystemSettings.AvaliableThreads / 2);
             Log.Info("Second stage of correcting temperature map has been finished");
             Map = res;
-            Log.Info($"Start third stage of correcting temperature map. Shifting dealing with anomalies, shifting tamp by {TemperatureShift}");
+            Log.Info(
+                $"Start third stage of correcting temperature map. Shifting dealing with anomalies, shifting tamp by {TemperatureShift}");
             Map = Map.Select((t, x, y) =>
             {
                 var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
                 var latitudeCorrection = relativeLatitude / 2 + 0.3;
-                var temperature = (t*latitudeCorrection + GetTemperature(x, y, globalMap.Altitudes[x, y])*(1-latitudeCorrection));
-                return Math.Min(TemperatureShift+TemperatureDeltaFromZero, Math.Max(-TemperatureDeltaFromZero + TemperatureShift, temperature));
+                var temperature = (t * latitudeCorrection +
+                                   GetTemperature(x, y, globalMap.Altitudes[x, y]) * (1 - latitudeCorrection));
+                return Math.Min(TemperatureShift + TemperatureDeltaFromZero,
+                    Math.Max(-TemperatureDeltaFromZero + TemperatureShift, temperature));
             });
             Log.Info("Third stage of correcting temperature map has been finished");
         }
@@ -149,12 +153,13 @@ namespace GlobalMap.Weather.Temperature
         {
             var relativeLatitude = Math.Abs(y / (Height / 2.0) - 1);
             var solarActivity = relativeLatitude < 0.233 ? 1
-                 : relativeLatitude < 0.433 ? (Math.Cos((relativeLatitude - 0.233) / 0.2 * Math.PI) / 4.0 + 0.75)
-                 : relativeLatitude < 0.7 ? 0.5
-                 : Math.Cos((relativeLatitude - 0.7) / 0.6 * Math.PI) / 2.0;
+                : relativeLatitude < 0.433 ? (Math.Cos((relativeLatitude - 0.233) / 0.2 * Math.PI) / 4.0 + 0.75)
+                : relativeLatitude < 0.7 ? 0.575
+                : Math.Cos((relativeLatitude - 0.7) / 0.6 * Math.PI) / 2.0;
             var relativeAltitude = (altitude - 0.455) / 0.545;
-            var altitudeCorrection = -(altitude > 0.455 ? relativeAltitude * relativeAltitude * 35 : 0);
-            return (solarActivity) * (2 * TemperatureDeltaFromZero + TemperatureShift) - TemperatureDeltaFromZero + altitudeCorrection;
+            var altitudeCorrection = -(altitude > 0.455 ? relativeAltitude * Math.Pow(relativeAltitude, 1.5) * 35 : 0);
+            return (solarActivity) * (2 * TemperatureDeltaFromZero + TemperatureShift) - TemperatureDeltaFromZero +
+                   altitudeCorrection;
         }
     }
 }

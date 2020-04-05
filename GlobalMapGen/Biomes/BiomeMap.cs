@@ -23,11 +23,11 @@ namespace GlobalMap.Weather.Biomes
                 bitmap.SetPixel(x, y, needBlend ? val.GetColorOrDefault().Blend(bitmap.GetPixel(x, y), 0.75) : val.GetColorOrDefault());
             });
             var yForText = 0;
-            foreach (var kvp in BiomeHelper.BiomesToColor)
+            /*foreach (var kvp in BiomeHelper.BiomesToColor)
             {
                 bitmap.DrawText(kvp.Key.ToString(),kvp.Value,new RectangleF(0,yForText,100,yForText+50));
                 yForText += 52;
-            }
+            }*/
         }
 
         [OnDeserialized]

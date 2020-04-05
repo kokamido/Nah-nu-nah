@@ -40,12 +40,12 @@ namespace TestProject
 
         private static void LifeTest()
         {
-            Known.i = 228;
+            var a = Known.Organs.Any();
         }
 
         private static void MapGenTest()
         {
-            var map = MapGenerator.GenerateAltitudeMap(1024, 768, new DefaultEarthAltitude());
+            var map = MapGenerator.GenerateAltitudeMap(1000, 1000, new DefaultEarthAltitude());
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));
@@ -61,8 +61,9 @@ namespace TestProject
             map.MoistureMap = new DefaultMoisture(map);
             map.BiomeMap = new DefaultBiomeMap(map);
 
-            File.WriteAllBytes("Pics/map.pozhato", map.ToJson().Compress());
-            File.WriteAllBytes("Pics/map.json", map.ToJson());
+            /*File.WriteAllBytes("Pics/map.pozhato", map.ToJson().Compress());
+            File.WriteAllBytes("Pics/map.json", map.ToJson());*/
+            log.Info($"Total biomes: {map.BiomeMap.Map.ToSingleDimension().Distinct().Count()}");
             log.Info("drawing");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Temperature).Save("Pics/AltAndTempMap.png");
             map.RedrawBitmap(MapLayer.Altitudes | MapLayer.Winds).Save("Pics/AltAndWind.png");
