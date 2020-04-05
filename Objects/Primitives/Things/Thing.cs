@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using lib;
 using Objects.Life;
 using Objects.Primitives.Materials;
 using Objects.Primitives.Tags;
@@ -11,17 +13,31 @@ namespace Objects.Primitives.Things
     [KnownType(typeof(Organ))]
     public abstract class Thing : TagableEntity
     {
-        [DataMember] public Material Material;
-        [DataMember] public double Volume; //m^3
-        [DataMember] public MechanicalProperties MechanicalProperties;
-        [DataMember] public List<Thing> InnerParts;
+        [DataMember(EmitDefaultValue = false)] public Material Material;
+        [DataMember(EmitDefaultValue = false)] public double AdditionalVolumeInCm3; //cm^3
+        [DataMember(EmitDefaultValue = false)] public MechanicalProperties MechanicalProperties;
+        [DataMember(EmitDefaultValue = false)] public List<Thing> InnerParts;
+        public CreatureSize Size { get; private set; }
 
-        public Thing(Material material, MechanicalProperties mechanicalProperties = null)
+        protected Thing(Material material, MechanicalProperties mechanicalProperties = null)
         {
             Material = material;
             MechanicalProperties = mechanicalProperties ?? new MechanicalProperties();
         }
-        public double Mass => Volume * Material.Density;
+        
+        public void ResizeTo(CreatureSize newSize)
+        {
+            var multiplier = newSize.ToDouble() / Size.ToDouble();
+            AdditionalVolumeInCm3 *= multiplier;
+            (InnerParts ?? Enumerable.Empty<Thing>()).ForEach(p => p.ResizeTo(newSize));
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context) => Size = CreatureSize.Cat;
+        
+
+        public double Volume => (InnerParts ?? Enumerable.Empty<Thing>()).Sum(part => part.Volume) + AdditionalVolumeInCm3;
+        public double Mass =>  (InnerParts ?? Enumerable.Empty<Thing>()).Sum(part => part.Mass) + AdditionalVolumeInCm3 * Material.Density;
     }
 
     public static class ThingHelper

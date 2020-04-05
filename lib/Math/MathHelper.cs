@@ -14,7 +14,7 @@ namespace lib
             if (rnd == null)
                 rnd = new Random();
             lock (rnd)
-                return rnd.Next(left, right);
+                return rnd.Next(left, right+1);
         }
 
         public static double GetUniformRndDouble(double left, double right)

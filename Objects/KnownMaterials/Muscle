@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "OrganicMuscle",
+    "tags": [],
+    "Density": 1300,
+    "Durability": 0.05,
+    "Hardness": 0.05,
+    "HeatCapacity": 3360,
+    "Plasticity": 0.85,
+    "SoundAbsorption": 0.3,
+    "Toughness": 0.15,
+    "Transcalency": 0.2,
+    "WaterAbsorption": 0.1
+  }
+]

@@ -50,6 +50,7 @@
         <Compile Include="Primitives\Materials\Material.cs" />
         <Compile Include="Primitives\Tags\TagableEntity.cs" />
         <Compile Include="Primitives\Tags\Tags.cs" />
+        <Compile Include="Primitives\Things\InnerPart.cs" />
         <Compile Include="Primitives\Things\MechanicalProperties.cs" />
         <Compile Include="Primitives\Things\Thing.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

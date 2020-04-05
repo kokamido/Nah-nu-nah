@@ -10,11 +10,11 @@ using Objects.Primitives.Things;
 
 namespace Objects.Life
 {
-    [Flags]
     public enum OrganType
     {
         None,
         Fluid,
+        Blood,
         BloodVessel,
         Bones,
         Muscle,
@@ -30,13 +30,20 @@ namespace Objects.Life
     {
         [IgnoreDataMember] public OrganState State;
         [IgnoreDataMember] public OrganType Type;
-        [DataMember] private string knownBasicMaterial;
-        [DataMember(Order = 1)] private string state;
-        [DataMember(Order = 2)] private string type;
-        [DataMember(Order = 3)] public List<(OrganType Type, int MinCount, int MaxCount)> NecessaryInnerParts;
-        [DataMember(Order = 4)] public List<(OrganType Type, int MaxCount, double Probability)> PossibleInnerParts;
+        [DataMember(Name = "KnownBasicMaterial", EmitDefaultValue = false)] private string knownBasicMaterial;
+        [DataMember(Order = 1, EmitDefaultValue = false)] private string state;
+        [DataMember(Name = "Type", Order = 2, EmitDefaultValue = false)] private string type;
+        [DataMember(Order = 3, EmitDefaultValue = false)] public List<NecessaryInnerPartTemplate<OrganType>> NecessaryInnerParts;
+        [DataMember(Order = 4, EmitDefaultValue = false)] public List<PossibleInnerPartTemplate<OrganType>> PossibleInnerParts;
         
         public Organ(Material material) : base(material){}
+
+        public void EraseFieldsAfterGeneration()
+        {
+            NecessaryInnerParts = null;
+            PossibleInnerParts = null;
+            knownBasicMaterial = null;
+        }
         
         [OnSerializing]
         private void OnSerializing(StreamingContext context)
@@ -46,7 +53,7 @@ namespace Objects.Life
         }
 
         [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        private void OnDeserialized(StreamingContext context)            
         {
             Enum.TryParse(state, true, out State);
             Enum.TryParse(type, true, out Type);

@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Bone",
+    "tags": [],
+    "Density": 1690,
+    "Durability": 0.2,
+    "Hardness": 0.3,
+    "HeatCapacity": 2000,
+    "Plasticity": 0.2,
+    "SoundAbsorption": 0.3,
+    "Toughness": 0.3,
+    "Transcalency": 0.2,
+    "WaterAbsorption": 0.0
+  }
+]

@@ -1,0 +1,65 @@
+[Flags]
+    public enum OrganType
+    {
+        #region Покров
+        Skin = 0,
+        Scales = 1,
+        Slime = 1 << 1,
+        Feathers = 1 << 2,
+        Fur = 1 << 3,
+        #endregion
+        
+        #region Части тела   
+        Torso = 1 << 4,
+        Head = 1 << 5,
+        Cephalothorax = 1 << 6, //головогрудь
+        Neck = 1 << 7,
+        #endregion
+        
+        #region Конечности
+        Leg = 1 << 8,
+        Hand = 1 << 9,
+        Tentacle = 1 << 10,
+        Wing = 1 << 11,
+        Fin = 1 << 12, //плавник
+        Tail = 1 << 13,
+        #endregion
+
+        #region Добавки к конечностям
+        Claws = 1 << 14,
+        Fingers = 1 << 15,
+        Hoof = 1 << 16,
+        SuctionCups = 1 << 17,
+        Horn = 1 << 18, // рог
+        Beak = 1 << 19,
+        Needles = 1 << 20,
+        Trunk = 1 << 21, //хобот
+        Splatter = 1 << 22, //Плевалка
+        Inkwell = 1 << 23,
+        JetNozzle = 1 << 24, //реактивное сопло
+        Sting = 1 << 25,
+        #endregion       
+
+        #region Внутренние органы
+        Brain = 1 << 26,
+        Muscle = 1 << 27,
+        Stomach = 1 << 28,
+        Heart = 1 << 29,
+        Artery = 1 << 30,
+        Vein = 1 << 31,
+        Intestines = 1 << 32, //кишечник
+        Liver = 1 << 33,
+        Lungs = 1 << 34,
+        Gills = 1 << 35,
+        PoisonGland = 1 << 36,
+        Shocker = 1 << 37,
+        #endregion
+
+        #region Органы чувств
+        Eye = 1 << 38,
+        Nose = 1 << 39,
+        Ear = 1 << 40,
+        Tongue = 1 << 41,
+        LateralLine = 1 << 42
+        #endregion        
+    }

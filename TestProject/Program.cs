@@ -30,7 +30,7 @@ namespace TestProject
             try
             {
                 LifeTest();
-                MapGenTest();
+                //MapGenTest();
             }
             catch (Exception e)
             {
@@ -40,12 +40,14 @@ namespace TestProject
 
         private static void LifeTest()
         {
-            var a = Known.Organs.Any();
+            var organ = Known.Organ(OrganType.BloodVessel);
+            organ.ResizeTo(CreatureSize.Human);
+            log.Info($"{organ.Name} has been resized to '{CreatureSize.Human}' and total volume '{organ.Volume}':\n{organ.ToJsonString()}\n");
         }
 
         private static void MapGenTest()
         {
-            var map = MapGenerator.GenerateAltitudeMap(1000, 1000, new DefaultEarthAltitude());
+            var map = MapGenerator.GenerateAltitudeMap(300, 300, new DefaultEarthAltitude());
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));
             map.Rivers.Add(map.GetCompatibleRiver(2));

@@ -43,7 +43,7 @@ namespace lib
 			return new DataContractJsonSerializer(type, useSimpleDictionaryFormat ? SimpleDictionarySettings : DefaultSettings).ReadObject(reader);
 		}
 
-		public static string ToJsonString<T>(this T obj, bool runtime = true, bool useSimpleDictionaryFormat = false, bool neverEmitTypeInfo = false, bool forceEmitTypeInfo = false)
+		public static string ToJsonString<T>(this T obj, bool runtime = true, bool useSimpleDictionaryFormat = false, bool neverEmitTypeInfo = true, bool forceEmitTypeInfo = false)
 		{
 			var bytes = obj.ToJsonSegment(runtime, useSimpleDictionaryFormat, neverEmitTypeInfo, forceEmitTypeInfo);
 			return Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count);

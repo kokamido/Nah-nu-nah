@@ -1,0 +1,38 @@
+[
+  {
+    "Name": "Blood",
+    "tags": [],
+    "Type": "Blood",
+    "AdditionalVolumeInCm3" : 0.7,
+    "KnownBasicMaterial" : "Blood",
+    "NecessaryInnerParts" : [],
+    "PossibleInnerParts" : []
+  },
+  {
+    "Name": "Hemolymph",
+    "tags": [],
+    "Type": "Blood",
+    "AdditionalVolumeInCm3" : 0.7,
+    "KnownBasicMaterial" : "Hemolymph",
+    "NecessaryInnerParts" : [],
+    "PossibleInnerParts" : []
+  },
+  {
+    "Name": "Saliva",
+    "tags": [],
+    "Type": "Fluid",
+    "AdditionalVolumeInCm3" : 0.1,
+    "KnownBasicMaterial" : "Saliva",
+    "NecessaryInnerParts" : [],
+    "PossibleInnerParts" : []
+  },
+  {
+    "Name": "СausticPoison",
+    "tags": [],
+    "Type": "Fluid",
+    "AdditionalVolumeInCm3" : 2.5,
+    "KnownBasicMaterial" : "Saliva",
+    "NecessaryInnerParts" : [],
+    "PossibleInnerParts" : []
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "Artery",
+    "tags": [],
+    "Type": "BloodVessel",
+    "AdditionalVolumeInCm3" : 0.03,
+    "KnownBasicMaterial" : "RegularSkin",
+    "NecessaryInnerParts" : [{"Type" : "Blood", "MinCount" : 1, "MaxCount" : 3}],
+    "PossibleInnerParts" : []
+  }
+]
