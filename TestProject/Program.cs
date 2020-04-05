@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Drawing;
 using System.Linq;
 using GlobalMap;
 using GlobalMap.Weather.Biomes;
@@ -14,7 +12,6 @@ using log4net;
 using log4net.Config;
 using Objects;
 using Objects.Life;
-using Objects.Primitives.Materials;
 
 namespace TestProject
 {
@@ -38,11 +35,23 @@ namespace TestProject
             }
         }
 
-        private static void LifeTest()
+        private static void LifeTest()    
         {
-            var organ = Known.Organ(OrganType.BloodVessel);
+            var organ = Known.Organ(OrganType.Viscera);
             organ.ResizeTo(CreatureSize.Human);
             log.Info($"{organ.Name} has been resized to '{CreatureSize.Human}' and total volume '{organ.Volume}':\n{organ.ToJsonString()}\n");
+            var bloodType = Known.Organ(OrganType.Blood);
+            organ.RecursiveApply<Organ>(o =>
+            {
+                if(o.InnerParts == null)
+                    return;
+                for (int i = 0; i < o.InnerParts.Count; i++)
+                {
+                    if (o.InnerParts[i] is Organ innerOrgan && innerOrgan.Type == OrganType.Blood)
+                        o.InnerParts[i] = bloodType.DeepCopyAs<Organ>();
+                }
+            });
+            log.Info($"{organ.Name} has been blood-checked with '{bloodType.Name}' blood:\n{organ.ToJsonString()}\n");
         }
 
         private static void MapGenTest()

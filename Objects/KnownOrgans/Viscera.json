@@ -1,0 +1,28 @@
+[
+  {
+    "Name": "Heart",
+    "tags": [],
+    "Type": "Viscera",
+    "AdditionalVolumeInCm3": 25,
+    "KnownBasicMaterial": "OrganicMuscle",
+    "NecessaryInnerParts": [
+      {
+        "Type": "BloodVessel",
+        "MinCount": 2,
+        "MaxCount": 4
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "Blood",
+        "MaxCount": 2,
+        "Probability": 0.15
+      },
+      {
+        "Type": "CausticPoison",
+        "MaxCount": 1,
+        "Probability": 0.1
+      }
+    ]
+  }
+]

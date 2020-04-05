@@ -11,7 +11,7 @@ namespace Objects.Primitives.Things
 {
     [DataContract]
     [KnownType(typeof(Organ))]
-    public abstract class Thing : TagableEntity
+    public class Thing : TagableEntity
     {
         [DataMember(EmitDefaultValue = false)] public Material Material;
         [DataMember(EmitDefaultValue = false)] public double AdditionalVolumeInCm3; //cm^3
@@ -25,12 +25,23 @@ namespace Objects.Primitives.Things
             MechanicalProperties = mechanicalProperties ?? new MechanicalProperties();
         }
         
+        public void RecursiveApply<T>(Action<T> action) where T: Thing
+        {
+            action(this as T);
+            if(InnerParts == null)
+                return;
+            foreach (var part in InnerParts)
+                part.RecursiveApply(action);
+        }
+        
         public void ResizeTo(CreatureSize newSize)
         {
             var multiplier = newSize.ToDouble() / Size.ToDouble();
             AdditionalVolumeInCm3 *= multiplier;
             (InnerParts ?? Enumerable.Empty<Thing>()).ForEach(p => p.ResizeTo(newSize));
         }
+
+        public T DeepCopyAs<T>() => JsonHelper.ParseJson<T>(this.ToJsonString());
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context) => Size = CreatureSize.Cat;

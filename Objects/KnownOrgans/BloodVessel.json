@@ -7,5 +7,14 @@
     "KnownBasicMaterial" : "RegularSkin",
     "NecessaryInnerParts" : [{"Type" : "Blood", "MinCount" : 1, "MaxCount" : 3}],
     "PossibleInnerParts" : []
+  },
+  {
+    "Name": "Vein",
+    "tags": [],
+    "Type": "BloodVessel",
+    "AdditionalVolumeInCm3" : 0.015,
+    "KnownBasicMaterial" : "RegularSkin",
+    "NecessaryInnerParts" : [{"Type" : "Blood", "MinCount" : 1, "MaxCount" : 2}],
+    "PossibleInnerParts" : []
   }
 ]
