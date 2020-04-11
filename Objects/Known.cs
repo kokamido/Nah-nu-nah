@@ -57,13 +57,18 @@ namespace Objects
 
         private static void AddInnerOrgan(Organ baseOrgan, OrganType innerOrganType, string innerOrganKnownName)
         {
-            var newOrgan = string.IsNullOrWhiteSpace(innerOrganKnownName)
-                ? Organ(innerOrganType)
-                : Organs[innerOrganType].FirstOrDefault(org => string.Equals(org.Name,innerOrganKnownName, StringComparison.InvariantCultureIgnoreCase));
-            if (newOrgan == null)
+            Organ newOrgan = null;
+            if (string.IsNullOrWhiteSpace(innerOrganKnownName))
+                newOrgan = Organ(innerOrganType);
+            else
             {
-                Log.Error($"Can't generate organ with type'{innerOrganType}'. Can't resolve KnownName '{innerOrganKnownName}'. Skipping it.");
-                return;
+                newOrgan = Organs[innerOrganType].FirstOrDefault(org => string.Equals(org.Name, innerOrganKnownName, StringComparison.InvariantCultureIgnoreCase));
+                if (newOrgan == null)
+                {
+                    Log.Error($"Can't generate organ with type'{innerOrganType}'. Can't resolve KnownName '{innerOrganKnownName}'. Skipping it.");
+                    return;
+                }
+                newOrgan = JsonHelper.ParseJson<Organ>(newOrgan.ToJsonString()); //Note Будет лагать - напишу норм копирование. ИМХО для генерации на старте и так сойдёт
             }
             Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
             if (baseOrgan.InnerParts == null)
@@ -111,24 +116,21 @@ namespace Objects
 
                     if (badInnerPartType != OrganType.None)
                     {
-                        Log.Error(
-                            $"Incorrect organ '{Organs[type][i].ToJsonString()}'. It may contains '{badInnerPartType.ToString()}'. It will be removed");
+                        Log.Error($"Incorrect organ '{Organs[type][i].ToJsonString()}'. It may contains '{badInnerPartType.ToString()}'. It will be removed");
                         toRemove.Add(Organs[type][i]);
                     }
                 }
 
-                Organs[type]
-                    .RemoveAll(o =>
-                        toRemove.Contains(o)); //Note Да, можно запилить хэши и сделать О(1). Но пока впадлу.
+                Organs[type].RemoveAll(o => toRemove.Contains(o)); //Note Да, можно запилить хэши и сделать О(1). Но пока впадлу.
             }
         }
 
         private static void LoadMaterials(string pathToData)
         {
             Materials = new Dictionary<string, Material>();
-            Log.Debug($"Loading basic materials from '{pathToData}'");
             foreach (var file in Directory.GetFiles(pathToData))
             {
+                Log.Debug($"Loading basic materials from '{file}'");
                 var materials = JsonHelper.ParseJson<List<Material>>(File.ReadAllText(file));
                 Log.Debug($"From '{file}' loaded '{materials.ToJsonString()}'");
                 materials.ForEach(m => Materials[m.Name] = m);

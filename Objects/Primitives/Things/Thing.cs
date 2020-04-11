@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using lib;
+using log4net;
 using Objects.Life;
 using Objects.Primitives.Materials;
 using Objects.Primitives.Tags;
@@ -17,6 +18,7 @@ namespace Objects.Primitives.Things
         [DataMember(EmitDefaultValue = false)] public double AdditionalVolumeInCm3; //cm^3
         [DataMember(EmitDefaultValue = false)] public MechanicalProperties MechanicalProperties;
         [DataMember(EmitDefaultValue = false)] public List<Thing> InnerParts;
+        private static ILog Log = LogManager.GetLogger(typeof(Thing));
         public CreatureSize Size { get; private set; }
 
         protected Thing(Material material, MechanicalProperties mechanicalProperties = null)
@@ -36,8 +38,9 @@ namespace Objects.Primitives.Things
         
         public void ResizeTo(CreatureSize newSize)
         {
-            var multiplier = newSize.ToDouble() / Size.ToDouble();
-            AdditionalVolumeInCm3 *= multiplier;
+            var res = AdditionalVolumeInCm3  / Size.ToDouble() * newSize.ToDouble();
+            Log.Debug($"Resizing '{Name}' with CreatureSize '{newSize}' from '{AdditionalVolumeInCm3}' to '{res}'");
+            AdditionalVolumeInCm3 = res;
             (InnerParts ?? Enumerable.Empty<Thing>()).ForEach(p => p.ResizeTo(newSize));
         }
 

@@ -1,0 +1,81 @@
+[
+  {
+    "Name": "SmallBone",
+    "tags": [],
+    "Type": "Bone",
+    "AdditionalVolumeInCm3": 0.5,
+    "KnownBasicMaterial": "Bone",
+    "PossibleInnerParts": [
+      {
+        "Type": "Viscera",
+        "KnownName": "BoneMarrow",
+        "MaxCount": 1,
+        "Probability": 0.15
+      },
+      {
+        "Type": "BloodVessel",
+        "KnownName": "BloodVessel",
+        "MaxCount": 1,
+        "Probability": 0.1
+      }
+    ]
+  },
+  {
+    "Name": "MiddleBone",
+    "tags": [],
+    "Type": "Bone",
+    "AdditionalVolumeInCm3": 1.5,
+    "KnownBasicMaterial": "Bone",
+    "NecessaryInnerParts": [
+      {
+        "Type": "Viscera",
+        "KnownName": "BoneMarrow",
+        "MinCount": 2,
+        "MaxCount": 5
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "Viscera",
+        "KnownName": "BoneMarrow",
+        "MaxCount": 2,
+        "Probability": 0.15
+      },
+      {
+        "Type": "BloodVessel",
+        "KnownName": "BloodVessel",
+        "MaxCount": 2,
+        "Probability": 0.2
+      }
+    ]
+  },
+  {
+    "Name": "BigBone",
+    "tags": [],
+    "Type": "Bone",
+    "AdditionalVolumeInCm3": 5,
+    "KnownBasicMaterial": "Bone",
+    "NecessaryInnerParts": [
+      {
+        "Type": "Viscera",
+        "KnownName": "BoneMarrow",
+        "MinCount": 5,
+        "MaxCount": 10
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "Viscera",
+        "KnownName": "BoneMarrow",
+        "MaxCount": 5,
+        "Probability": 0.15
+      },
+      {
+        "Type": "BloodVessel",
+        "KnownName": "BloodVessel",
+        "MaxCount": 3,
+        "Probability": 0.3
+      }
+    ]
+  }
+]

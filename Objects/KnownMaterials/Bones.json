@@ -21,7 +21,7 @@
     "HeatCapacity": 2000,
     "Plasticity": 0.3,
     "SoundAbsorption": 0.3,
-    "Toughness": 0.315
+    "Toughness": 0.15,
     "Transcalency": 0.2,
     "WaterAbsorption": 0.0
   }

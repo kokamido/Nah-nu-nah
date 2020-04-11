@@ -37,7 +37,7 @@ namespace TestProject
 
         private static void LifeTest()    
         {
-            var organ = Known.Organ(OrganType.Viscera);
+            var organ = Known.Organ(OrganType.Bone);
             organ.ResizeTo(CreatureSize.Human);
             log.Info($"{organ.Name} has been resized to '{CreatureSize.Human}' and total volume '{organ.Volume}':\n{organ.ToJsonString()}\n");
             var bloodType = Known.Organ(OrganType.Blood);

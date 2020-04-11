@@ -24,5 +24,19 @@
         "Probability": 0.1
       }
     ]
+  },
+  {
+    "Name": "BoneMarrow",
+    "tags": [],
+    "Type": "Viscera",
+    "AdditionalVolumeInCm3": 0.5,
+    "KnownBasicMaterial": "ViscousTissue",
+    "NecessaryInnerParts": [
+      {
+        "Type": "Blood",
+        "MinCount": 1,
+        "MaxCount": 2
+      }
+    ]
   }
 ]

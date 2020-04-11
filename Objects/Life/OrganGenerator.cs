@@ -29,7 +29,7 @@ namespace Objects.Life
             [CreatureSize.Fly] = 0.0001,
             [CreatureSize.Frog] = 0.004,
             [CreatureSize.Cat] = 1,
-            [CreatureSize.Human] = 20,
+            [CreatureSize.Human] = 15,
             [CreatureSize.Gorilla] = 60,
             [CreatureSize.Rhinoceros] = 500,
             [CreatureSize.Elephant] = 1500,
@@ -39,5 +39,4 @@ namespace Objects.Life
         public static double ToDouble(this CreatureSize size) => SizeToMultiplier[size];
     }
 
-    
 }
