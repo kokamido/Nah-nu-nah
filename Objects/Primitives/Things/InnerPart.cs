@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.Serialization;
-using Objects.Life;
 
 namespace Objects.Primitives.Things
 {
@@ -10,6 +9,7 @@ namespace Objects.Primitives.Things
         [IgnoreDataMember] public T Type;
         [DataMember] public int MinCount;
         [DataMember] public int MaxCount;
+        [DataMember] public string KnownName;
         [DataMember(Name = "Type")] private string type;
         
         [OnSerializing]
@@ -33,6 +33,7 @@ namespace Objects.Primitives.Things
         [IgnoreDataMember] public T Type;
         [DataMember] public double Probability;
         [DataMember] public int MaxCount;
+        [DataMember] public string KnownName;
         [DataMember(Name = "Type")] private string type;
         
         [OnSerializing]

@@ -1,0 +1,28 @@
+[
+  {
+    "Name": "ConnectiveTissue",
+    "tags": [],
+    "Density": 1027,
+    "Durability": 0,
+    "Hardness": 0.1,
+    "HeatCapacity": 2372,
+    "Plasticity": 0.9,
+    "SoundAbsorption": 0.3,
+    "Toughness": 0.05,
+    "Transcalency": 0.5,
+    "WaterAbsorption": 0.05
+  },
+  {
+    "Name": "ViscousTissue",
+    "tags": [],
+    "Density": 1100,
+    "Durability": 0,
+    "Hardness": 0.05,
+    "HeatCapacity": 2000,
+    "Plasticity": 0.95,
+    "SoundAbsorption": 0.3,
+    "Toughness": 0.025,
+    "Transcalency": 0.5,
+    "WaterAbsorption": 0.15
+  }
+]

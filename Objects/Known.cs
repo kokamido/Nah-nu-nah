@@ -27,37 +27,24 @@ namespace Objects
         public static Organ Organ(OrganType type)
         {
             Log.Debug($"Generating organ of type '{type.ToString()}'");
-            var organ = JsonHelper.ParseJson<Organ>(Organs[type][MathHelper.GetUniformRndInt(0, Organs[type].Count - 1)].ToJsonString()); //Note Будет лагать - напишу норм копирование. ИМХО для генерации на старте и так сойдёт
+            var organ = JsonHelper.ParseJson<Organ>(Organs[type][MathHelper.GetUniformRndInt(0, Organs[type].Count - 1)]
+                .ToJsonString()); //Note Будет лагать - напишу норм копирование. ИМХО для генерации на старте и так сойдёт
             Log.Debug($"Generating necessary inner parts for '{organ.ToJsonString()}'");
-            foreach (var o in organ.NecessaryInnerParts ??
-                              Enumerable.Empty<NecessaryInnerPartTemplate<OrganType>>())
+            foreach (var o in organ.NecessaryInnerParts ?? Enumerable.Empty<NecessaryInnerPartTemplate<OrganType>>())
             {
                 Log.Debug($"Processing '{o}'");
                 for (int j = 0; j < MathHelper.GetUniformRndInt(o.MinCount, o.MaxCount); j++)
-                {
-                    var newOrgan = Organ(o.Type);
-                    Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
-                    if (organ.InnerParts == null)
-                        organ.InnerParts = new List<Thing>();
-                    organ.InnerParts.Add(newOrgan);
-                }
+                    AddInnerOrgan(organ, o.Type, o.KnownName);
             }
 
             Log.Debug($"Generating possible inner parts for '{organ.ToJsonString()}'");
-            foreach (var o in organ.PossibleInnerParts ??
-                              Enumerable.Empty<PossibleInnerPartTemplate<OrganType>>())
+            foreach (var o in organ.PossibleInnerParts ?? Enumerable.Empty<PossibleInnerPartTemplate<OrganType>>())
             {
                 Log.Debug($"Processing '{o}'");
                 for (int j = 0; j < MathHelper.GetUniformRndInt(0, o.MaxCount); j++)
                 {
                     if (o.Probability.CheckProbability())
-                    {
-                        var newOrgan = Organ(o.Type);
-                        Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
-                        if (organ.InnerParts == null)
-                            organ.InnerParts = new List<Thing>();
-                        organ.InnerParts.Add(newOrgan);
-                    }
+                        AddInnerOrgan(organ, o.Type, o.KnownName);
                     else
                         Log.Debug("Probability check failed");
                 }
@@ -65,9 +52,25 @@ namespace Objects
 
             organ.EraseFieldsAfterGeneration();
             Log.Debug($"{organ.Name} has been generated with volume '{organ.Volume}' for {CreatureSize.Cat}:\n{organ.ToJsonString()}\n");
-            return organ;    
+            return organ;
         }
 
+        private static void AddInnerOrgan(Organ baseOrgan, OrganType innerOrganType, string innerOrganKnownName)
+        {
+            var newOrgan = string.IsNullOrWhiteSpace(innerOrganKnownName)
+                ? Organ(innerOrganType)
+                : Organs[innerOrganType].FirstOrDefault(org => string.Equals(org.Name,innerOrganKnownName, StringComparison.InvariantCultureIgnoreCase));
+            if (newOrgan == null)
+            {
+                Log.Error($"Can't generate organ with type'{innerOrganType}'. Can't resolve KnownName '{innerOrganKnownName}'. Skipping it.");
+                return;
+            }
+            Log.Debug($"Adding '{newOrgan.ToJsonString()}'");
+            if (baseOrgan.InnerParts == null)
+                baseOrgan.InnerParts = new List<Thing>();
+            baseOrgan.InnerParts.Add(newOrgan);
+        }
+        
         private static void LoadOrgans(string pathToData)
         {
             Organs = new Dictionary<OrganType, List<Organ>>();
