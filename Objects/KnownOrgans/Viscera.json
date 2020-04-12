@@ -38,5 +38,89 @@
         "MaxCount": 2
       }
     ]
+  },
+  {
+    "Name": "Liver",
+    "tags": [],
+    "Type": "Viscera",
+    "AdditionalVolumeInCm3": 30,
+    "KnownBasicMaterial": "ViscousTissue",
+    "NecessaryInnerParts": [
+      {
+        "Type": "BloodVessel",
+        "MinCount": 2,
+        "MaxCount": 4
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "Blood",
+        "MaxCount": 2,
+        "Probability": 0.15
+      }
+    ]
+  },
+  {
+    "Name": "Stomach",
+    "tags": [],
+    "Type": "Viscera",
+    "AdditionalVolumeInCm3": 30,
+    "KnownBasicMaterial": "ViscousTissue",
+    "NecessaryInnerParts": [
+      {
+        "Type": "GastricJuice",
+        "MinCount": 1,
+        "MaxCount": 2
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "GastricJuice",
+        "MaxCount": 4,
+        "Probability": 0.15
+      }
+    ]
+  },
+  {
+    "Name": "Lungs",
+    "tags": [],
+    "Type": "Viscera",
+    "AdditionalVolumeInCm3": 45,
+    "KnownBasicMaterial": "ViscousTissue",
+    "NecessaryInnerParts": [
+      {
+        "Type": "BloodVessel",
+        "MinCount": 1,
+        "MaxCount": 3
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "BloodVessel",
+        "MaxCount": 2,
+        "Probability": 0.4
+      }
+    ]
+  },
+  {
+    "Name": "Intestines",
+    "tags": [],
+    "Type": "Viscera",
+    "AdditionalVolumeInCm3": 90,
+    "KnownBasicMaterial": "RegularSkin",
+    "NecessaryInnerParts": [
+      {
+        "Type": "BloodVessel",
+        "MinCount": 1,
+        "MaxCount": 3
+      }
+    ],
+    "PossibleInnerParts": [
+      {
+        "Type": "BloodVessel",
+        "MaxCount": 5,
+        "Probability": 0.1
+      }
+    ]
   }
 ]

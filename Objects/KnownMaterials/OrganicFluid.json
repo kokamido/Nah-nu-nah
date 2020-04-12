@@ -50,5 +50,19 @@
     "Toughness": 0.0,
     "Transcalency": 0.3,
     "WaterAbsorption": 0
+  },
+  ,
+  {
+    "Name": "GastricJuice",
+    "tags": [],
+    "Density": 1001,
+    "Durability": 0,
+    "Hardness": 0.0,
+    "HeatCapacity": 1050,
+    "Plasticity": 1,
+    "SoundAbsorption": 0.3,
+    "Toughness": 0.0,
+    "Transcalency": 0.3,
+    "WaterAbsorption": 0
   }
 ]

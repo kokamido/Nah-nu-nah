@@ -1,0 +1,59 @@
+[
+  {
+    "Name": "SmallOrganicMuscle",
+    "tags": [],
+    "Type": "Muscle",
+    "AdditionalVolumeInCm3": 0.5,
+    "KnownBasicMaterial": "OrganicMuscle",
+    "NecessaryInnerParts": [
+      {
+        "Type": "Blood",
+        "MinCount": 1,
+        "MaxCount": 2
+      },
+      {
+        "Type": "BloodVessel",
+        "MinCount": 1,
+        "MaxCount": 2
+      }
+    ]
+  },
+  {
+    "Name": "MiddleOrganicMuscle",
+    "tags": [],
+    "Type": "Muscle",
+    "AdditionalVolumeInCm3": 1.5,
+    "KnownBasicMaterial": "OrganicMuscle",
+    "NecessaryInnerParts": [
+      {
+        "Type": "Blood",
+        "MinCount": 2,
+        "MaxCount": 4
+      },
+      {
+        "Type": "BloodVessel",
+        "MinCount": 1,
+        "MaxCount": 4
+      }
+    ]
+  },
+  {
+    "Name": "BigOrganicMuscle",
+    "tags": [],
+    "Type": "Muscle",
+    "AdditionalVolumeInCm3": 5,
+    "KnownBasicMaterial": "OrganicMuscle",
+    "NecessaryInnerParts": [
+      {
+        "Type": "Blood",
+        "MinCount": 3,
+        "MaxCount": 6
+      },
+      {
+        "Type": "BloodVessel",
+        "MinCount": 1,
+        "MaxCount": 6
+      }
+    ]
+  }
+]

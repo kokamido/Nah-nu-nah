@@ -1,38 +1,57 @@
 [
   {
     "Name": "Blood",
-    "tags": ["Intangible"],
+    "tags": [
+      "Intangible"
+    ],
     "Type": "Blood",
-    "AdditionalVolumeInCm3" : 0.5,
-    "KnownBasicMaterial" : "Blood",
-    "NecessaryInnerParts" : [],
-    "PossibleInnerParts" : []
+    "AdditionalVolumeInCm3": 0.5,
+    "KnownBasicMaterial": "Blood",
+    "NecessaryInnerParts": [],
+    "PossibleInnerParts": []
   },
   {
     "Name": "Hemolymph",
-    "tags": ["Intangible"],
+    "tags": [
+      "Intangible"
+    ],
     "Type": "Blood",
-    "AdditionalVolumeInCm3" : 0.5,
-    "KnownBasicMaterial" : "Hemolymph",
-    "NecessaryInnerParts" : [],
-    "PossibleInnerParts" : []
+    "AdditionalVolumeInCm3": 0.5,
+    "KnownBasicMaterial": "Hemolymph",
+    "NecessaryInnerParts": [],
+    "PossibleInnerParts": []
   },
   {
     "Name": "Saliva",
-    "tags": ["Intangible"],
+    "tags": [
+      "Intangible"
+    ],
     "Type": "Fluid",
-    "AdditionalVolumeInCm3" : 0.025,
-    "KnownBasicMaterial" : "Saliva",
-    "NecessaryInnerParts" : [],
-    "PossibleInnerParts" : []
+    "AdditionalVolumeInCm3": 0.025,
+    "KnownBasicMaterial": "Saliva",
+    "NecessaryInnerParts": [],
+    "PossibleInnerParts": []
   },
   {
     "Name": "СausticPoison",
-    "tags": ["Intangible"],
+    "tags": [
+      "Intangible"
+    ],
     "Type": "Fluid",
-    "AdditionalVolumeInCm3" : 2.5,
-    "KnownBasicMaterial" : "Saliva",
-    "NecessaryInnerParts" : [],
-    "PossibleInnerParts" : []
+    "AdditionalVolumeInCm3": 2.5,
+    "KnownBasicMaterial": "Saliva",
+    "NecessaryInnerParts": [],
+    "PossibleInnerParts": []
+  },
+  {
+    "Name": "GastricJuice",
+    "tags": [
+      "Intangible"
+    ],
+    "Type": "Fluid",
+    "AdditionalVolumeInCm3": 2.5,
+    "KnownBasicMaterial": "GastricJuice",
+    "NecessaryInnerParts": [],
+    "PossibleInnerParts": []
   }
 ]
